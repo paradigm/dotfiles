@@ -368,25 +368,23 @@ bindkey -M viins "^?" backward-delete-char
 # Have i_ctrl-a work as it does in Vim.
 bindkey -M viins "^A" beginning-of-line
 
-# Go back in history from insert mode.  This does not have a clean Vim
-# parallel.
-bindkey -M viins "^B" up-line-or-history
+# Have i_ctrl-p work as c_ctrl-p does in Vim.
+bindkey -M viins "^P" up-line-or-history
 
 # Have i_ctrl-e work as it does in Vim.
 bindkey -M viins "^E" end-of-line
 
-# Go back in history from insert mode.  This does not have a clean Vim
-# parallel.
-bindkey -M viins "^F" down-line-or-history
+# Have i_ctrl-n work as c_ctrl-n does in Vim.
+bindkey -M viins "^N" down-line-or-history
 
 # Have i_ctrl-h work as it does in Vim.
 bindkey -M viins "^H" backward-delete-char
 
-# Have i_ctrl-p work as it does in Vim.
-bindkey -M viins "^N" _history-complete-newer
+# Have i_ctrl-b work as i_ctrl-p does in Vim.
+bindkey -M viins "^B" _history-complete-newer
 
-# Have i_ctrl-p work as it does in Vim.
-bindkey -M viins "^P" _history-complete-older
+# Have i_ctrl-f work as i_ctrl-n does in Vim.
+bindkey -M viins "^F" _history-complete-older
 
 # Prepend "sudo ".  This does not have a Vim parallel.
 bindkey "^S" prepend-sudo
