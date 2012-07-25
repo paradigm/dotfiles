@@ -122,9 +122,9 @@ export MAIL="~/.mail"
 # Otherwise, it should be a blue dollar sign.
 
 if [ "$(id -u)" -eq "0" ]; then
-	export PS1=$'\e[0;31m#\e[m '
+	export PS1=$'\e[0;30m\e[41m#\e[m '
 else
-	export PS1=$'\e[0;34m$\e[m '
+	export PS1=$'\e[0;30m\e[47m$\e[m '
 fi
 
 # ==============================================================================

@@ -514,9 +514,9 @@ export MAIL="~/.mail"
 # Otherwise, it should be a blue dollar sign.
 
 if [ $(id -u) -eq "0" ]; then
-	export PROMPT=$'%{\e[0;31m%}#%{\e[m%} '
+	export PROMPT=$'%{\e[0;30m\e[41m%}#%{\e[m%} '
 else
-	export PROMPT=$'%{\e[0;34m%}$%{\e[m%} '
+	export PROMPT=$'%{\e[0;30m\e[47m%}$%{\e[m%} '
 fi
 
 # ==============================================================================

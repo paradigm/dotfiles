@@ -345,23 +345,41 @@ if &t_Co == 256
 "	let m4fg = 31
 "	let m4bg = 0
 
-" Blue-based:
-	let nfg = 19
-	let nbg = 0
-	let hfg = 21
-	let hbg = 0
-	let ifg = 17
-	let ibg = 0
-	let efg = 196
-	let ebg = 0
-	let m1fg = 25
-	let m1bg = 0
-	let m2fg = 55
-	let m2bg = 0
-	let m3fg = 31
-	let m3bg = 0
-	let m4fg = 91
-	let m4bg = 0
+"" Blue-based:
+"	let nfg = 19
+"	let nbg = 0
+"	let hfg = 21
+"	let hbg = 0
+"	let ifg = 17
+"	let ibg = 0
+"	let efg = 196
+"	let ebg = 0
+"	let m1fg = 25
+"	let m1bg = 0
+"	let m2fg = 55
+"	let m2bg = 0
+"	let m3fg = 31
+"	let m3bg = 0
+"	let m4fg = 91
+"	let m4bg = 0
+
+" White-based:
+	let nfg  = 231 " white
+	let nbg  = 0   " black
+	let hfg  = 0   " black
+	let hbg  = 231 " white
+	let ifg  = 240 " about 30% white
+	let ibg  = 0   " black
+	let efg  = 196 " red
+	let ebg  = 0   " black
+	let m1fg = 147 " blue-white
+	let m1bg = 0   " black
+	let m2fg = 157 " green-white
+	let m2bg = 0   " black
+	let m3fg = 159 " slight cyan
+	let m3bg = 0   " black
+	let m4fg = 217 " slight red
+	let m4bg = 0   " black
 
 " ------------------------------------------------------------------------------
 " - General Syntax                                                             -
