@@ -363,7 +363,25 @@ if &t_Co == 256
 "	let m4fg = 91
 "	let m4bg = 0
 
-" White-based:
+"" White-based:
+"	let nfg  = 231 " white
+"	let nbg  = 0   " black
+"	let hfg  = 0   " black
+"	let hbg  = 231 " white
+"	let ifg  = 240 " about 30% white
+"	let ibg  = 0   " black
+"	let efg  = 196 " red
+"	let ebg  = 0   " black
+"	let m1fg = 147 " blue-white
+"	let m1bg = 0   " black
+"	let m2fg = 157 " green-white
+"	let m2bg = 0   " black
+"	let m3fg = 159 " slight cyan
+"	let m3bg = 0   " black
+"	let m4fg = 217 " slight red
+"	let m4bg = 0   " black
+
+" Grayscale:
 	let nfg  = 231 " white
 	let nbg  = 0   " black
 	let hfg  = 0   " black
@@ -372,14 +390,15 @@ if &t_Co == 256
 	let ibg  = 0   " black
 	let efg  = 196 " red
 	let ebg  = 0   " black
-	let m1fg = 147 " blue-white
+	let m1fg = 250 " gray 74
 	let m1bg = 0   " black
-	let m2fg = 157 " green-white
+	let m2fg = 248 " gray 66
 	let m2bg = 0   " black
-	let m3fg = 159 " slight cyan
+	let m3fg = 244 " gray 50
 	let m3bg = 0   " black
-	let m4fg = 217 " slight red
+	let m4fg = 257 " gray 82
 	let m4bg = 0   " black
+
 
 " ------------------------------------------------------------------------------
 " - General Syntax                                                             -
