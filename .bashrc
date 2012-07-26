@@ -272,7 +272,7 @@ then
 		# Search for package name in repository
 		alias ks="packer -Ss"
 		# show to which installed package a file Belongs
-		alias kb="packer -Qo"
+		alias kb="pacman -Qo"
 		# shoW information about package
 		alias kw="packer -Si"
 	else
