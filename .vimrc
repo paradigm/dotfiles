@@ -77,7 +77,7 @@ set tags=./tags,./TAGS,tags,TAGS,~/.vim/tags
 "au BufWinLeave * silent! mkview!  " automatically save view on exit
 "au BufWinEnter * silent! loadview " automatically load view on load
 " If available, have pathogen load plugins form ~/.vim/bundle.
-if exists("*pathogen#helptags()")
+if filereadable($HOME."/.vim/autoload/pathogen.vim")
 	call pathogen#runtime_append_all_bundles()
 	call pathogen#helptags()
 endif
