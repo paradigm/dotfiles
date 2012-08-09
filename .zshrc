@@ -96,7 +96,8 @@ if [ ! -d $CACHEDIR ]; then
 fi
 
 # Use completion functionality.
-autoload -U compinit && compinit -d $CACHEDIR/zcompdump
+autoload -U compinit
+compinit -d $CACHEDIR/zcompdump 2>/dev/null
 
 # Use cache to speed completion up.
 zstyle ':completion:*' use-cache on
