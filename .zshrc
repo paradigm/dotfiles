@@ -80,7 +80,7 @@ WORDCHARS=${WORDCHARS//\/}
 # $fpath defines where Zsh searches for completion functions.  Include one in
 # the $HOME directory for non-root-user-made completion functions.
 
-fpath=(~/.zsh/completion $fpath)
+#fpath=(~/.zsh/completion $fpath)
 
 # Zsh's completion can benefit from caching.  Set the directory in which to
 # load/store the caches.
@@ -475,7 +475,7 @@ if [ -z "$DISPLAY" ]
 then
 	export BROWSER="elinks"
 else
-	if which dwb >/dev/null
+	if which dwb 1>/dev/null 2>/dev/null
 	then
 		export BROWSER="dwb"
 	else

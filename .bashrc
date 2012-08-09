@@ -83,7 +83,7 @@ if [ -z "$DISPLAY" ]
 then
 	export BROWSER="elinks"
 else
-	if which dwb >/dev/null
+	if which dwb 1>/dev/null 2>/dev/null
 	then
 		export BROWSER="dwb"
 	else
