@@ -31,18 +31,18 @@ bg[INSENSITIVE] = "#000000"    # unavailable (eg: max'd scroll bar button)
 # ------------------------------------------------------------------------------
 text[NORMAL] = "#ffffff"       # normal, unselected text fg
 text[ACTIVE] = "#000000"       # selected text fg, unfocused window
-text[PRELIGHT] = "#ff0000"     # ??
+text[PRELIGHT] = "#000000"     # mouse hover dropdown-box
 text[SELECTED] = "#000000"     # selected text fg, focused window
-text[INSENSITIVE] = "#ffffff"  # mouse hover checkboxes
+text[INSENSITIVE] = "#000000"  # mouse hover checkboxes
 
 # ------------------------------------------------------------------------------
 #  text background
 # ------------------------------------------------------------------------------
 base[NORMAL] = "#000000"       # normal bg
 base[ACTIVE] = "#ffffff"       # selected text bg, unfocused window
-base[PRELIGHT] = "#ff0000"     # ??
+base[PRELIGHT] = "#ffffff"     # mouse hover dropdown-box
 base[SELECTED] = "#ffffff"     # selected text bg, focused window
-base[INSENSITIVE] = "#000000"  # mouse hover checkboxes
+base[INSENSITIVE] = "#ffffff"  # mouse hover checkboxes
 
 # ------------------------------------------------------------------------------
 #  cursor
