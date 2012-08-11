@@ -9,7 +9,7 @@
 # either in part or in full.
 
 # ==============================================================================
-# = General Settings                                                           =
+# = general settings                                                           =
 # ==============================================================================
 #
 # These are general shell settings that don't fit well into any of the
@@ -38,7 +38,7 @@ shopt -s extglob
 stty -ixon
 
 # ==============================================================================
-# = Functions                                                                  =
+# = functions                                                                  =
 # ==============================================================================
 
 # Change directory then immediately clear the screen and run `ls`.
@@ -47,7 +47,7 @@ cds() {
 }
 
 # ==============================================================================
-# = Key Bindings                                                               =
+# = key bindings                                                               =
 # ==============================================================================
 #
 # Note that bash uses readline, and thus further bindings can be placed in
@@ -64,11 +64,11 @@ cds() {
 bind '"":""'
 
 # ==============================================================================
-# = Environmental Variables                                                    =
+# = environmental variables                                                    =
 # ==============================================================================
 #
 # ------------------------------------------------------------------------------
-# - General Evironmental Variables                                             -
+# - general (evironmental variables)                                           -
 # ------------------------------------------------------------------------------
 
 # "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
@@ -115,7 +115,7 @@ export SAGE_BROWSER="sage_browser"
 export MAIL="~/.mail"
 
 # ------------------------------------------------------------------------------
-# - Prompt                                                                     -
+# - prompt (evironmental variables)                                            -
 # ------------------------------------------------------------------------------
 #
 # If root, the prompt should be a red pound sign.
@@ -128,11 +128,11 @@ else
 fi
 
 # ==============================================================================
-# = Aliases                                                                    =
+# = aliases                                                                    =
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# - New Commands                                                               -
+# - new commands (aliases)                                                     -
 # ------------------------------------------------------------------------------
 
 # Clear the screen then run `ls`
@@ -151,7 +151,7 @@ alias yours="sudo find . -perm -u+x -exec chmod a+x {} \; && sudo find . -perm -
 alias rtex="$PDFREADER *.pdf& vim *.tex"
 
 # ------------------------------------------------------------------------------
-# - Shortcuts to existing commands                                             -
+# - shortcuts to existing commands (aliases)                                   -
 # ------------------------------------------------------------------------------
 
 alias ..="cd .."
@@ -168,7 +168,7 @@ alias vs="vim --servername vim"
 alias vv="cd /dev/shm"
 
 # ------------------------------------------------------------------------------
-# - Set default flags                                                          -
+# - set default flags (aliases)                                                -
 # ------------------------------------------------------------------------------
 
 alias cl="cclive --format=best"
@@ -183,7 +183,7 @@ alias xpdfr="xpdf -remote 127.0.0.1"
 alias xpdfv="xpdf -rv"
 
 # ------------------------------------------------------------------------------
-# - Git                                                                        -
+# - git (aliases)                                                              -
 # ------------------------------------------------------------------------------
 
 alias gc="git commit -a -v"
@@ -200,7 +200,7 @@ alias gul="git pull"
 alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 
 # ------------------------------------------------------------------------------
-# - Bedrock clients                                                            -
+# - bedrock clients (aliases)                                                  -
 # ------------------------------------------------------------------------------
 
 if which brc >/dev/null
@@ -213,7 +213,7 @@ then
 fi
 
 # ------------------------------------------------------------------------------
-# - Package Management                                                         -
+# - package management (aliases)                                               -
 # ------------------------------------------------------------------------------
 
 if [ -f /etc/arch-release ]

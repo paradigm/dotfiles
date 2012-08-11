@@ -9,7 +9,7 @@
 # either in part or in full.
 
 # ==============================================================================
-# = General Settings                                                           =
+# = general settings                                                           =
 # ==============================================================================
 #
 # These are general shell settings that don't fit well into any of the
@@ -74,7 +74,7 @@ setopt interactivecomments
 WORDCHARS=${WORDCHARS//\/}
 
 # ==============================================================================
-# = Completion                                                                 =
+# = completion                                                                 =
 # ==============================================================================
 
 # $fpath defines where Zsh searches for completion functions.  Include one in
@@ -128,11 +128,11 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 zstyle ':completion:history-words:*' menu yes
 
 # ==============================================================================
-# = Functions and ZLE widgets                                                  =
+# = functions and zle widgets                                                  =
 # ==============================================================================
 #
 # ------------------------------------------------------------------------------
-# - ZLE Widgets                                                                -
+# - zle widgets                                                                -
 # ------------------------------------------------------------------------------
 #
 # The ZLE widges are all followed by "zle -<MODE> <NAME>" and bound below in
@@ -335,7 +335,7 @@ history-beginning-search-backward-then-append() {
 zle -N history-beginning-search-backward-then-append
 
 # ------------------------------------------------------------------------------
-# - Non-ZLE Widget functions                                                   -
+# - non-zle widget functions                                                   -
 # ------------------------------------------------------------------------------
 
 # Change directory then immediately clear the screen and run `ls`.
@@ -344,7 +344,7 @@ cds() {
 }
 
 # ==============================================================================
-# = Key Bindings                                                               =
+# = key bindings                                                               =
 # ==============================================================================
 #
 # My goal here is to make the ZLE feel as much like Vim as possible without
@@ -360,7 +360,7 @@ bindkey -rpM viins '^['
 bindkey -rpM vicmd '^['
 
 # ------------------------------------------------------------------------------
-# - Insert mode bindings                                                       -
+# - insert mode (key bindings)                                                 -
 # ------------------------------------------------------------------------------
 
 # Have i_backspace work as it does in Vim.
@@ -411,7 +411,7 @@ bindkey -M viins "^X^H" _complete_help
 bindkey -M viins "^Y" push-line
 
 # ------------------------------------------------------------------------------
-# - Normal mode bindings                                                       -
+# - normal mode (key bindings)                                                 -
 # ------------------------------------------------------------------------------
 
 # Have ctrl-a work as it does in Vim.
@@ -457,11 +457,11 @@ bindkey -M vicmd v edit-command-line
 bindkey -M vicmd "^X" decrement-number
 
 # ==============================================================================
-# = Environmental Variables                                                    =
+# = environmental variables                                                    =
 # ==============================================================================
 #
 # ------------------------------------------------------------------------------
-# - General Evironmental Variables                                             -
+# - general (evironmental variables)                                           -
 # ------------------------------------------------------------------------------
 
 # "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
@@ -508,7 +508,7 @@ export SAGE_BROWSER="sage_browser"
 export MAIL="~/.mail"
 
 # ------------------------------------------------------------------------------
-# - Prompt                                                                     -
+# - prompt (environmental variables)                                           -
 # ------------------------------------------------------------------------------
 #
 # If root, the prompt should be a red pound sign.
@@ -521,11 +521,11 @@ else
 fi
 
 # ==============================================================================
-# = Aliases                                                                    =
+# = aliases                                                                    =
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# - New Commands                                                               -
+# - new commands (aliases)                                                     -
 # ------------------------------------------------------------------------------
 
 # Clear the screen then run `ls`
@@ -544,7 +544,7 @@ alias yours="sudo find . -perm -u+x -exec chmod a+x {} \; && sudo find . -perm -
 alias rtex="$PDFREADER *.pdf& vim *.tex"
 
 # ------------------------------------------------------------------------------
-# - Shortcuts to existing commands                                             -
+# - shortcuts to existing commands (aliases)                                   -
 # ------------------------------------------------------------------------------
 
 alias :q="exit"
@@ -560,7 +560,7 @@ alias vs="vim --servername vim"
 alias vv="cd /dev/shm/"
 
 # ------------------------------------------------------------------------------
-# - Set default flags                                                          -
+# - set default flags (aliases)                                                -
 # ------------------------------------------------------------------------------
 
 alias cl="cclive --format=best"
@@ -575,7 +575,7 @@ alias xpdfr="xpdf -remote 127.0.0.1"
 alias xpdfv="xpdf -rv"
 
 # ------------------------------------------------------------------------------
-# - Git                                                                        -
+# - git (aliases)                                                              -
 # ------------------------------------------------------------------------------
 
 alias gc="git commit -a -v"
@@ -592,7 +592,7 @@ alias gul="git pull"
 alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 
 # ------------------------------------------------------------------------------
-# - Bedrock clients                                                            -
+# - bedrock clients (aliases)                                                  -
 # ------------------------------------------------------------------------------
 
 if which brc >/dev/null
@@ -605,7 +605,7 @@ then
 fi
 
 # ------------------------------------------------------------------------------
-# - Package Management                                                         -
+# - package management (aliases)                                               -
 # ------------------------------------------------------------------------------
 
 if [ -f /etc/arch-release ]
@@ -743,7 +743,7 @@ then # none of these are tested, just gathered around
 fi
 
 # ------------------------------------------------------------------------------
-# - Global Aliases                                                            -
+# - global (aliases)                                                           -
 # ------------------------------------------------------------------------------
 
 alias -g L="|less"
@@ -754,7 +754,7 @@ alias -g T="|tail"
 alias -g V="|vim -m -c 'set nomod' -"
 
 # ------------------------------------------------------------------------------
-# - Suffix Aliases                                                            -
+# - suffix (aliases)                                                           -
 # ------------------------------------------------------------------------------
 
 alias -s html=$BROWSER
@@ -769,12 +769,8 @@ alias -s pdf=$PDFREADER
 alias -s gz=tar -xzvf
 alias -s bz2=tar -xjvf
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-#  nocorrect
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
 # ------------------------------------------------------------------------------
-# -  Disable corrrectall in these situations                                   -
+# -  disable corrrectall in these situations                                   -
 # ------------------------------------------------------------------------------
 
 alias mkdir="nocorrect mkdir"
