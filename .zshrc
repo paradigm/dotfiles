@@ -670,7 +670,7 @@ then
 		# shoW information about package
 		alias kw="packer -Si"
 		# Find package containing file
-		alias kf="pkgfile"
+		alias kf="sudo pkgfile"
 	else
 		# Install package
 		alias ki="sudo pacman -S"
@@ -689,7 +689,7 @@ then
 		# shoW information about package
 		alias kw="pacman -Si"
 		# Find package containing file
-		alias kf="pkgfile"
+		alias kf="sudo pkgfile"
 	fi
 elif [ "$DISTRO" = "Fedora" ]
 then
@@ -710,7 +710,7 @@ then
 	# shoW information about package
 	alias kw="yum info"
 	# Find package containing file
-	alias kf="yum whatprovides"
+	alias kf="sudo yum whatprovides"
 elif [ "$DISTRO" = "Slackware" ]
 then
 	# Install package
