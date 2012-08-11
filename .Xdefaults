@@ -1,0 +1,6 @@
+*.foreground: #ffffff
+*.background: #000000
+*.highlight:  #888888
+*.scrollBar: false
+*.font: -*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-*
+*.colorBD: #888888
