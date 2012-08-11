@@ -1,0 +1,24 @@
+# ==============================================================================
+# = paradigm's .inputrc                                                        =
+# ==============================================================================
+#
+# The goal here is to make programs which utilize readline feel as much like
+# vim as possible.
+
+# act like vi(m)
+set editing-mode vi
+
+# insert-mode bindings
+set keymap vi-insert
+"\C-l": clear-screen
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+#"\C-n": complete
+#"\C-p": complete
+"\C-n": next-history
+"\C-p": previous-history
+
+# command-mode bindings
+set keymap vi-command
+"gg": beginning-of-history
+"G": end-of-history
