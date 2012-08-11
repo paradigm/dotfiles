@@ -647,6 +647,8 @@ then
 	alias kb="dpkg -S"
 	# shoW information about package
 	alias kw="apt-cache show"
+	# Find package containing file
+	alias kf="apt-file search"
 elif [ "$DISTRO" = "Arch" ]
 then
 	if which packer >/dev/null
@@ -667,6 +669,8 @@ then
 		alias kb="pacman -Qo"
 		# shoW information about package
 		alias kw="packer -Si"
+		# Find package containing file
+		alias kf="pkgfile"
 	else
 		# Install package
 		alias ki="sudo pacman -S"
@@ -684,6 +688,8 @@ then
 		alias kb="pacman -Qo"
 		# shoW information about package
 		alias kw="pacman -Si"
+		# Find package containing file
+		alias kf="pkgfile"
 	fi
 elif [ "$DISTRO" = "Fedora" ]
 then
@@ -703,6 +709,8 @@ then
 	alias kb="rpm -qa"
 	# shoW information about package
 	alias kw="yum info"
+	# Find package containing file
+	alias kf="yum whatprovides"
 elif [ "$DISTRO" = "Slackware" ]
 then
 	# Install package
