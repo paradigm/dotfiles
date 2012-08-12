@@ -463,6 +463,14 @@
 
   <context name="Frame">
 
+    <mousebind button="button9" action="Press">
+      <action name="Focus"/>
+      <action name="Raise"/>
+    </mousebind>
+    <mousebind button="button8" action="Press">
+      <action name="Focus"/>
+      <action name="Raise"/>
+    </mousebind>
     <mousebind button="button9" action="Drag">
       <action name="Move"/>
     </mousebind>
