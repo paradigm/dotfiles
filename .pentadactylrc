@@ -1,0 +1,138 @@
+" ==============================================================================
+" = paradigm's .pentadactylrc                                                  =
+" ==============================================================================
+"
+" Note that much is this is legacy/depreciated items which I have not taken the
+" time to clean up
+
+" ==============================================================================
+" = general settings                                                           =
+" ==============================================================================
+
+" only show tabline if more than one tab is available
+set showtabline=multitab
+
+" use terminal vim as editor with i_ctrl-i
+set editor="uxterm -e vim"
+
+" default search is (SSL'd) Google's I'm feeling lucky
+" bmark https://encrypted.google.com/search?btnI=I%27m+Feeling+Lucky&complete=0&q=%s -title='Google feeling lucky search' -keyword=googlelucky
+set defsearch=googlelucky
+
+" all-lowercase search is case-insensitive (default)
+set findcase=smart
+
+" GUI options
+set guioptions=Cs
+
+" highlight all search findings on the page
+set hlfind
+" Don't re-highlight when sourcing
+nohl
+
+" begin searching after /, don't wait for <CR> (default)
+set incfind
+
+" default to insert mode when in a text-entry box (default)
+set insertmode
+
+" do not automatically complete things
+set autocomplete=
+
+" ==============================================================================
+" = mappings                                                                   =
+" ==============================================================================
+
+" ------------------------------------------------------------------------------
+" - general (mappings)                                                         -
+" ------------------------------------------------------------------------------
+
+" <c-l> temporarily disables find highlighting
+nmap -builtin -silent <c-l> :nohlfind<return>
+
+" use < and > to navigate tabs, elinks-style
+nmap -builtin > gt
+nmap -builtin < gT
+
+" I prefer c_ctrl-n/p to act like c_up/down
+cmap -builtin <c-n> <down>
+cmap -builtin <c-p> <up>
+
+" hitting <esc> from insert mode goes to text edit mode
+" hitting <esc> from text edit mode returns to normal mode
+"inoremap <esc> <c-t>
+"tnoremap <esc> <esc><esc>
+js dactyl.registerObserver("modes.change", function (prev, [main]) { if (main == modes.INSERT && Events.isInputElement(dactyl.focusedElement) && modes.getStack(1).main != modes.TEXT_EDIT) { modes.pop(null, { fromFocus: true }); modes.push(modes.TEXT_EDIT); modes.push(modes.INSERT); } });
+
+" ------------------------------------------------------------------------------
+" - noscript (mappings)                                                        -
+" ------------------------------------------------------------------------------
+"
+" yet again, something wrong with <a-tab>
+
+nmap -builtin v :set nst!=<a-tab>
+nmap -builtin V :set nss!=<a-tab>
+
+" ------------------------------------------------------------------------------
+" - cookie management (mappings)                                               -
+" ------------------------------------------------------------------------------
+"
+" there is a bug in pentadactyl with <a-tab> and/or <space>, will have to just use this for now
+
+"nmap -builtin cD :cookies <a-tab> clear
+"nmap -builtin ca :cookies <a-tab> allow
+nmap -builtin cc :cookies <a-tab>
+"nmap -builtin cd :cookies <a-tab> deny
+"nmap -builtin cl :cookies <a-tab> list
+"nmap -builtin cs :cookies <a-tab> session
+"nmap -builtin cu :cookies <a-tab> unset
+
+" ------------------------------------------------------------------------------
+" - gui (mappings)                                                             -
+" ------------------------------------------------------------------------------
+
+" use GTK or webpage theme for webpages
+nmap -builtin p :set! browser.display.use_document_colors=false<CR>:set! browser.display.use_system_colors=true<CR>
+nmap -builtin P :set! browser.display.use_document_colors=true<CR>:set! browser.display.use_system_colors=false<CR>
+
+" toggle statusbar
+nmap -builtin s :set guioptions!=s<CR>
+
+" toggle scrollbars (requires reloading page)
+nmap -builtin S :set guioptions!=b<CR>: set guioptions!=r<CR>: reload<CR>
+
+" ==============================================================================
+" = theming                                                                    =
+" ==============================================================================
+
+" clear any non-default theming
+hi clear
+" normal dactyl font
+hi Normal font-family: Terminus; font-size: 12px; font-weight: normal; color: #ffffff; background: #000000
+" info
+hi InfoMsg font-family: Terminus; font-size: 12px; font-weight: normal; color: #ffffff; background: #000000
+" normal status line - doesn't touch encrypted, etc
+hi StatusLineNormal font-family: Terminus; font-size: 12px; font-weight: normal; color: #ffffff; background: #000000
+" Notification of current mode (eg, -- INSERT -- )
+hi ModeMsg font-family: Terminus; font-size: 12px; font-weight: normal; color: #888888; background: #000000
+" Buttons - like in :downloads
+hi Button font-family: Terminus; font-size: 12px; font-weight: normal; color: #888888; background: #000000
+" hints
+hi Hint margin: -.2ex; padding: 0 0 0 1px; outline: 1px solid rgba(0, 0, 0, .5); background: rgba(000, 255, 160, .8); color: black;
+hi HintElem margin: -.2ex; padding: 0 0 0 1px; outline: 1px solid rgba(0, 0, 0, .5) !important; background: rgba(000, 255, 160, .8); color: black !important;
+hi Hint[active] background: rgba(000, 255, 255, .8);
+hi HintActive background-color: #00ffff !important; color: black !important;
+hi Hint::after content: attr(text) !important;
+hi HintImage opacity: .5 !important;
+" search
+"set! ui.textHighlightBackground=#000000
+"set! ui.textHighlightForeground=#00ffa0
+hi Find color: #000000; background: #ffffff
+
+"  Other
+" ==============================================================================
+
+" pentadactyl acts weird until first command, so give it something to do
+silent echo ""
+
+
