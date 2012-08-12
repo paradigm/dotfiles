@@ -1,0 +1,16 @@
+a:link {
+	color: #888888 !important; /* link fg */
+	background-color: #000000 !important; /* link bg  */
+}
+* {
+	background-color: #000000 !important; /* all bg */
+	background-image: none !important;
+	color: #ffffff !important; /* all fg */
+	border-color: #ffffff !important; /* all border */
+	font-family: "Terminus" !important;
+	line-height: 1.0 !important;
+}
+input {
+	border: 1px solid #ffffff !important; /* input border  */
+	color: #ffffff !important; /* input fg */
+}
