@@ -127,6 +127,9 @@ zstyle ':completion:*:cd:*' ignore-parents parent pwd
 # the first request)
 zstyle ':completion:history-words:*' menu yes
 
+# Have zsh treat "mosh" like "ssh"
+compdef mosh=ssh
+
 # ==============================================================================
 # = functions and zle widgets                                                  =
 # ==============================================================================
