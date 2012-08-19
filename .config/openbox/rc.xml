@@ -372,9 +372,9 @@
     <action name="Execute">
       <startupnotify>
         <enabled>true</enabled>
-        <name>firefox</name>
+        <name>dwb</name>
       </startupnotify>
-      <command>firefox</command>
+      <command>dwb</command>
     </action>
   </keybind>
   <keybind key="C-S-Left">
