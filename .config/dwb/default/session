@@ -1,0 +1,14 @@
+g:default
+-12 dwb:bookmarks dwb
+-11 dwb:settings dwb - Settings
+-10 dwb:bookmarks dwb - Bookmarks
+-9 dwb:quickmarks dwb - Quickmarks
+-8 dwb:history dwb - History
+-7 dwb:quickmarks dwb - Quickmarks
+-6 dwb:history dwb - History
+-5 dwb:searchengines dwb - Searchengines
+-4 dwb:downloads dwb - Downloads
+-3 dwb:keys dwb - Keys
+-2 dwb:settings dwb - Settings
+-1 dwb:keys dwb - Keys
+0|0 dwb:settings dwb - Settings
