@@ -4,3 +4,5 @@ gt:focus_next;;
 gT:focus_prev;;
 X:set auto-load-images true;;
 x:set auto-load-images false;;
+p:set user-stylesheet-uri file:///home/paradigm/.config/dwb/customstylesheet.css;;
+P:set user-stylesheet-uri file://;;
