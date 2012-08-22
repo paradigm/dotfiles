@@ -188,7 +188,7 @@ alias mpv="mupdf -V"
 # ------------------------------------------------------------------------------
 
 alias gc="git commit -a -v"
-alias gcd="git commit -a -v -m \"$(date)\""
+alias gcd="git commit -a -v -m \"\$(date)\""
 alias gb="git branch"
 alias gl="git log --graph --color"
 alias gr="git reset --hard HEAD"
