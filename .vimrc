@@ -628,7 +628,7 @@ au Filetype tex inoremap <buffer> ;tb \begin{tabular}{llllllllll}<cr>\end{tabula
 au Filetype tex inoremap <buffer> ;ll \begin{lstlisting}<cr>\end{lstlisting}<ESC>ko
 au Filetype tex inoremap <buffer> ;df \begin{definition}[]<cr>\end{definition}<ESC>ko<++><esc>k0f[a
 au Filetype tex inoremap <buffer> ;xp \begin{example}[]<cr>\end{example}<ESC>ko<++><esc>k0f[a
-au Filetype tex inoremap <buffer> ;sl \begin{solution}[]<cr>\end{solution}<ESC>ko<++><esc>k0f[a
+au Filetype tex inoremap <buffer> ;sl \begin{solution}<cr>\end{solution}<ESC>ko<++><esc>k0f[a
 " Tabularize mappingts for common TeX alignment situations
 au Filetype tex vnoremap <buffer> <space>& :Tab /&<cr>
 au Filetype tex vnoremap <buffer> <space>\ :Tab /\\\\<cr>
