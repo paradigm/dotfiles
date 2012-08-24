@@ -430,6 +430,9 @@ if &t_Co == 256
 	execute "highlight Type       cterm   = NONE"
 	execute "highlight Type       ctermfg = " . m4fg
 	execute "highlight Type       ctermbg = " . m4bg
+	" spelling
+	highlight clear SpellBad
+	highlight SpellBad cterm=underline
 
 " ------------------------------------------------------------------------------
 " - vim chrome (theme)                                                         -
