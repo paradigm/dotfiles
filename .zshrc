@@ -544,7 +544,7 @@ alias mine="sudo chown -R $(whoami):$(whoami)"
 alias yours="sudo find . -perm -u+x -exec chmod a+x {} \; && sudo find . -perm -u+r -exec chmod a+r {} \;"
 
 # Resume work on a TeX project
-alias rtex="$PDFREADER *.pdf& vim *.tex"
+alias rtex="uxterm -e texautofollow& mupdf -V *.pdf& vim --servername "tex" *.tex"
 
 # ------------------------------------------------------------------------------
 # - shortcuts to existing commands (aliases)                                   -
