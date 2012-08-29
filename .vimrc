@@ -610,7 +610,7 @@ au Filetype tex inoremap <buffer> ;; <ESC>o\item<space>
 au Filetype tex inoremap <buffer> ;' <ESC>o\item[]\hfill<cr><TAB><++><ESC>k0f[a
 au Filetype tex inoremap <buffer> (( \left(\right)<++><ESC>10hi
 au Filetype tex inoremap <buffer> [[ \left[\right]<++><ESC>10hi
-au Filetype tex inoremap <buffer> {{ \left\{\right\}<++><ESC>10hi
+au Filetype tex inoremap <buffer> {{ \left\{\right\}<++><ESC>11hi
 au Filetype tex inoremap <buffer> __ _{}<++><ESC>4hi
 au Filetype tex inoremap <buffer> ^^ ^{}<++><ESC>4hi
 au Filetype tex inoremap <buffer> == &=
