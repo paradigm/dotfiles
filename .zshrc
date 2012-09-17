@@ -65,7 +65,7 @@ setopt histignoredups
 
 # Allow comments on the command line.  Without this comments are only allowed
 # in scripts.
-setopt interactivecomments  
+setopt interactivecomments
 
 # Do not consider "/" a word character.  One benefit of this is that when
 # hitting ctrl-w in insert mode (which deletes the word before the cursor) just
@@ -86,9 +86,9 @@ WORDCHARS=${WORDCHARS//\/}
 # load/store the caches.
 CACHEDIR="$HOME/.zsh/$(uname -n)"
 # If on Bedrock, separate out caches by client.
-if which brw >/dev/null
+if which bri -n >/dev/null
 then
-	CACHEDIR="$CACHEDIR-$(brw)"
+	CACHEDIR="$CACHEDIR-$(bri -n)"
 fi
 # Create  $CACHEDIR if it does not exist.
 if [ ! -d $CACHEDIR ]; then
@@ -566,6 +566,7 @@ alias vv="cd /dev/shm/"
 # - set default flags (aliases)                                                -
 # ------------------------------------------------------------------------------
 
+alias 2pdf="libreoffice --headless --invisible --convert-to pdf"
 alias cl="cclive --format=best"
 alias df="df -h"
 alias du="du -hs"
@@ -602,7 +603,7 @@ alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 
 if which brc >/dev/null
 then
-	for CLIENT in $(brc -l)
+	for CLIENT in $(bri -l)
 	do
 		alias $CLIENT="brc $CLIENT"
 		alias s$CLIENT="sudo brc $CLIENT"

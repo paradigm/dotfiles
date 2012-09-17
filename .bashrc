@@ -171,6 +171,7 @@ alias vv="cd /dev/shm"
 # - set default flags (aliases)                                                -
 # ------------------------------------------------------------------------------
 
+alias 2pdf="libreoffice --headless --invisible --convert-to pdf"
 alias cl="cclive --format=best"
 alias df="df -h"
 alias du="du -hs"
@@ -207,7 +208,7 @@ alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 
 if which brc >/dev/null
 then
-	for CLIENT in $(brc -l)
+	for CLIENT in $(bri -l)
 	do
 		alias $CLIENT="brc $CLIENT"
 		alias s$CLIENT="sudo brc $CLIENT"
