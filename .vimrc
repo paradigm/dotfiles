@@ -614,10 +614,10 @@ au Filetype tex inoremap <buffer> ;; <ESC>o\item<space>
 au Filetype tex inoremap <buffer> ;' <ESC>o\item[]\hfill<cr><TAB><++><ESC>k0f[a
 au Filetype tex inoremap <buffer> (( \left(\right)<++><ESC>10hi
 au Filetype tex inoremap <buffer> [[ \left[\right]<++><ESC>10hi
-au Filetype tex inoremap <buffer> {{ \left\{\right\}<++><ESC>10hi
+au Filetype tex inoremap <buffer> {{ \left\{\right\}<++><ESC>11hi
 au Filetype tex inoremap <buffer> __ _{}<++><ESC>4hi
 au Filetype tex inoremap <buffer> ^^ ^{}<++><ESC>4hi
-au Filetype tex inoremap <buffer> == &=<space>
+au Filetype tex inoremap <buffer> == &=
 au Filetype tex inoremap <buffer> ;new \documentclass{}<cr>\begin{document}<cr><++><cr>\end{document}<ESC>3kf{a
 au Filetype tex inoremap <buffer> ;use \usepackage{}<ESC>i
 au Filetype tex inoremap <buffer> ;f \frac{}{<++>}<++><ESC>10hi
@@ -637,12 +637,12 @@ au Filetype tex inoremap <buffer> ;df \begin{definition}[]<cr>\end{definition}<E
 au Filetype tex inoremap <buffer> ;xp \begin{example}[]<cr>\end{example}<ESC>ko<++><esc>k0f[a
 au Filetype tex inoremap <buffer> ;sl \begin{solution}<cr>\end{solution}<ESC>ko<++><esc>k0f[a
 " Tabularize mappingts for common TeX alignment situations
-au Filetype tex vnoremap <buffer> <space>& :Tab /&<cr>
-au Filetype tex vnoremap <buffer> <space>\ :Tab /\\\\<cr>
-au Filetype tex vnoremap <buffer> <space>tl :Tab /&<cr>gv:Tab /\\\\<cr>
 au Filetype tex nnoremap <buffer> <space>& :Tab /&<cr>
+au Filetype tex vnoremap <buffer> <space>& :Tab /&<cr>
 au Filetype tex nnoremap <buffer> <space>\ :Tab /\\\\<cr>
-au Filetype tex nnoremap <buffer> <space>tl :Tab /&<cr>gv:Tab /\\\\<cr>
+au Filetype tex vnoremap <buffer> <space>\ :Tab /\\\\<cr>
+au Filetype tex nnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
+au Filetype tex vnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
 " Tabularize Automatically
 " Disabled as more troublesome than helpful
 "au Filetype tex inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a

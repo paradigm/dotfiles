@@ -65,7 +65,7 @@ setopt histignoredups
 
 # Allow comments on the command line.  Without this comments are only allowed
 # in scripts.
-setopt interactivecomments  
+setopt interactivecomments
 
 # Do not consider "/" a word character.  One benefit of this is that when
 # hitting ctrl-w in insert mode (which deletes the word before the cursor) just
@@ -544,7 +544,7 @@ alias mine="sudo chown -R $(whoami):$(whoami)"
 alias yours="sudo find . -perm -u+x -exec chmod a+x {} \; && sudo find . -perm -u+r -exec chmod a+r {} \;"
 
 # Resume work on a TeX project
-alias rtex="$PDFREADER *.pdf& vim *.tex"
+alias rtex="uxterm -e texautofollow& mupdf -V *.pdf& vim --servername "tex" *.tex"
 
 # ------------------------------------------------------------------------------
 # - shortcuts to existing commands (aliases)                                   -
@@ -566,6 +566,7 @@ alias vv="cd /dev/shm/"
 # - set default flags (aliases)                                                -
 # ------------------------------------------------------------------------------
 
+alias 2pdf="libreoffice --headless --invisible --convert-to pdf"
 alias cl="cclive --format=best"
 alias df="df -h"
 alias du="du -hs"
