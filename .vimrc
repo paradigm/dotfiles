@@ -250,6 +250,10 @@ vmap <space>F \F
 " Fast access to LanguageTool
 nnoremap <space>lt :LanguageToolCheck<cr>
 nnoremap <space>lc :LanguageToolClear<cr>
+" ParaSurround - new surroundings
+vnoremap s <esc>:call ParaSurround(0)<cr>
+" ParaSurround - use previous surroundings
+vnoremap S <esc>:call ParaSurround(1)<cr>
 
 " ------------------------------------------------------------------------------
 " - custom text objects (mappings)                                             -
@@ -942,8 +946,9 @@ endfunction
 " ------------------------------------------------------------------------------
 " - createcommentheading() (functions)                                         -
 " ------------------------------------------------------------------------------
-
+"
 " Create headings in comments
+
 function! CreateCommentHeading(level)
 	setlocal paste
 	for iteration in [1,2]
@@ -969,4 +974,22 @@ function! CreateCommentHeading(level)
 	endif
 	setlocal nopaste
 	startreplace
+endfunction
+
+" ------------------------------------------------------------------------------
+" - parasurround() (funcitons)                                                 -
+" ------------------------------------------------------------------------------
+"
+" Surround visually-selected areas
+
+function! ParaSurround(previous)
+	if a:previous == 0 || !exists('g:ParaSurroundLeft') || !exists('g:ParaSurroundRight')
+		let g:ParaSurroundLeft = input("Left: ")
+		let g:ParaSurroundRight = input("Right: ")
+	endif
+	normal `>
+	execute "normal a".g:ParaSurroundRight
+	normal `<
+	execute "normal i".g:ParaSurroundLeft
+	execute "normal `>".strlen(g:ParaSurroundLeft)."l".strlen(g:ParaSurroundRight)."l"
 endfunction
