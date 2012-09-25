@@ -987,9 +987,7 @@ function! ParaSurround(previous)
 		let g:ParaSurroundLeft = input("Left: ")
 		let g:ParaSurroundRight = input("Right: ")
 	endif
-	normal `>
-	execute "normal a".g:ParaSurroundRight
-	normal `<
-	execute "normal i".g:ParaSurroundLeft
+	execute "normal `>a".g:ParaSurroundRight
+	execute "normal `<i".g:ParaSurroundLeft
 	execute "normal `>".strlen(g:ParaSurroundLeft)."l".strlen(g:ParaSurroundRight)."l"
 endfunction
