@@ -605,8 +605,8 @@ if which brc >/dev/null
 then
 	for CLIENT in $(bri -l)
 	do
-		alias $CLIENT="brc $CLIENT"
-		alias s$CLIENT="sudo brc $CLIENT"
+		alias $CLIENT="brc $CLIENT $SHELL"
+		alias s$CLIENT="sudo brc $CLIENT $SHELL"
 	done
 fi
 
