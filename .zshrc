@@ -603,7 +603,7 @@ alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 
 if which brc >/dev/null
 then
-	for CLIENT in $(brc -l)
+	for CLIENT in $(bri -l)
 	do
 		alias $CLIENT="brc $CLIENT"
 		alias s$CLIENT="sudo brc $CLIENT"
@@ -753,7 +753,7 @@ fi
 # ------------------------------------------------------------------------------
 
 alias -g L="|less"
-alias -g G="|greps"
+alias -g G="|grep"
 alias -g B="&exit"
 alias -g H="|head"
 alias -g T="|tail"
