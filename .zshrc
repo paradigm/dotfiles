@@ -393,7 +393,7 @@ bindkey -M viins "^F" _history-complete-older
 # Prepend "sudo ".  This does not have a Vim parallel.
 bindkey "^S" prepend-sudo
 
-# Prepend "sudo ".  This does not have a Vim parallel.
+# Prepend "vim ".  This does not have a Vim parallel.
 bindkey "^V" prepend-vim
 
 # Have i_ctrl-u work as it does in Vim.
