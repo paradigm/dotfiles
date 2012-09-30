@@ -64,3 +64,26 @@ def simplify_unit(given_unit):
                 except:
                     pass
     return given_unit
+
+def batman_plot(num):
+	x,y = var('x,y')
+	f1 = ((x/7)^2*sqrt((abs(abs(x)-3))/(abs(x)-3))+(y/3)^2*sqrt((abs(y+3*sqrt(33)/7)/(y+3*sqrt(33)/7)))-1)
+	f2 = abs(x/2)-(3*sqrt(33)-7)/112*x^2-3+sqrt(1-(abs(abs(x)-2)-1)^2)-y
+	f3 = 9*sqrt(abs((abs(x)-1)*(abs(x)-0.75))/((1-abs(x))*(abs(x)-0.75)))-8*abs(x)-y
+	f4 = -y+3*abs(x)+0.75*sqrt(abs((abs(x)-0.75)*(abs(x)-0.5))/(-(abs(x)-0.75)*(abs(x)-0.5)))
+	f5 = 2.25*sqrt(abs((x-0.5)*(x+0.5))/(-(x-0.5)*(x+0.5)))-y
+	f6 = 6*sqrt(10)/7+(1.5-0.5*abs(x))*sqrt(abs(abs(x)-1)/(abs(x)-1))-6*sqrt(10)/14*sqrt(4-(abs(x)-1)^2)-y
+	print "0/6"
+	A = implicit_plot(f1,(x,-8,8),(y,-5,5),plot_points=num)
+	print "1/6"
+	B = implicit_plot(f2,(x,-8,8),(y,-5,5),plot_points=num)
+	print "2/6"
+	C = implicit_plot(f3,(x,-8,8),(y,-5,5),plot_points=num)
+	print "3/6"
+	D = implicit_plot(f4,(x,-8,8),(y,-5,5),plot_points=num)
+	print "4/6"
+	E = implicit_plot(f5,(x,-8,8),(y,-5,5),plot_points=num)
+	print "5/6"
+	F = implicit_plot(f6,(x,-8,8),(y,-5,5),plot_points=num)
+	print "6/6"
+	show(A+B+C+D+E+F)

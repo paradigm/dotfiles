@@ -208,10 +208,10 @@ alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 
 if which brc >/dev/null
 then
-	for CLIENT in $(brc -l)
+	for CLIENT in $(bri -l)
 	do
-		alias $CLIENT="brc $CLIENT"
-		alias s$CLIENT="sudo brc $CLIENT"
+		alias $CLIENT="brc $CLIENT $SHELL"
+		alias s$CLIENT="sudo brc $CLIENT $SHELL"
 	done
 fi
 
@@ -267,11 +267,11 @@ then
 		# Install package
 		alias ki="sudo packer -S"
 		# Remove package
-		alias kr="sudo pacman -R" # packer doesn't have -R?
+		alias kr="sudo pacman -R" # packer does not provide -R
 		# Updated packages
 		alias ku="sudo packer -Syu"
 		# List installed packages
-		alias kl="packer -Q"
+		alias kl="pacman -Q" # packer does not provide -Q
 		# Clean up package manager cruft
 		alias kc='sudo packer -Sc && for PKG in `packer -Qqtd`; do sudo packer -Rs $PKG; done'
 		# Search for package name in repository
