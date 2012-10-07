@@ -254,6 +254,8 @@ nnoremap <space>lc :LanguageToolClear<cr>
 vnoremap s <esc>:call ParaSurround(0)<cr>
 " ParaSurround - use previous surroundings
 vnoremap S <esc>:call ParaSurround(1)<cr>
+" ParaSurround - use previous region size and surroundings
+nnoremap <space>S :call ParaSurround(2)<cr>
 
 " ------------------------------------------------------------------------------
 " - custom text objects (mappings)                                             -
@@ -987,6 +989,13 @@ function! ParaSurround(previous)
 		let g:ParaSurroundLeft = input("Left: ")
 		let g:ParaSurroundRight = input("Right: ")
 	endif
+	if a:previous == 2
+		if !exists('g:ParaSurroundLength')
+			let g:ParaSurroundLength = 1
+		endif
+		execute "normal v".g:ParaSurroundLength."l\<esc>"
+	endif
+	let g:ParaSurroundLength = col("'>") - col("'<")
 	execute "normal `>a".g:ParaSurroundRight
 	execute "normal `<i".g:ParaSurroundLeft
 	execute "normal `>".strlen(g:ParaSurroundLeft)."l".strlen(g:ParaSurroundRight)."l"
