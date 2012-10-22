@@ -60,7 +60,7 @@ set spellcapcheck=""
 " Enable syntax highlighting.
 syn on
 " Do not show introduction message when starting Vim.
-set shortmess=I
+set shortmess+=I
 " Display special characters for certain whitespace situations.
 set list
 set listchars=tab:>·,trail:·,extends:…,precedes:…,nbsp:&
@@ -174,6 +174,23 @@ nnoremap <c-p>u :diffupdate<cr>
 nnoremap <c-p>x :diffoff<cr>
 nnoremap <c-p>y do<cr>
 nnoremap <c-p>p dp<cr>
+
+" ------------------------------------------------------------------------------
+" - visual-mode searching (mappings)                                           -
+" ------------------------------------------------------------------------------
+" 
+" Many of these were either shamelessly stolen from or inspiried by
+" SearchParty.  See: https://github.com/dahu/SearchParty.  Thanks, bairui.
+
+" Having v_* and v_# search for visually selected area.
+vnoremap * "*y<Esc>/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><cr>
+vnoremap # "*y<Esc>?<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><cr>
+" Prepare search based on visually-selected area.  Useful for searching for
+" something slightly different from something by the cursor.  For example, if
+" on "vnoremap" and looking for "nnoremap"
+vnoremap / "*y<Esc>q/i<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><esc>0
+" Prepare substitution based on visually-selected area.
+vnoremap & "*y<Esc>q:i%s/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr>/
 
 " ------------------------------------------------------------------------------
 " - insert-mode completion (mappings)                                          -
