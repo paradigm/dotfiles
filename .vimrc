@@ -1047,6 +1047,7 @@ endfunction
 " (re)generates tag files from open buffers
 
 function! GenerateTagsForBuffers()
+	echo "Generating tags from buffers, may take a few seconds..."
 	let l:localtagfile="/dev/shm/.vim-tags-".getpid()
 	if filereadable(l:localtagfile)
 		call delete(l:localtagfile)
@@ -1060,6 +1061,8 @@ function! GenerateTagsForBuffers()
 			call system("ctags -a -f ".l:localtagfile." --language-force=".GetCtagsFiletype(getbufvar(l:buffer_number,"&filetype"))." ".l:buffername)
 		endif
 	endfor
+	redraw
+	echo "Done generating tags."
 endfunction
 
 " ------------------------------------------------------------------------------
