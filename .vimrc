@@ -60,7 +60,7 @@ set spellcapcheck=""
 " Enable syntax highlighting.
 syn on
 " Do not show introduction message when starting Vim.
-set shortmess=I
+set shortmess+=I
 " Display special characters for certain whitespace situations.
 set list
 set listchars=tab:>·,trail:·,extends:…,precedes:…,nbsp:&
@@ -72,8 +72,6 @@ set wildmode=longest:full,full
 " Timeout for keycodes (such as arrow keys and function keys) is only 10ms.
 " Timeout for Vim keymaps is half a second.
 set timeout ttimeoutlen=10 timeoutlen=500
-" Include ~/.vim/tags in tag list.
-set tags=./tags,./TAGS,tags,TAGS,~/.vim/tags
 " Automatically save/load settings for buffer when entering/leaving them.  This
 " was disabled as it proved more troublesome than helpful.
 "au BufWinLeave * silent! mkview!  " automatically save view on exit
@@ -563,6 +561,8 @@ au Filetype asm set tabstop=8
 au Filetype c set makeprg=gcc
 " Execute result.
 au Filetype c nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
+" include c tags
+au Filetype c set tags+=,~/.vim/tags/ctags
 
 " ------------------------------------------------------------------------------
 " - c++ (filetype-specific)                                                    -
