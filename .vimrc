@@ -1066,6 +1066,7 @@ function! GenerateTagsForFiletype()
 		call system(tags_command)
 	endfor
 	redraw
+	echo "Done generating tags."
 endfunction
 
 " ------------------------------------------------------------------------------
