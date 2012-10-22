@@ -228,14 +228,11 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " - plugins and functions (mappings)                                           -
 " ------------------------------------------------------------------------------
 
-" Use ParaMenu to manage buffers.
-nnoremap <cr> :ParaBuffers<cr>
-" Do not use ParaBuffers in the cmdline-window.
+nnoremap <cr> :call ArgCompletion("b")<cr>
 au CmdwinEnter * nnoremap <cr> a<cr>
-au CmdwinLeave * nnoremap <cr> :call ParaBuffers()<cr>
-" Use ParaMenu to manage tags.
-nnoremap <bs> :ParaTags<cr>
-" Use ParaMenu to manage the Quickfix list.
+au CmdwinLeave * nnoremap <cr> :call ArgCompletion()<cr>
+nnoremap <bs> :call ArgCompletion("tag")<cr>
+
 nnoremap <space>x :ParaQuickFix<cr>
 " Use ParaIncr to increment/decriment after visual selection.
 vnoremap <space>i :call ParaIncr(1,"","")<cr>
@@ -1169,5 +1166,55 @@ function! GetCtagsFiletype(vimfiletype)
 		return("yacc")
 	else
 		return("")
+	endif
+endfunction
+
+" ------------------------------------------------------------------------------
+" - argcompletion                                                              -
+" ------------------------------------------------------------------------------
+
+function! ArgCompletion(cmd)
+	let s:partial = ""
+	while 1
+		let results = GetCtrlAResults(a:cmd." ".s:partial)
+		redraw
+		if type(results) == 0
+			echo "[No result]"
+		else
+			if len(split(results)) == 1
+				execute "silent ".a:cmd." ".results
+				return 0
+			endif
+			echo results
+		endif
+		echo ":".a:cmd." ".s:partial
+		let l:input = getchar()
+		if type(l:input) == 0
+			let l:input = nr2char(l:input)
+		endif
+		if l:input == "\<esc>"
+			let s:partial = ""
+			redraw
+			return 0
+		elseif strlen(l:input) > 0 && l:input == "\<bs>" || l:input == "\<c-h>"
+			let s:partial = s:partial[:-2]
+		elseif l:input == "\<c-u>" || l:input == "\<c-w>"
+			let s:partial = ""
+		elseif l:input == "\<cr>"
+			execute "silent ".a:cmd." ".partial
+			return 0
+		else
+			let s:partial = s:partial . l:input
+		endif
+	endwhile
+endfunction
+
+function! GetCtrlAResults(str)
+	let d={}
+	execute "silent normal! :".a:str."\<c-a>\<c-\>eextend(d, {'cmdline':getcmdline()}).cmdline\n"
+	if has_key(d, 'cmdline')
+		return strpart(d['cmdline'],stridx(d['cmdline'],' ')+1)
+	else
+		return 0
 	endif
 endfunction
