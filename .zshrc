@@ -626,6 +626,9 @@ then
 elif [ -f /etc/debian-release ]
 then
 	DISTRO="Debian"
+elif [ -d /etc/linuxmint ]
+then
+	DISTRO="Mint"
 elif [ -f /etc/lsb-release ]
 then
 	DISTRO=$(awk -F= '/DISTRIB_ID/{print$2;exit}' /etc/lsb-release)
@@ -634,8 +637,7 @@ then
 	DISTRO=$(awk '/[:alpha:]/{print$1;exit}' /etc/issue 2>/dev/null)
 fi
 
-
-if [ "$DISTRO" = "Debian" ] || [ "$DISTRO" = "Ubuntu" ]
+if [ "$DISTRO" = "Debian" ] || [ "$DISTRO" = "Ubuntu" ] || [ "$DISTRO" = "Mint" ]
 then
 	# Install package
 	alias ki="sudo apt-get install"

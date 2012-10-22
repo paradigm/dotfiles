@@ -72,8 +72,6 @@ set wildmode=longest:full,full
 " Timeout for keycodes (such as arrow keys and function keys) is only 10ms.
 " Timeout for Vim keymaps is half a second.
 set timeout ttimeoutlen=10 timeoutlen=500
-" Include ~/.vim/tags in tag list.
-set tags=./tags,./TAGS,tags,TAGS,~/.vim/tags
 " Automatically save/load settings for buffer when entering/leaving them.  This
 " was disabled as it proved more troublesome than helpful.
 "au BufWinLeave * silent! mkview!  " automatically save view on exit
@@ -273,6 +271,10 @@ vnoremap s <esc>:call ParaSurround(0)<cr>
 vnoremap S <esc>:call ParaSurround(1)<cr>
 " ParaSurround - use previous region size and surroundings
 nnoremap <space>S :call ParaSurround(2)<cr>
+" (re)generate tags
+nnoremap <space>g :call GenerateTagsForBuffers()<cr>
+nnoremap <space>G :call GenerateTagsForFiletype()<cr>
+let g:generate_tags=[]
 
 " ------------------------------------------------------------------------------
 " - custom text objects (mappings)                                             -
@@ -580,6 +582,10 @@ au Filetype asm set tabstop=8
 au Filetype c set makeprg=gcc
 " Execute result.
 au Filetype c nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
+" include c tags
+au Filetype c set tags+=,~/.vim/tags/ctags
+" regenerate tags
+au Filetype c let g:generate_tags+=["ctags -R -f ~/.vim/tags/ctags /usr/include"]
 
 " ------------------------------------------------------------------------------
 " - c++ (filetype-specific)                                                    -
@@ -723,6 +729,14 @@ highlight EasyMotionShade   cterm=NONE ctermfg=DarkBlue  ctermbg=Black
 
 " Indicate where the LanguageTool jar is located
 let g:languagetool_jar='/opt/languagetool/LanguageTool.jar'
+
+" ------------------------------------------------------------------------------
+" - GenerateTagsForBuffers                                                     -
+" ------------------------------------------------------------------------------
+
+execute "set tags+=/dev/shm/.vim-tags-".getpid()
+au VimLeave * call delete("/dev/shm/.vim-tags-".getpid())
+
 
 " ==============================================================================
 " = custom functions                                                           =
@@ -996,7 +1010,7 @@ function! CreateCommentHeading(level)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - parasurround() (funcitons)                                                 -
+" - parasurround() (functions)                                                 -
 " ------------------------------------------------------------------------------
 "
 " Surround visually-selected areas
@@ -1016,4 +1030,132 @@ function! ParaSurround(previous)
 	execute "normal `>a".g:ParaSurroundRight
 	execute "normal `<i".g:ParaSurroundLeft
 	execute "normal `>".strlen(g:ParaSurroundLeft)."l".strlen(g:ParaSurroundRight)."l"
+endfunction
+
+" ------------------------------------------------------------------------------
+" - generatetagsforbuffers() (functions)                                       -
+" ------------------------------------------------------------------------------
+"
+" (re)generates tag files from open buffers
+
+function! GenerateTagsForBuffers()
+	let l:localtagfile="/dev/shm/.vim-tags-".getpid()
+	if filereadable(l:localtagfile)
+		call delete(l:localtagfile)
+	endif
+	for l:buffer_number in range(1,bufnr("$"))
+		if buflisted(l:buffer_number)
+			let l:buffername = bufname(l:buffer_number)
+			if l:buffername[0] != "/"
+				let l:buffername = getcwd()."/".l:buffername
+			endif
+			call system("ctags -a -f ".l:localtagfile." --language-force=".GetCtagsFiletype(getbufvar(l:buffer_number,"&filetype"))." ".l:buffername)
+		endif
+	endfor
+endfunction
+
+" ------------------------------------------------------------------------------
+" - generatetagsforfiletype                                                    -
+" ------------------------------------------------------------------------------
+"
+" (re)generates tag files for filetype specific libraries
+
+function! GenerateTagsForFiletype()
+	echo "Generating filetype-specific tags, may take a few seconds..."
+	for tags_command in g:generate_tags
+		call system(tags_command)
+	endfor
+	redraw
+endfunction
+
+" ------------------------------------------------------------------------------
+" - getctagsfiletype() (functions)                                             -
+" ------------------------------------------------------------------------------
+"
+" maps vim's filetype to corresponding ctag's filetype
+" used by GenerateTags()
+
+function! GetCtagsFiletype(vimfiletype)
+	if a:vimfiletype == "asm"
+		return("asm")
+	elseif a:vimfiletype == "aspperl"
+		return("asp")
+	elseif a:vimfiletype == "aspvbs"
+		return("asp")
+	elseif a:vimfiletype == "awk"
+		return("awk")
+	elseif a:vimfiletype == "beta"
+		return("beta")
+	elseif a:vimfiletype == "c"
+		return("c")
+	elseif a:vimfiletype == "cpp"
+		return("c++")
+	elseif a:vimfiletype == "cs"
+		return("c#")
+	elseif a:vimfiletype == "cobol"
+		return("cobol")
+	elseif a:vimfiletype == "eiffel"
+		return("eiffel")
+	elseif a:vimfiletype == "erlang"
+		return("erlang")
+	elseif a:vimfiletype == "expect"
+		return("tcl")
+	elseif a:vimfiletype == "fortran"
+		return("fortran")
+	elseif a:vimfiletype == "html"
+		return("html")
+	elseif a:vimfiletype == "java"
+		return("java")
+	elseif a:vimfiletype == "javascript"
+		return("javascript")
+	elseif a:vimfiletype == "tex" && g:tex_flavor == "tex"
+		return("tex")
+		" LaTeX is not supported by default, add to ~/.ctags
+	elseif a:vimfiletype == "tex" && g:tex_flavor == "latex"
+		return("latex")
+	elseif a:vimfiletype == "lisp"
+		return("lisp")
+	elseif a:vimfiletype == "lua"
+		return("lua")
+	elseif a:vimfiletype == "make"
+		return("make")
+	elseif a:vimfiletype == "pascal"
+		return("pascal")
+	elseif a:vimfiletype == "perl"
+		return("perl")
+	elseif a:vimfiletype == "php"
+		return("php")
+	elseif a:vimfiletype == "python"
+		return("python")
+	elseif a:vimfiletype == "rexx"
+		return("rexx")
+	elseif a:vimfiletype == "ruby"
+		return("ruby")
+	elseif a:vimfiletype == "scheme"
+		return("scheme")
+	elseif a:vimfiletype == "sh"
+		return("sh")
+	elseif a:vimfiletype == "csh"
+		return("sh")
+	elseif a:vimfiletype == "zsh"
+		return("sh")
+	elseif a:vimfiletype == "slang"
+		return("slang")
+	elseif a:vimfiletype == "sml"
+		return("sml")
+	elseif a:vimfiletype == "sql"
+		return("sql")
+	elseif a:vimfiletype == "tcl"
+		return("tcl")
+	elseif a:vimfiletype == "vera"
+		return("vera")
+	elseif a:vimfiletype == "verilog"
+		return("verilog")
+	elseif a:vimfiletype == "vim"
+		return("vim")
+	elseif a:vimfiletype == "yacc"
+		return("yacc")
+	else
+		return("")
+	endif
 endfunction
