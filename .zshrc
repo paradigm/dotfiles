@@ -1,5 +1,5 @@
 # ==============================================================================
-# = paradigm's .zshrc                                                          =
+# = paradigm's_.zshrc                                                          =
 # ==============================================================================
 #
 # Disclaimer: Note that I have unusual tastes.  Blindly copying lines from this
@@ -9,7 +9,7 @@
 # either in part or in full.
 
 # ==============================================================================
-# = general settings                                                           =
+# = general_settings                                                           =
 # ==============================================================================
 #
 # These are general shell settings that don't fit well into any of the
@@ -131,11 +131,11 @@ zstyle ':completion:history-words:*' menu yes
 compdef mosh=ssh
 
 # ==============================================================================
-# = functions and zle widgets                                                  =
+# = functions_and_zle_widgets                                                  =
 # ==============================================================================
 #
 # ------------------------------------------------------------------------------
-# - zle widgets                                                                -
+# - zle_widgets                                                                -
 # ------------------------------------------------------------------------------
 #
 # The ZLE widges are all followed by "zle -<MODE> <NAME>" and bound below in
@@ -338,7 +338,7 @@ history-beginning-search-backward-then-append() {
 zle -N history-beginning-search-backward-then-append
 
 # ------------------------------------------------------------------------------
-# - non-zle widget functions                                                   -
+# - non-zle_widget_functions                                                   -
 # ------------------------------------------------------------------------------
 
 # Change directory then immediately clear the screen and run `ls`.
@@ -347,7 +347,7 @@ cds() {
 }
 
 # ==============================================================================
-# = key bindings                                                               =
+# = key_bindings                                                               =
 # ==============================================================================
 #
 # My goal here is to make the ZLE feel as much like Vim as possible without
@@ -363,7 +363,7 @@ bindkey -rpM viins '^['
 bindkey -rpM vicmd '^['
 
 # ------------------------------------------------------------------------------
-# - insert mode (key bindings)                                                 -
+# - insert_mode_(key bindings)                                                 -
 # ------------------------------------------------------------------------------
 
 # Have i_backspace work as it does in Vim.
@@ -414,7 +414,7 @@ bindkey -M viins "^X^H" _complete_help
 bindkey -M viins "^Y" push-line
 
 # ------------------------------------------------------------------------------
-# - normal mode (key bindings)                                                 -
+# - normal_mode_(key_bindings)                                                 -
 # ------------------------------------------------------------------------------
 
 # Have ctrl-a work as it does in Vim.
@@ -460,11 +460,11 @@ bindkey -M vicmd v edit-command-line
 bindkey -M vicmd "^X" decrement-number
 
 # ==============================================================================
-# = environmental variables                                                    =
+# = environmental_variables                                                    =
 # ==============================================================================
 #
 # ------------------------------------------------------------------------------
-# - general (evironmental variables)                                           -
+# - general_(evironmental_variables)                                           -
 # ------------------------------------------------------------------------------
 
 # "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
@@ -511,7 +511,7 @@ export SAGE_BROWSER="sage_browser"
 export MAIL="~/.mail"
 
 # ------------------------------------------------------------------------------
-# - prompt (environmental variables)                                           -
+# - prompt_(environmental_variables)                                           -
 # ------------------------------------------------------------------------------
 #
 # If root, the prompt should be a red pound sign.
@@ -528,7 +528,7 @@ fi
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# - new commands (aliases)                                                     -
+# - new_commands_(aliases)                                                     -
 # ------------------------------------------------------------------------------
 
 # Clear the screen then run `ls`
@@ -547,7 +547,7 @@ alias yours="sudo find . -perm -u+x -exec chmod a+x {} \; && sudo find . -perm -
 alias rtex="uxterm -e texautofollow& mupdf -V *.pdf& vim --servername "tex" *.tex"
 
 # ------------------------------------------------------------------------------
-# - shortcuts to existing commands (aliases)                                   -
+# - shortcuts_to_existing_commands_(aliases)                                   -
 # ------------------------------------------------------------------------------
 
 alias :q="exit"
@@ -563,7 +563,7 @@ alias vs="vim --servername vim"
 alias vv="cd /dev/shm/"
 
 # ------------------------------------------------------------------------------
-# - set default flags (aliases)                                                -
+# - set_default_flags_(aliases)                                                -
 # ------------------------------------------------------------------------------
 
 alias 2pdf="libreoffice --headless --invisible --convert-to pdf"
@@ -580,7 +580,7 @@ alias xpdfv="xpdf -rv"
 alias mpv="mupdf -V"
 
 # ------------------------------------------------------------------------------
-# - git (aliases)                                                              -
+# - git_(aliases)                                                              -
 # ------------------------------------------------------------------------------
 
 alias gc="git commit -a -v"
@@ -598,7 +598,7 @@ alias gul="git pull"
 alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 
 # ------------------------------------------------------------------------------
-# - bedrock clients (aliases)                                                  -
+# - bedrock_clients_(aliases)                                                  -
 # ------------------------------------------------------------------------------
 
 if which brc >/dev/null
@@ -611,7 +611,7 @@ then
 fi
 
 # ------------------------------------------------------------------------------
-# - package management (aliases)                                               -
+# - package_management_(aliases)                                               -
 # ------------------------------------------------------------------------------
 
 if [ -f /etc/arch-release ]
@@ -751,7 +751,7 @@ then # none of these are tested, just gathered around
 fi
 
 # ------------------------------------------------------------------------------
-# - global (aliases)                                                           -
+# - global_(aliases)                                                           -
 # ------------------------------------------------------------------------------
 
 alias -g L="|less"
@@ -762,7 +762,7 @@ alias -g T="|tail"
 alias -g V="|vim -m -c 'set nomod' -"
 
 # ------------------------------------------------------------------------------
-# - suffix (aliases)                                                           -
+# - suffix_(aliases)                                                           -
 # ------------------------------------------------------------------------------
 
 alias -s html=$BROWSER
@@ -778,7 +778,7 @@ alias -s gz=tar -xzvf
 alias -s bz2=tar -xjvf
 
 # ------------------------------------------------------------------------------
-# -  disable corrrectall in these situations                                   -
+# -  disable_corrrectall_in_these_situations                                   -
 # ------------------------------------------------------------------------------
 
 alias mkdir="nocorrect mkdir"

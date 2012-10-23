@@ -1,5 +1,5 @@
 # ==============================================================================
-# = paradigm's .bashrc                                                         =
+# = paradigm's_.bashrc                                                         =
 # ==============================================================================
 #
 # Disclaimer: Note that I have unusual tastes.  Blindly copying lines from this
@@ -9,7 +9,7 @@
 # either in part or in full.
 
 # ==============================================================================
-# = general settings                                                           =
+# = general_settings                                                           =
 # ==============================================================================
 #
 # These are general shell settings that don't fit well into any of the
@@ -47,7 +47,7 @@ cds() {
 }
 
 # ==============================================================================
-# = key bindings                                                               =
+# = key_bindings                                                               =
 # ==============================================================================
 #
 # Note that bash uses readline, and thus further bindings can be placed in
@@ -64,11 +64,11 @@ cds() {
 bind '"":""'
 
 # ==============================================================================
-# = environmental variables                                                    =
+# = environmental_variables                                                    =
 # ==============================================================================
 #
 # ------------------------------------------------------------------------------
-# - general (evironmental variables)                                           -
+# - general_(evironmental_variables)                                           -
 # ------------------------------------------------------------------------------
 
 # "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
@@ -115,7 +115,7 @@ export SAGE_BROWSER="sage_browser"
 export MAIL="~/.mail"
 
 # ------------------------------------------------------------------------------
-# - prompt (evironmental variables)                                            -
+# - prompt_(evironmental_variables)                                            -
 # ------------------------------------------------------------------------------
 #
 # If root, the prompt should be a red pound sign.
@@ -132,7 +132,7 @@ fi
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# - new commands (aliases)                                                     -
+# - new_commands_(aliases)                                                     -
 # ------------------------------------------------------------------------------
 
 # Clear the screen then run `ls`
@@ -151,7 +151,7 @@ alias yours="sudo find . -perm -u+x -exec chmod a+x {} \; && sudo find . -perm -
 alias rtex="uxterm -e texautofollow& mupdf -V *.pdf& vim --servername "tex" *.tex"
 
 # ------------------------------------------------------------------------------
-# - shortcuts to existing commands (aliases)                                   -
+# - shortcuts_to_existing_commands_(aliases)                                   -
 # ------------------------------------------------------------------------------
 
 alias ..="cd .."
@@ -168,7 +168,7 @@ alias vs="vim --servername vim"
 alias vv="cd /dev/shm"
 
 # ------------------------------------------------------------------------------
-# - set default flags (aliases)                                                -
+# - set_default_flags_(aliases)                                                -
 # ------------------------------------------------------------------------------
 
 alias 2pdf="libreoffice --headless --invisible --convert-to pdf"
@@ -185,7 +185,7 @@ alias xpdfv="xpdf -rv"
 alias mpv="mupdf -V"
 
 # ------------------------------------------------------------------------------
-# - git (aliases)                                                              -
+# - git_(aliases)                                                              -
 # ------------------------------------------------------------------------------
 
 alias gc="git commit -a -v"
@@ -203,7 +203,7 @@ alias gul="git pull"
 alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 
 # ------------------------------------------------------------------------------
-# - bedrock clients (aliases)                                                  -
+# - bedrock_clients_(aliases)                                                  -
 # ------------------------------------------------------------------------------
 
 if which brc >/dev/null
@@ -216,7 +216,7 @@ then
 fi
 
 # ------------------------------------------------------------------------------
-# - package management (aliases)                                               -
+# - package_management_(aliases)                                               -
 # ------------------------------------------------------------------------------
 
 if [ -f /etc/arch-release ]
