@@ -232,6 +232,7 @@ nnoremap <cr> :call ArgCompletion("b")<cr>
 au CmdwinEnter * nnoremap <cr> a<cr>
 au CmdwinLeave * nnoremap <cr> :call ArgCompletion("b")<cr>
 nnoremap <bs> :call GenerateTagsForBuffers()<cr>:call ArgCompletion("tag")<cr>
+nnoremap <space>e :call ArgCompletion("e")<cr>
 
 nnoremap <space>x :ParaQuickFix<cr>
 " Use ParaIncr to increment/decriment after visual selection.
@@ -1225,7 +1226,7 @@ function! GetCtrlAResults(str)
 	let d={}
 	execute "silent normal! :".a:str."\<c-a>\<c-\>eextend(d, {'cmdline':getcmdline()}).cmdline\n"
 	if has_key(d, 'cmdline')
-		return split(strpart(d['cmdline'],stridx(d['cmdline'],' ')+1))
+		return split(strpart(d['cmdline'],stridx(d['cmdline'],' ')+1),'\\\@<! ')
 	else
 		return [0]
 	endif
