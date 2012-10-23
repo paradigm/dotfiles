@@ -9,7 +9,7 @@
 " either in part or in full.
 
 " ==============================================================================
-" = general settings                                                           =
+" = general_settings                                                           =
 " ==============================================================================
 "
 " These are general shell settings that don't fit well into any of the
@@ -91,7 +91,7 @@ filetype indent on
 " ==============================================================================
 
 " ------------------------------------------------------------------------------
-" - general (mappings)                                                         -
+" - general_(mappings)                                                         -
 " ------------------------------------------------------------------------------
 
 " Disable <f1>'s default help functionality.
@@ -133,7 +133,7 @@ vnoremap <silent> gk k
 set pastetoggle=<insert>
 
 " ------------------------------------------------------------------------------
-" - cmdline-window (mappings)                                                  -
+" - cmdline-window_(mappings)                                                  -
 " ------------------------------------------------------------------------------
 
 " Swap default ':', '/' and '?' with cmdline-window equivalent.
@@ -153,7 +153,7 @@ vnoremap q? ?
 au CmdwinEnter * nnoremap <buffer> <ESC> :q<cr>
 
 " ------------------------------------------------------------------------------
-" - quickfix list (mappings)                                                   -
+" - quickfix_list_(mappings)                                                   -
 " ------------------------------------------------------------------------------
 
 " Move to next quickfix item.
@@ -164,7 +164,7 @@ nnoremap +p :cpprevious<cr>
 nnoremap +c :cc<cr>
 
 " ------------------------------------------------------------------------------
-" - diff (mappings)                                                            -
+" - diff_(mappings)                                                            -
 " ------------------------------------------------------------------------------
 
 nnoremap <c-p>t :diffthis<cr>
@@ -174,7 +174,7 @@ nnoremap <c-p>y do<cr>
 nnoremap <c-p>p dp<cr>
 
 " ------------------------------------------------------------------------------
-" - visual-mode searching (mappings)                                           -
+" - visual-mode_searching_(mappings)                                           -
 " ------------------------------------------------------------------------------
 " 
 " Many of these were either shamelessly stolen from or inspiried by
@@ -191,7 +191,7 @@ vnoremap / "*y<Esc>q/i<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g"
 vnoremap & "*y<Esc>q:i%s/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr>/
 
 " ------------------------------------------------------------------------------
-" - insert-mode completion (mappings)                                          -
+" - insert-mode_completion_(mappings)                                          -
 " ------------------------------------------------------------------------------
 
 " Allow ctrl-f/ctrl-b to page through pop-up menu.
@@ -204,7 +204,7 @@ inoremap <c-@> <c-x><c-o>
 inoremap <c-l> <c-x><c-l>
 
 " ------------------------------------------------------------------------------
-" - comments (mappings)                                                        -
+" - comments_(mappings)                                                        -
 " ------------------------------------------------------------------------------
 
 " Determine comment character(s) based on filetype.  Vim sets &commentstring
@@ -225,13 +225,13 @@ nnoremap <silent> <c-n>s :call CreateCommentHeading(2)<cr>
 nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 
 " ------------------------------------------------------------------------------
-" - plugins and functions (mappings)                                           -
+" - plugins_and_functions_(mappings)                                           -
 " ------------------------------------------------------------------------------
 
 nnoremap <cr> :call ArgCompletion("b")<cr>
 au CmdwinEnter * nnoremap <cr> a<cr>
-au CmdwinLeave * nnoremap <cr> :call ArgCompletion()<cr>
-nnoremap <bs> :call ArgCompletion("tag")<cr>
+au CmdwinLeave * nnoremap <cr> :call ArgCompletion("b")<cr>
+nnoremap <bs> :call GenerateTagsForBuffers()<cr>:call ArgCompletion("tag")<cr>
 
 nnoremap <space>x :ParaQuickFix<cr>
 " Use ParaIncr to increment/decriment after visual selection.
@@ -274,7 +274,7 @@ nnoremap <space>G :call GenerateTagsForFiletype()<cr>
 let g:generate_tags=[]
 
 " ------------------------------------------------------------------------------
-" - custom text objects (mappings)                                             -
+" - custom_text_objects_(mappings)                                             -
 " ------------------------------------------------------------------------------
 
 " Create new text objects for pairs of identical characters
@@ -307,7 +307,7 @@ onoremap a<cr> :normal Vi<c-v><cr><cr>
 "vnoremap <silent>ii :<C-u>cal IndTxtObj(1)<CR><Esc>gv
 
 " ------------------------------------------------------------------------------
-" - git (mappings)                                                             -
+" - git_(mappings)                                                             -
 " ------------------------------------------------------------------------------
 
 " Commit
@@ -328,7 +328,7 @@ command! SyntaxGroup echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "
 if &t_Co == 256
 
 " ------------------------------------------------------------------------------
-" - color definitions (theme)                                                  -
+" - color_definitions_(theme)                                                  -
 " ------------------------------------------------------------------------------
 "
 " Define colors that will be used repeatedly.
@@ -425,7 +425,7 @@ if &t_Co == 256
 
 
 " ------------------------------------------------------------------------------
-" - general syntax (theme)                                                     -
+" - general_syntax_(theme)                                                     -
 " ------------------------------------------------------------------------------
 
 	execute "highlight Comment    cterm   = NONE"
@@ -457,7 +457,7 @@ if &t_Co == 256
 	highlight SpellBad cterm=underline
 
 " ------------------------------------------------------------------------------
-" - vim chrome (theme)                                                         -
+" - vim_chrome_(theme)                                                         -
 " ------------------------------------------------------------------------------
 
 	execute "highlight LineNr       cterm   = None"
@@ -520,11 +520,11 @@ endif
 
 
 " ==============================================================================
-" = filetype-specific settings                                                 =
+" = filetype-specific_settings                                                 =
 " ==============================================================================
 
 " ------------------------------------------------------------------------------
-" - viml (filetype-specific)                                                   -
+" - viml_(filetype-specific)                                                   -
 " ------------------------------------------------------------------------------
 
 " VimL has its own omnicompletion mapping by default, separate from the normal
@@ -535,14 +535,14 @@ au Filetype vim inoremap <buffer> <c-x><c-o> <c-x><c-v>
 au Filetype vim inoremap <buffer> <c-@> <c-x><c-v>
 
 " ------------------------------------------------------------------------------
-" - mail (filetype-specific)                                                   -
+" - mail_(filetype-specific)                                                   -
 " ------------------------------------------------------------------------------
 
 " Use spellcheck by default when composing an email.
 au Filetype mail set spell
 
 " ------------------------------------------------------------------------------
-" - python (filetype-specific)                                                 -
+" - python_(filetype-specific)                                                 -
 " ------------------------------------------------------------------------------
 "
 " The python community strongly favors using spaces for indentation rather
@@ -565,14 +565,14 @@ au Filetype python set errorformat=%f:%l:%c:%m
 au Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
 
 " ------------------------------------------------------------------------------
-" - assembly (filetype-specific)                                               -
+" - assembly_(filetype-specific)                                               -
 " ------------------------------------------------------------------------------
 
 " Set tabstop to 8 for assembly.
 au Filetype asm set tabstop=8
 
 " ------------------------------------------------------------------------------
-" - c (filetype-specific)                                                      -
+" - c_(filetype-specific)                                                      -
 " ------------------------------------------------------------------------------
 
 " Set compiler.
@@ -585,7 +585,7 @@ au Filetype c set tags+=,~/.vim/tags/ctags
 au Filetype c let g:generate_tags+=["ctags -R -f ~/.vim/tags/ctags /usr/include"]
 
 " ------------------------------------------------------------------------------
-" - c++ (filetype-specific)                                                    -
+" - c++_(filetype-specific)                                                    -
 " ------------------------------------------------------------------------------
 
 " Set compiler.
@@ -594,11 +594,11 @@ au Filetype cpp set makeprg=g++
 au Filetype cpp nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
 
 " ------------------------------------------------------------------------------
-" - tex (filetype-specific)                                                    -
+" - tex_(filetype-specific)                                                    -
 " ------------------------------------------------------------------------------
 
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ general options (tex)                                                      ~
+" ~ general_options (tex)                                                      ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " Default to LaTeX, not Plain TeX/ConTeXt/etc
 let g:tex_flavor='latex'
@@ -608,7 +608,7 @@ au Filetype tex set spell
 au Filetype tex set makeprg=lualatex\ \-file\-line\-error\ \-interaction=nonstopmode\ $*\\\|\ awk\ '/^\\(.*.tex$/{sub(/^./,\"\",$0);X=$0}\ /^!/{sub(/^./,\"\",$0);print\ X\":1:\"$0}\ /tex:[0-9]+:\ /{A=$0;MORE=2}\ (MORE==2\ &&\ /^l.[0-9]/){sub(/^l.[0-9]+[\ \\t]+/,\"\",$0);B=$0;MORE=1}\ (MORE==1\ &&\ /^[\ ]+/){sub(/^[\ \\t]+/,\"\",$0);print\ A\":\ \"B\"·\"$0;MORE=0}'
 au Filetype tex set errorformat=%f:%l:\ %m
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ lualatex highlighting (tex)                                                ~
+" ~ lualatex_highlighting_(tex)                                                ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " LuaTeX embeds Lua code into TeX documents.  The following code tells vim to
 " use Lua highlighting in the relevant sections within a TeX document.
@@ -623,7 +623,7 @@ au Filetype tex highlight link Snip SpecialComment
 au Filetype tex let b:current_syntax="luatex"
 au Filetype tex endif
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ custom mappings (tex)                                                      ~
+" ~ custom_mappings_(tex)                                                      ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " Compile TeX document and, if successful, reload pdf reader
 au Filetype tex nnoremap <buffer> <space>m :w<cr>:!clear<cr>:silent make %<cr>:if(len(getqflist())==0)<cr>execute '!pkill -HUP mupdf'<cr>endif<cr><cr>:cc<cr>
@@ -669,7 +669,7 @@ au Filetype tex vnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\
 " Disabled as more troublesome than helpful
 "au Filetype tex inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ tags (tex)                                                                 ~
+" ~ tags_(tex)                                                                 ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " include latex tags
 au Filetype tex set tags+=,~/.vim/tags/latextags
@@ -680,7 +680,7 @@ au Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/te
 au Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/.texmf/tex/latex/"]
 
 " ------------------------------------------------------------------------------
-" - other (filetype-specific)                                                  -
+" - other_(filetype-specific)                                                  -
 " ------------------------------------------------------------------------------
 "
 " If a filetype doesn't have it's own omnicompletion, but it does have syntax
@@ -694,11 +694,11 @@ if has("autocmd") && exists("+omnifunc")
 endif
 
 " ==============================================================================
-" = plugin settings                                                            =
+" = plugin_settings                                                            =
 " ==============================================================================
 
 " ------------------------------------------------------------------------------
-" - paramenu (plugins)                                                         -
+" - paramenu_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 " Set which keys are used for selection
 let g:ParaMenuSelectionKeys = ["0","1","2","3","4","5","6","7","8","9"]
@@ -718,7 +718,7 @@ let g:ParaTagsTempDir = "/dev/shm/"
 let g:ParaTagsAutoCreate = 1
 
 " ------------------------------------------------------------------------------
-" - easymotion (plugins)                                                       -
+" - easymotion_(plugins)                                                       -
 " ------------------------------------------------------------------------------
 "
 " Use \ as prefix for easymotion commands
@@ -731,7 +731,7 @@ highlight EasyMotionTarget  cterm=NONE ctermfg=Cyan      ctermbg=Black
 highlight EasyMotionShade   cterm=NONE ctermfg=DarkBlue  ctermbg=Black
 
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ languagetool (plugins)                                                     ~
+" ~ languagetool_(plugins)                                                     ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 
 " Indicate where the LanguageTool jar is located
@@ -746,11 +746,11 @@ au VimLeave * call delete("/dev/shm/.vim-tags-".getpid())
 
 
 " ==============================================================================
-" = custom functions                                                           =
+" = custom_functions                                                           =
 " ==============================================================================
 
 " ------------------------------------------------------------------------------
-" - paraincr() (functions)                                                     -
+" - paraincr()_(functions)                                                     -
 " ------------------------------------------------------------------------------
 "
 " Increments/decriments column of numbers.
@@ -813,7 +813,7 @@ function! ParaIncr(direction,bufferingchar,bufferingside)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - paraincrvisselect() (functions)                                            -
+" - paraincrvisselect()_(functions)                                            -
 " ------------------------------------------------------------------------------
 "
 " Selects a block for ParaIncr().  To use, simply call ParaIncrVisSelect() with
@@ -902,7 +902,7 @@ function! ParaIncrVisSelect(direction,bufferingchar,bufferingside)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - latexjump() (functions)                                                    -
+" - latexjump()_(functions)                                                    -
 " ------------------------------------------------------------------------------
 "
 " Jumps to next <++>.  Conceptually based on vim-latexsuite's equivalent.
@@ -917,7 +917,7 @@ function! LatexJump()
 endfunction
 
 " ------------------------------------------------------------------------------
-" - latexenv() (functions)                                                     -
+" - latexenv()_(functions)                                                     -
 " ------------------------------------------------------------------------------
 "
 " Used to create a text object for LaTeX environments.  Searchpair() seems to
@@ -938,7 +938,7 @@ function! LatexEnv(inner)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - parajump() (functions)                                                     -
+" - parajump()_(functions)                                                     -
 " ------------------------------------------------------------------------------
 "
 " Jump to the line with the indentation level corresponding to the cursor
@@ -984,7 +984,7 @@ function! ParaJump(direction,visual)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - createcommentheading() (functions)                                         -
+" - createcommentheading()_(functions)                                         -
 " ------------------------------------------------------------------------------
 "
 " Create headings in comments
@@ -1017,7 +1017,7 @@ function! CreateCommentHeading(level)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - parasurround() (functions)                                                 -
+" - parasurround()_(functions)                                                 -
 " ------------------------------------------------------------------------------
 "
 " Surround visually-selected areas
@@ -1040,7 +1040,7 @@ function! ParaSurround(previous)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - generatetagsforbuffers() (functions)                                       -
+" - generatetagsforbuffers()_(functions)                                       -
 " ------------------------------------------------------------------------------
 "
 " (re)generates tag files from open buffers
@@ -1065,7 +1065,7 @@ function! GenerateTagsForBuffers()
 endfunction
 
 " ------------------------------------------------------------------------------
-" - generatetagsforfiletype                                                    -
+" - generatetagsforfiletype()_(functions)                                      -
 " ------------------------------------------------------------------------------
 "
 " (re)generates tag files for filetype specific libraries
@@ -1080,7 +1080,7 @@ function! GenerateTagsForFiletype()
 endfunction
 
 " ------------------------------------------------------------------------------
-" - getctagsfiletype() (functions)                                             -
+" - getctagsfiletype()_(functions)                                             -
 " ------------------------------------------------------------------------------
 "
 " maps vim's filetype to corresponding ctag's filetype
@@ -1179,24 +1179,31 @@ function! ArgCompletion(cmd)
 	let s:partial = ""
 	while 1
 		let results = GetCtrlAResults(a:cmd." ".s:partial)
-		redraw
-		if type(results) == 0
+		if type(results[0]) == 0
 			echo "[No result]"
 		else
-			if len(split(results)) == 1
-				execute "silent ".a:cmd." ".results
+			if len(results) == 1
+				execute "silent ".a:cmd." ".results[0]
 				return 0
 			endif
-			echo results
+			echo "Possible options for :".a:cmd
+			let counter = 1
+			for result in results[0:8]
+				echo "[".counter."] ".result
+				let counter+=1
+			endfor
+			if len(results) > 9
+				echo "-- more --"
+			endif
 		endif
 		echo ":".a:cmd." ".s:partial
 		let l:input = getchar()
+		redraw
 		if type(l:input) == 0
 			let l:input = nr2char(l:input)
 		endif
 		if l:input == "\<esc>"
 			let s:partial = ""
-			redraw
 			return 0
 		elseif strlen(l:input) > 0 && l:input == "\<bs>" || l:input == "\<c-h>"
 			let s:partial = s:partial[:-2]
@@ -1204,6 +1211,9 @@ function! ArgCompletion(cmd)
 			let s:partial = ""
 		elseif l:input == "\<cr>"
 			execute "silent ".a:cmd." ".partial
+			return 0
+		elseif l:input =~ "[1-9]"
+			execute "silent ".a:cmd." ".results[l:input-1]
 			return 0
 		else
 			let s:partial = s:partial . l:input
@@ -1215,8 +1225,56 @@ function! GetCtrlAResults(str)
 	let d={}
 	execute "silent normal! :".a:str."\<c-a>\<c-\>eextend(d, {'cmdline':getcmdline()}).cmdline\n"
 	if has_key(d, 'cmdline')
-		return strpart(d['cmdline'],stridx(d['cmdline'],' ')+1)
+		return split(strpart(d['cmdline'],stridx(d['cmdline'],' ')+1))
 	else
-		return 0
+		return [0]
 	endif
 endfunction
+
+"function! ArgCompletion(cmd)
+"	let s:partial = ""
+"	while 1
+"		let results = GetCtrlAResults(a:cmd." ".s:partial)
+"		if type(results) == 0
+"			echo "[No result]"
+"		else
+"			if len(split(results)) == 1
+"				execute "silent ".a:cmd." ".results
+"				return 0
+"			endif
+"			echo results
+"		endif
+"		echo ":".a:cmd." ".s:partial
+"		let l:input = getchar()
+"		redraw
+"		if type(l:input) == 0
+"			let l:input = nr2char(l:input)
+"		endif
+"		if l:input == "\<esc>"
+"			let s:partial = ""
+"			return 0
+"		elseif strlen(l:input) > 0 && l:input == "\<bs>" || l:input == "\<c-h>"
+"			let s:partial = s:partial[:-2]
+"		elseif l:input == "\<c-u>" || l:input == "\<c-w>"
+"			let s:partial = ""
+"		elseif l:input == "\<cr>"
+"			execute "silent ".a:cmd." ".partial
+"			return 0
+"		elseif l:input =~ "[1-9]"
+"			execute "silent ".a:cmd." ".split(results)[l:input-1]
+"			return 0
+"		else
+"			let s:partial = s:partial . l:input
+"		endif
+"	endwhile
+"endfunction
+"
+"function! GetCtrlAResults(str)
+"	let d={}
+"	execute "silent normal! :".a:str."\<c-a>\<c-\>eextend(d, {'cmdline':getcmdline()}).cmdline\n"
+"	if has_key(d, 'cmdline')
+"		return strpart(d['cmdline'],stridx(d['cmdline'],' ')+1)
+"	else
+"		return 0
+"	endif
+"endfunction
