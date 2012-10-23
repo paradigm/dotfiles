@@ -1175,6 +1175,9 @@ endfunction
 " ------------------------------------------------------------------------------
 " - argcompletion                                                              -
 " ------------------------------------------------------------------------------
+" todo: fix ctrl-w as now supports some spaces
+" todo: fix backspace with :e
+" todo: number selection on :e directories
 
 function! ArgCompletion(cmd)
 	let s:partial = ""
@@ -1184,8 +1187,14 @@ function! ArgCompletion(cmd)
 			echo "[No result]"
 		else
 			if len(results) == 1
-				execute "silent ".a:cmd." ".results[0]
-				return 0
+				let ctrllresults = GetCtrlAResults(a:cmd." ".s:partial."\<c-l>")
+				if len(ctrllresults) > 1 || ctrllresults[0] != results[0]
+					let s:partial = results[0]
+					let results = GetCtrlAResults(a:cmd." ".s:partial)
+				else
+					execute "silent ".a:cmd." ".results[0]
+					return 0
+				endif
 			endif
 			echo "Possible options for :".a:cmd
 			let counter = 1
