@@ -1,5 +1,5 @@
 " ==============================================================================
-" = paradigm's .vimrc                                                          =
+" = paradigm's_.vimrc                                                          =
 " ==============================================================================
 "
 " Disclaimer: Note that I have unusual tastes.  Blindly copying lines from this
