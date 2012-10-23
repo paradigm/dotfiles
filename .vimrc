@@ -678,6 +678,8 @@ au Filetype tex vnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\
 au Filetype tex set tags+=,~/.vim/tags/latextags
 " regenerate tags
 au Filetype tex let g:generate_tags+=["ctags -R -f ~/.vim/tags/latextags /usr/share/texmf-texlive/tex/latex/"]
+au Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags /usr/share/texmf/tex/latex/"]
+au Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/texmf/tex/latex/"]
 au Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/.texmf/tex/latex/"]
 
 " ------------------------------------------------------------------------------
