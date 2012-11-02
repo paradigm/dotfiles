@@ -228,11 +228,12 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " - plugins_and_functions_(mappings)                                           -
 " ------------------------------------------------------------------------------
 
-nnoremap <cr> :call ArgCompletion("b")<cr>
+nnoremap <cr> :call SkyBison("b",1)<cr>
 au CmdwinEnter * nnoremap <cr> a<cr>
-au CmdwinLeave * nnoremap <cr> :call ArgCompletion("b")<cr>
-nnoremap <bs> :call GenerateTagsForBuffers()<cr>:call ArgCompletion("tag")<cr>
-nnoremap <space>e :call ArgCompletion("e")<cr>
+au CmdwinLeave * nnoremap <cr> :call SkyBison("b",1)<cr>
+nnoremap <bs> :call GenerateTagsForBuffers()<cr>:call SkyBison("tag",1)<cr>
+nnoremap <space>e :call SkyBison("e",0)<cr>
+nnoremap <space>h :call SkyBison("h",0)<cr>
 
 nnoremap <space>x :ParaQuickFix<cr>
 " Use ParaIncr to increment/decriment after visual selection.
@@ -1171,120 +1172,3 @@ function! GetCtagsFiletype(vimfiletype)
 		return("")
 	endif
 endfunction
-
-" ------------------------------------------------------------------------------
-" - argcompletion                                                              -
-" ------------------------------------------------------------------------------
-" todo: fix ctrl-w as now supports some spaces
-" todo: fix backspace with :e
-" todo: number selection on :e directories
-
-function! ArgCompletion(cmd)
-	let s:partial = ""
-	while 1
-		let results = GetCtrlAResults(a:cmd." ".s:partial)
-		if type(results[0]) == 0
-			echo "[No result]"
-		else
-			if len(results) == 1
-				let ctrllresults = GetCtrlAResults(a:cmd." ".s:partial."\<c-l>")
-				if len(ctrllresults) > 1 || ctrllresults[0] != results[0]
-					let s:partial = results[0]
-					let results = GetCtrlAResults(a:cmd." ".s:partial)
-				else
-					execute "silent ".a:cmd." ".results[0]
-					return 0
-				endif
-			endif
-			echo "Possible options for :".a:cmd
-			let counter = 1
-			for result in results[0:8]
-				echo "[".counter."] ".result
-				let counter+=1
-			endfor
-			if len(results) > 9
-				echo "-- more --"
-			endif
-		endif
-		echo ":".a:cmd." ".s:partial
-		let l:input = getchar()
-		redraw
-		if type(l:input) == 0
-			let l:input = nr2char(l:input)
-		endif
-		if l:input == "\<esc>"
-			let s:partial = ""
-			return 0
-		elseif strlen(l:input) > 0 && l:input == "\<bs>" || l:input == "\<c-h>"
-			let s:partial = s:partial[:-2]
-		elseif l:input == "\<c-u>" || l:input == "\<c-w>"
-			let s:partial = ""
-		elseif l:input == "\<cr>"
-			execute "silent ".a:cmd." ".partial
-			return 0
-		elseif l:input =~ "[1-9]"
-			execute "silent ".a:cmd." ".results[l:input-1]
-			return 0
-		else
-			let s:partial = s:partial . l:input
-		endif
-	endwhile
-endfunction
-
-function! GetCtrlAResults(str)
-	let d={}
-	execute "silent normal! :".a:str."\<c-a>\<c-\>eextend(d, {'cmdline':getcmdline()}).cmdline\n"
-	if has_key(d, 'cmdline')
-		return split(strpart(d['cmdline'],stridx(d['cmdline'],' ')+1),'\\\@<! ')
-	else
-		return [0]
-	endif
-endfunction
-
-"function! ArgCompletion(cmd)
-"	let s:partial = ""
-"	while 1
-"		let results = GetCtrlAResults(a:cmd." ".s:partial)
-"		if type(results) == 0
-"			echo "[No result]"
-"		else
-"			if len(split(results)) == 1
-"				execute "silent ".a:cmd." ".results
-"				return 0
-"			endif
-"			echo results
-"		endif
-"		echo ":".a:cmd." ".s:partial
-"		let l:input = getchar()
-"		redraw
-"		if type(l:input) == 0
-"			let l:input = nr2char(l:input)
-"		endif
-"		if l:input == "\<esc>"
-"			let s:partial = ""
-"			return 0
-"		elseif strlen(l:input) > 0 && l:input == "\<bs>" || l:input == "\<c-h>"
-"			let s:partial = s:partial[:-2]
-"		elseif l:input == "\<c-u>" || l:input == "\<c-w>"
-"			let s:partial = ""
-"		elseif l:input == "\<cr>"
-"			execute "silent ".a:cmd." ".partial
-"			return 0
-"		elseif l:input =~ "[1-9]"
-"			execute "silent ".a:cmd." ".split(results)[l:input-1]
-"			return 0
-"		else
-"			let s:partial = s:partial . l:input
-"		endif
-"	endwhile
-"endfunction
-"
-"function! GetCtrlAResults(str)
-"	let d={}
-"	execute "silent normal! :".a:str."\<c-a>\<c-\>eextend(d, {'cmdline':getcmdline()}).cmdline\n"
-"	if has_key(d, 'cmdline')
-"		return strpart(d['cmdline'],stridx(d['cmdline'],' ')+1)
-"	else
-"		return 0
-"	endif
-"endfunction
