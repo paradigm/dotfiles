@@ -226,11 +226,13 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " ~ SkyBison_(mappings)                                                        ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-nnoremap <cr> 2:<c-u>call SkyBison("b ")<cr>
+nnoremap <cr>     2:<c-u>call SkyBison("b ")<cr>
 autocmd CmdwinEnter * nnoremap <buffer> <cr> a<cr>
-nnoremap <bs> :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
+nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
 nnoremap <space>h 2:<c-u>call SkyBison("h ")<cr>
-nnoremap <space>e :<c-u>call SkyBison("e ")<cr>
+nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
+nnoremap <space>;  :<c-u>call SkyBison("")<cr>
+cnoremap <c-l>     <c-r>=SkyBison("")<cr><cr>
 
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " ~ ParaIncr_(mappings)                                                        ~
