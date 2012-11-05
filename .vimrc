@@ -233,7 +233,7 @@ au CmdwinEnter * nnoremap <cr> a<cr>
 au CmdwinLeave * nnoremap <cr> :call SkyBison("b",1)<cr>
 nnoremap <bs> :call GenerateTagsForBuffers()<cr>:call SkyBison("tag",1)<cr>
 nnoremap <space>e :call SkyBison("e",0)<cr>
-nnoremap <space>h :call SkyBison("h",0)<cr>
+nnoremap <space>h :call SkyBison("h",1)<cr>
 
 nnoremap <space>x :ParaQuickFix<cr>
 " Use ParaIncr to increment/decriment after visual selection.
@@ -698,6 +698,12 @@ endif
 " ==============================================================================
 " = plugin_settings                                                            =
 " ==============================================================================
+
+" ------------------------------------------------------------------------------
+" - skybison_(plugins)                                                         -
+" ------------------------------------------------------------------------------
+
+let g:skybison_fuzz = 1
 
 " ------------------------------------------------------------------------------
 " - paramenu_(plugins)                                                         -
