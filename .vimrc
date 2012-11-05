@@ -226,11 +226,11 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " ~ SkyBison_(mappings)                                                        ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-nnoremap <cr> :call SkyBison("b",1)<cr>
+nnoremap <cr> 2:<c-u>call SkyBison("b ")<cr>
 autocmd CmdwinEnter * nnoremap <buffer> <cr> a<cr>
-nnoremap <bs> :call GenerateTagsForBuffers()<cr>:call SkyBison("tag",1)<cr>
-nnoremap <space>e :call SkyBison("e",0)<cr>
-nnoremap <space>h :call SkyBison("h",1)<cr>
+nnoremap <bs> :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
+nnoremap <space>h 2:<c-u>call SkyBison("h ")<cr>
+nnoremap <space>e :<c-u>call SkyBison("e ")<cr>
 
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " ~ ParaIncr_(mappings)                                                        ~
@@ -743,7 +743,7 @@ let g:generate_tags=[]
 " - SkyBison_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 
-let g:skybison_fuzz = 1
+let g:skybison_fuzz = 2
 
 " ------------------------------------------------------------------------------
 " - EasyMotion_(plugins)                                                       -
