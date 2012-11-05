@@ -58,7 +58,7 @@ set encoding=utf-8
 " Disable capitalization check in spellcheck.
 set spellcapcheck=""
 " Enable syntax highlighting.
-syn on
+syntax on
 " Do not show introduction message when starting Vim.
 set shortmess+=I
 " Display special characters for certain whitespace situations.
@@ -98,7 +98,7 @@ filetype indent on
 nnoremap <f1> <esc>
 inoremap <f1> <esc>
 " Clear search highlighting and messages at bottom when redrawing
-nnoremap <silent> <c-l> :noh<cr><c-l>
+nnoremap <silent> <c-l> :nohlsearch<cr><c-l>
 " Faster mapping for saving
 nnoremap <space>w :w<cr>
 " Faster mapping for closing window / quitting
@@ -107,18 +107,18 @@ nnoremap <space>q :q<cr>
 nnoremap <space>s :so $MYVIMRC<cr>
 " Run :make
 nnoremap <space>m :w<cr>:!clear<cr>:silent make %<cr>:cc<cr>
-" Execute buffer
+" Execute buffer ("run")
 nnoremap <space>r :cd %:p:h<cr>:!clear;./%<cr>
 " Faster mapping for spelling correction
 nnoremap <space>z 1z=
 " Select most recently changed text - particularly useful for pastes
-nnoremap <space>v '[v']
-nnoremap <space>V '[V']
+nnoremap <space>v `[v`]
+nnoremap <space>V `[V`]
 " Provide more comfortable alternative to default window resizing mappings.
-nnoremap <c-w><c-h> :vertical res -10<cr>
-nnoremap <c-w><c-l> :vertical res +10<cr>
-nnoremap <c-w><c-j> :res +10<cr>
-nnoremap <c-w><c-k> :res -10<cr>
+nnoremap <c-w><c-h> :vertical resize -10<cr>
+nnoremap <c-w><c-l> :vertical resize +10<cr>
+nnoremap <c-w><c-j> :resize +10<cr>
+nnoremap <c-w><c-k> :resize -10<cr>
 " Move by 'display lines' rather than 'logical lines'.
 nnoremap <silent> j gj
 vnoremap <silent> j gj
@@ -131,6 +131,12 @@ nnoremap <silent> gk k
 vnoremap <silent> gk k
 " Toggle 'paste'
 set pastetoggle=<insert>
+" next buffer
+nnoremap + :bn<cr>
+" Find next/previous search item which is not visible in the window.
+" Note that 'scrolloff' probably breaks this.
+nnoremap <space>n L$nzt
+nnoremap <space>N H$Nzb
 
 " ------------------------------------------------------------------------------
 " - cmdline-window_(mappings)                                                  -
@@ -150,18 +156,7 @@ vnoremap q/ /
 nnoremap q? ?
 vnoremap q? ?
 " Have <esc> leave cmdline-window
-au CmdwinEnter * nnoremap <buffer> <ESC> :q<cr>
-
-" ------------------------------------------------------------------------------
-" - quickfix_list_(mappings)                                                   -
-" ------------------------------------------------------------------------------
-
-" Move to next quickfix item.
-nnoremap +n :cnext<cr>
-" Move to previous quickfix item.
-nnoremap +p :cpprevious<cr>
-" Display current quickfix item.
-nnoremap +c :cc<cr>
+autocmd CmdwinEnter * nnoremap <buffer> <esc> :q<cr>
 
 " ------------------------------------------------------------------------------
 " - diff_(mappings)                                                            -
@@ -176,7 +171,7 @@ nnoremap <c-p>p dp<cr>
 " ------------------------------------------------------------------------------
 " - visual-mode_searching_(mappings)                                           -
 " ------------------------------------------------------------------------------
-" 
+"
 " Many of these were either shamelessly stolen from or inspiried by
 " SearchParty.  See: https://github.com/dahu/SearchParty.  Thanks, bairui.
 
@@ -209,11 +204,11 @@ inoremap <c-l> <c-x><c-l>
 
 " Determine comment character(s) based on filetype.  Vim sets &commentstring
 " to the relevant value, but also include '%s' which we want to strip out.
-au Bufread * let b:commentcharacters = substitute(&commentstring,"%s","","")
+autocmd BufRead * let b:commentcharacters = substitute(&commentstring,"%s","","")
 " Comment out selected lines.
-vnoremap <silent> <c-n>c :s!^!<c-r>=b:commentcharacters<cr><space>!<cr>:noh<cr>
+vnoremap <silent> <c-n>c :s,^,<c-r>=b:commentcharacters<cr><space>,<cr>:nohlsearch<cr>
 " Uncomment out selected lines.
-vnoremap <silent> <c-n>u :s!^\V<c-r>=b:commentcharacters<cr><space>!!e<cr>:noh<cr>
+vnoremap <silent> <c-n>u :s,^\V<c-r>=b:commentcharacters<cr><space>,,e<cr>:nohlsearch<cr>
 " Align by comment.
 nnoremap <silent> <c-n>a :Tabularize /<c-r>=b:commentcharacters<cr><cr>
 vnoremap <silent> <c-n>a :Tabularize /<c-r>=b:commentcharacters<cr><cr>
@@ -228,14 +223,18 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " - plugins_and_functions_(mappings)                                           -
 " ------------------------------------------------------------------------------
 
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+" ~ SkyBison_(mappings)                                                        ~
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <cr> :call SkyBison("b",1)<cr>
-au CmdwinEnter * nnoremap <cr> a<cr>
-au CmdwinLeave * nnoremap <cr> :call SkyBison("b",1)<cr>
+autocmd CmdwinEnter * nnoremap <buffer> <cr> a<cr>
 nnoremap <bs> :call GenerateTagsForBuffers()<cr>:call SkyBison("tag",1)<cr>
 nnoremap <space>e :call SkyBison("e",0)<cr>
 nnoremap <space>h :call SkyBison("h",1)<cr>
 
-nnoremap <space>x :ParaQuickFix<cr>
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+" ~ ParaIncr_(mappings)                                                        ~
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " Use ParaIncr to increment/decriment after visual selection.
 vnoremap <space>i :call ParaIncr(1,"","")<cr>
 vnoremap <space>I :call ParaIncr(1," ","")<cr>
@@ -246,34 +245,47 @@ nnoremap <space>i :<c-u>call ParaIncrVisSelect(1,"","")<cr>
 nnoremap <space>I :<c-u>call ParaIncrVisSelect(1," ","")<cr>
 nnoremap <space>d :<c-u>call ParaIncrVisSelect(-1,"","")<cr>
 nnoremap <space>D :<c-u>call ParaIncrVisSelect(-1," ","")<cr>
-" Find next/previous search item which is not visible in the window.
-" Note that 'scrolloff' probably breaks this.
-nnoremap <space>n L$nzt
-nnoremap <space>N H$Nzb
+
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+" ~ ParaJump_(mappings)                                                        ~
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " Find next item at same indentation level.
 nnoremap <space>j :call ParaJump("j",0)<cr>
 vnoremap <space>j :call ParaJump("j",1)<cr>
 " Find previous item at same indentation level.
 nnoremap <space>k :call ParaJump("k",0)<cr>
 vnoremap <space>k :call ParaJump("k",1)<cr>
+
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+" ~ EasyMotion_(mappings)                                                      ~
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " faster mapping for easymotion's 'f'.
 nmap <space>f \f
 nmap <space>F \F
 vmap <space>f \f
 vmap <space>F \F
-" Fast access to LanguageTool
+
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+" ~ LanguageTool_(mappings)                                                    ~
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <space>lt :LanguageToolCheck<cr>
 nnoremap <space>lc :LanguageToolClear<cr>
+
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+" ~ ParaSurround_(mappings)                                                    ~
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " ParaSurround - new surroundings
-vnoremap s <esc>:call ParaSurround(0)<cr>
+vnoremap c <esc>:call ParaSurround(0)<cr>
 " ParaSurround - use previous surroundings
-vnoremap S <esc>:call ParaSurround(1)<cr>
+vnoremap C <esc>:call ParaSurround(1)<cr>
 " ParaSurround - use previous region size and surroundings
-nnoremap <space>S :call ParaSurround(2)<cr>
-" (re)generate tags
+nnoremap <space>C :call ParaSurround(2)<cr>
+
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+" ~ GenerateTags_(mappings)                                                    ~
+" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <space>g :call GenerateTagsForBuffers()<cr>
 nnoremap <space>G :call GenerateTagsForFiletype()<cr>
-let g:generate_tags=[]
 
 " ------------------------------------------------------------------------------
 " - custom_text_objects_(mappings)                                             -
@@ -315,7 +327,7 @@ onoremap a<cr> :normal Vi<c-v><cr><cr>
 " Commit
 nnoremap <space>gc :w<cr>:!git commit -a<cr>
 " Push
-nnoremap <space>gp :!git push origin master<cr>
+nnoremap <space>gp :!git push origin $(git branch \| awk '/^\*/{print$2}')<cr>
 
 " ==============================================================================
 " = theme                                                                      =
@@ -529,19 +541,25 @@ endif
 " - viml_(filetype-specific)                                                   -
 " ------------------------------------------------------------------------------
 
-" VimL has its own omnicompletion mapping by default, separate from the normal
-" one.  Set the normal omnicompletion mapping to cover the special VimL
-" completion.
-au Filetype vim inoremap <buffer> <c-x><c-o> <c-x><c-v>
-" Note that c-@ is triggered by c-space.
-au Filetype vim inoremap <buffer> <c-@> <c-x><c-v>
+augroup viml
+	autocmd!
+	" VimL has its own omnicompletion mapping by default, separate from the normal
+	" one.  Set the normal omnicompletion mapping to cover the special VimL
+	" completion.
+	autocmd Filetype vim inoremap <buffer> <c-x><c-o> <c-x><c-v>
+	" Note that c-@ is triggered by c-space.
+	autocmd Filetype vim inoremap <buffer> <c-@> <c-x><c-v>
+augroup END
 
 " ------------------------------------------------------------------------------
 " - mail_(filetype-specific)                                                   -
 " ------------------------------------------------------------------------------
 
-" Use spellcheck by default when composing an email.
-au Filetype mail set spell
+augroup mail
+	autocmd!
+	" Use spellcheck by default when composing an email.
+	autocmd Filetype mail setlocal spell
+augroup END
 
 " ------------------------------------------------------------------------------
 " - python_(filetype-specific)                                                 -
@@ -552,134 +570,150 @@ au Filetype mail set spell
 " convert the space-indentation to tabs, and when saving, convert the tabs
 " back to spaces.
 
-" Convert indentation from spaces to tabs when opening a file.
-au Filetype python retab!
-" Convert indentation from tabs to spaces when wring a file to disk, then
-" immediately back when saving is done.
-au Filetype python au BufWritePre * :set expandtab
-au Filetype python au BufWritePre * :retab!
-au Filetype python au BufWritePost * :set noexpandtab!
-au Filetype python au BufWritePost * :retab!
-" 'Compile' with pep8.
-au Filetype python set makeprg=pep8
-au Filetype python set errorformat=%f:%l:%c:%m
-" Execute.
-au Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
+augroup python
+	autocmd!
+	" Convert indentation from spaces to tabs when opening a file.
+	autocmd Filetype python retab!
+	" Convert indentation from tabs to spaces when wring a file to disk, then
+	" immediately back when saving is done.
+	autocmd Filetype python autocmd BufWritePre * :setlocal expandtab
+	autocmd Filetype python autocmd BufWritePre * :retab!
+	autocmd Filetype python autocmd BufWritePost * :setlocal noexpandtab!
+	autocmd Filetype python autocmd BufWritePost * :retab!
+	" 'Compile' with pep8.
+	autocmd Filetype python setlocal makeprg=pep8
+	autocmd Filetype python setlocal errorformat=%f:%l:%c:%m
+	" Execute.
+	autocmd Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
+augroup END
 
 " ------------------------------------------------------------------------------
 " - assembly_(filetype-specific)                                               -
 " ------------------------------------------------------------------------------
 
-" Set tabstop to 8 for assembly.
-au Filetype asm set tabstop=8
+augroup asm
+	autocmd!
+	" Set tabstop to 8 for assembly.
+	autocmd Filetype asm setlocal tabstop=8
+augroup END
 
 " ------------------------------------------------------------------------------
 " - c_(filetype-specific)                                                      -
 " ------------------------------------------------------------------------------
 
-" Set compiler.
-au Filetype c set makeprg=gcc
-" Execute result.
-au Filetype c nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
-" include c tags
-au Filetype c set tags+=,~/.vim/tags/ctags
-" regenerate tags
-au Filetype c let g:generate_tags+=["ctags -R -f ~/.vim/tags/ctags /usr/include"]
+augroup c
+	autocmd!
+	" Set compiler.
+	autocmd Filetype c set makeprg=gcc
+	" Execute result.
+	autocmd Filetype c nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
+	" include c tags
+	autocmd Filetype c set tags+=,~/.vim/tags/ctags
+	" regenerate tags
+	autocmd Filetype c let g:generate_tags+=["ctags -R -f ~/.vim/tags/ctags /usr/include"]
+augroup END
 
 " ------------------------------------------------------------------------------
 " - c++_(filetype-specific)                                                    -
 " ------------------------------------------------------------------------------
 
-" Set compiler.
-au Filetype cpp set makeprg=g++
-" Execute.
-au Filetype cpp nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
+augroup cpp
+	autocmd!
+	" Set compiler.
+	autocmd Filetype cpp set makeprg=g++
+	" Execute.
+	autocmd Filetype cpp nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
+augroup END
 
 " ------------------------------------------------------------------------------
 " - tex_(filetype-specific)                                                    -
 " ------------------------------------------------------------------------------
 
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ general_options (tex)                                                      ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" Default to LaTeX, not Plain TeX/ConTeXt/etc
-let g:tex_flavor='latex'
-" Enable spell check
-au Filetype tex set spell
-" Parse TeX output for errors and use them in the quickfix menu
-au Filetype tex set makeprg=lualatex\ \-file\-line\-error\ \-interaction=nonstopmode\ $*\\\|\ awk\ '/^\\(.*.tex$/{sub(/^./,\"\",$0);X=$0}\ /^!/{sub(/^./,\"\",$0);print\ X\":1:\"$0}\ /tex:[0-9]+:\ /{A=$0;MORE=2}\ (MORE==2\ &&\ /^l.[0-9]/){sub(/^l.[0-9]+[\ \\t]+/,\"\",$0);B=$0;MORE=1}\ (MORE==1\ &&\ /^[\ ]+/){sub(/^[\ \\t]+/,\"\",$0);print\ A\":\ \"B\"·\"$0;MORE=0}'
-au Filetype tex set errorformat=%f:%l:\ %m
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ lualatex_highlighting_(tex)                                                ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" LuaTeX embeds Lua code into TeX documents.  The following code tells vim to
-" use Lua highlighting in the relevant sections within a TeX document.
-au Filetype tex if exists("b:current_syntax") && b:current_syntax == "tex"
-au Filetype tex unlet b:current_syntax
-au Filetype tex syntax include @TEX syntax/tex.vim
-au Filetype tex unlet b:current_syntax
-au Filetype tex syntax include @LUA syntax/lua.vim
-au Filetype tex syntax match texComment '%.*$' containedin=luatex contains=@texCommentGroup
-au Filetype tex syntax region luatex matchgroup=Snip start='\\directlua{' end='}' containedin=@TEX contains=@LUA contains=@texComment
-au Filetype tex highlight link Snip SpecialComment
-au Filetype tex let b:current_syntax="luatex"
-au Filetype tex endif
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ custom_mappings_(tex)                                                      ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" Compile TeX document and, if successful, reload pdf reader
-au Filetype tex nnoremap <buffer> <space>m :w<cr>:!clear<cr>:silent make %<cr>:if(len(getqflist())==0)<cr>execute '!pkill -HUP mupdf'<cr>endif<cr><cr>:cc<cr>
-" Reload PDF reader
-au Filetype tex nnoremap <buffer> <space>r :silent !pkill -HUP mupdf<cr><C-L>
-" Utilize vim-latexsuite style jumping
-au Filetype tex inoremap <buffer> <c-j> <ESC>:call LatexJump()<cr>
-" Various LaTeX mappings to save keystrokes in common situations
-au Filetype tex inoremap <buffer> ;; <ESC>o\item<space>
-au Filetype tex inoremap <buffer> ;' <ESC>o\item[]\hfill<cr><TAB><++><ESC>k0f[a
-au Filetype tex inoremap <buffer> (( \left(\right)<++><ESC>10hi
-au Filetype tex inoremap <buffer> [[ \left[\right]<++><ESC>10hi
-au Filetype tex inoremap <buffer> {{ \left\{\right\}<++><ESC>11hi
-au Filetype tex inoremap <buffer> __ _{}<++><ESC>4hi
-au Filetype tex inoremap <buffer> ^^ ^{}<++><ESC>4hi
-au Filetype tex inoremap <buffer> == &=
-au Filetype tex inoremap <buffer> ;new \documentclass{}<cr>\begin{document}<cr><++><cr>\end{document}<ESC>3kf{a
-au Filetype tex inoremap <buffer> ;use \usepackage{}<ESC>i
-au Filetype tex inoremap <buffer> ;f \frac{}{<++>}<++><ESC>10hi
-au Filetype tex inoremap <buffer> ;td \todo[]{}<esc>i
-au Filetype tex inoremap <buffer> ;sk \sketch[]{}<esc>i
-au Filetype tex inoremap <buffer> ;mi \begin{minipage}{.9\columnwidth}<cr>\end{minipage}<ESC>ko
-au Filetype tex inoremap <buffer> ;al \begin{align*}<cr>\end{align*}<ESC>ko
-au Filetype tex inoremap <buffer> ;mb \begin{bmatrix}<cr>\end{bmatrix}<ESC>ko
-au Filetype tex inoremap <buffer> ;mp \begin{pmatrix}<cr>\end{pmatrix}<ESC>ko
-au Filetype tex inoremap <buffer> ;li \begin{itemize}<cr>\end{itemize}<ESC>ko\item<space>
-au Filetype tex inoremap <buffer> ;le \begin{enumerate}<cr>\end{enumerate}<ESC>ko\item<space>
-au Filetype tex inoremap <buffer> ;ld \begin{description}<cr>\end{description}<ESC>ko\item[]\hfill<cr><tab><++><ESC>k0f[a
-au Filetype tex inoremap <buffer> ;ca \begin{cases}<cr>\end{cases}<ESC>ko
-au Filetype tex inoremap <buffer> ;tb \begin{tabular}{llllllllll}<cr>\end{tabular}<ESC>ko\toprule<cr>\midrule<cr>\bottomrule<ESC>kko
-au Filetype tex inoremap <buffer> ;ll \begin{lstlisting}<cr>\end{lstlisting}<ESC>ko
-au Filetype tex inoremap <buffer> ;df \begin{definition}[]<cr>\end{definition}<ESC>ko<++><esc>k0f[a
-au Filetype tex inoremap <buffer> ;xp \begin{example}[]<cr>\end{example}<ESC>ko<++><esc>k0f[a
-au Filetype tex inoremap <buffer> ;sl \begin{solution}<cr>\end{solution}<ESC>ko<++><esc>k0f[a
-" Tabularize mappingts for common TeX alignment situations
-au Filetype tex nnoremap <buffer> <space>& :Tab /&<cr>
-au Filetype tex vnoremap <buffer> <space>& :Tab /&<cr>
-au Filetype tex nnoremap <buffer> <space>\ :Tab /\\\\<cr>
-au Filetype tex vnoremap <buffer> <space>\ :Tab /\\\\<cr>
-au Filetype tex nnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
-au Filetype tex vnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
-" Tabularize Automatically
-" Disabled as more troublesome than helpful
-"au Filetype tex inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ tags_(tex)                                                                 ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" include latex tags
-au Filetype tex set tags+=,~/.vim/tags/latextags
-" regenerate tags
-au Filetype tex let g:generate_tags+=["ctags -R -f ~/.vim/tags/latextags /usr/share/texmf-texlive/tex/latex/"]
-au Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags /usr/share/texmf/tex/latex/"]
-au Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/texmf/tex/latex/"]
-au Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/.texmf/tex/latex/"]
+augroup latex
+	autocmd!
+	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+	" ~ general_options (tex)                                                      ~
+	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+	" Default to LaTeX, not Plain TeX/ConTeXt/etc
+	let g:tex_flavor='latex'
+	" Enable spell check
+	autocmd Filetype tex set spell
+	" Parse TeX output for errors and use them in the quickfix menu
+	autocmd Filetype tex setlocal makeprg=lualatex\ \-file\-line\-error\ \-interaction=nonstopmode\ $*\\\|\ awk\ '/^\\(.*.tex$/{sub(/^./,\"\",$0);X=$0}\ /^!/{sub(/^./,\"\",$0);print\ X\":1:\"$0}\ /tex:[0-9]+:\ /{A=$0;MORE=2}\ (MORE==2\ &&\ /^l.[0-9]/){sub(/^l.[0-9]+[\ \\t]+/,\"\",$0);B=$0;MORE=1}\ (MORE==1\ &&\ /^[\ ]+/){sub(/^[\ \\t]+/,\"\",$0);print\ A\":\ \"B\"·\"$0;MORE=0}'
+	autocmd Filetype tex setlocal errorformat=%f:%l:\ %m
+
+	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+	" ~ lualatex_highlighting_(tex)                                                ~
+	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+	" LuaTeX embeds Lua code into TeX documents.  The following code tells vim to
+	" use Lua highlighting in the relevant sections within a TeX document.
+	autocmd Filetype tex if exists("b:current_syntax") && b:current_syntax == "tex"
+	autocmd Filetype tex unlet b:current_syntax
+	autocmd Filetype tex syntax include @TEX syntax/tex.vim
+	autocmd Filetype tex unlet b:current_syntax
+	autocmd Filetype tex syntax include @LUA syntax/lua.vim
+	autocmd Filetype tex syntax match texComment '%.*$' containedin=luatex contains=@texCommentGroup
+	autocmd Filetype tex syntax region luatex matchgroup=Snip start='\\directlua{' end='}' containedin=@TEX contains=@LUA contains=@texComment
+	autocmd Filetype tex highlight link Snip SpecialComment
+	autocmd Filetype tex let b:current_syntax="luatex"
+	autocmd Filetype tex endif
+	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+	" ~ custom_mappings_(tex)                                                      ~
+	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+	" Compile TeX document and, if successful, reload pdf reader
+	autocmd Filetype tex nnoremap <buffer> <space>m :w<cr>:!clear<cr>:silent make %<cr>:if(len(getqflist())==0)<cr>execute '!pkill -HUP mupdf'<cr>endif<cr><cr>:cc<cr>
+	" Reload PDF reader
+	autocmd Filetype tex nnoremap <buffer> <space>r :silent !pkill -HUP mupdf<cr><C-L>
+	" Utilize vim-latexsuite style jumping
+	autocmd Filetype tex inoremap <buffer> <c-j> <ESC>:call LatexJump()<cr>
+	" Various LaTeX mappings to save keystrokes in common situations
+	autocmd Filetype tex inoremap <buffer> ;; <ESC>o\item<space>
+	autocmd Filetype tex inoremap <buffer> ;' <ESC>o\item[]\hfill<cr><TAB><++><ESC>k0f[a
+	autocmd Filetype tex inoremap <buffer> (( \left(\right)<++><ESC>10hi
+	autocmd Filetype tex inoremap <buffer> [[ \left[\right]<++><ESC>10hi
+	autocmd Filetype tex inoremap <buffer> {{ \left\{\right\}<++><ESC>11hi
+	autocmd Filetype tex inoremap <buffer> __ _{}<++><ESC>4hi
+	autocmd Filetype tex inoremap <buffer> ^^ ^{}<++><ESC>4hi
+	autocmd Filetype tex inoremap <buffer> == &=
+	autocmd Filetype tex inoremap <buffer> ;new \documentclass{}<cr>\begin{document}<cr><++><cr>\end{document}<ESC>3kf{a
+	autocmd Filetype tex inoremap <buffer> ;use \usepackage{}<ESC>i
+	autocmd Filetype tex inoremap <buffer> ;f \frac{}{<++>}<++><ESC>10hi
+	autocmd Filetype tex inoremap <buffer> ;td \todo[]{}<esc>i
+	autocmd Filetype tex inoremap <buffer> ;sk \sketch[]{}<esc>i
+	autocmd Filetype tex inoremap <buffer> ;mi \begin{minipage}{.9\columnwidth}<cr>\end{minipage}<ESC>ko
+	autocmd Filetype tex inoremap <buffer> ;al \begin{align*}<cr>\end{align*}<ESC>ko
+	autocmd Filetype tex inoremap <buffer> ;mb \begin{bmatrix}<cr>\end{bmatrix}<ESC>ko
+	autocmd Filetype tex inoremap <buffer> ;mp \begin{pmatrix}<cr>\end{pmatrix}<ESC>ko
+	autocmd Filetype tex inoremap <buffer> ;li \begin{itemize}<cr>\end{itemize}<ESC>ko\item<space>
+	autocmd Filetype tex inoremap <buffer> ;le \begin{enumerate}<cr>\end{enumerate}<ESC>ko\item<space>
+	autocmd Filetype tex inoremap <buffer> ;ld \begin{description}<cr>\end{description}<ESC>ko\item[]\hfill<cr><tab><++><ESC>k0f[a
+	autocmd Filetype tex inoremap <buffer> ;ca \begin{cases}<cr>\end{cases}<ESC>ko
+	autocmd Filetype tex inoremap <buffer> ;tb \begin{tabular}{llllllllll}<cr>\end{tabular}<ESC>ko\toprule<cr>\midrule<cr>\bottomrule<ESC>kko
+	autocmd Filetype tex inoremap <buffer> ;ll \begin{lstlisting}<cr>\end{lstlisting}<ESC>ko
+	autocmd Filetype tex inoremap <buffer> ;df \begin{definition}[]<cr>\end{definition}<ESC>ko<++><esc>k0f[a
+	autocmd Filetype tex inoremap <buffer> ;xp \begin{example}[]<cr>\end{example}<ESC>ko<++><esc>k0f[a
+	autocmd Filetype tex inoremap <buffer> ;sl \begin{solution}<cr>\end{solution}<ESC>ko<++><esc>k0f[a
+	" Tabularize mappingts for common TeX alignment situations
+	autocmd Filetype tex nnoremap <buffer> <space>& :Tab /&<cr>
+	autocmd Filetype tex vnoremap <buffer> <space>& :Tab /&<cr>
+	autocmd Filetype tex nnoremap <buffer> <space>\ :Tab /\\\\<cr>
+	autocmd Filetype tex vnoremap <buffer> <space>\ :Tab /\\\\<cr>
+	autocmd Filetype tex nnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
+	autocmd Filetype tex vnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
+	" Tabularize Automatically
+	" Disabled as more troublesome than helpful
+	"au Filetype tex inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a
+	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+	" ~ tags_(tex)                                                                 ~
+	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+	" include latex tags
+	autocmd Filetype tex set tags+=,~/.vim/tags/latextags
+	" regenerate tags
+	autocmd Filetype tex let g:generate_tags+=["ctags -R -f ~/.vim/tags/latextags /usr/share/texmf-texlive/tex/latex/"]
+	autocmd Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags /usr/share/texmf/tex/latex/"]
+	autocmd Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/texmf/tex/latex/"]
+	autocmd Filetype tex let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/.texmf/tex/latex/"]
+augroup END
 
 " ------------------------------------------------------------------------------
 " - other_(filetype-specific)                                                  -
@@ -700,33 +734,19 @@ endif
 " ==============================================================================
 
 " ------------------------------------------------------------------------------
-" - skybison_(plugins)                                                         -
+" - Generate-Tags_(plugins)                                                    -
+" ------------------------------------------------------------------------------
+
+let g:generate_tags=[]
+
+" ------------------------------------------------------------------------------
+" - SkyBison_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 
 let g:skybison_fuzz = 1
 
 " ------------------------------------------------------------------------------
-" - paramenu_(plugins)                                                         -
-" ------------------------------------------------------------------------------
-" Set which keys are used for selection
-let g:ParaMenuSelectionKeys = ["0","1","2","3","4","5","6","7","8","9"]
-" Set which keys are used for miscellanous functionality
-let g:ParaMenuSPecialKeys = ["\<esc>","\<cr>","\<tab>"]
-" Set direction of selection keys
-let g:ParaMenuSelectionDirection = 0
-" Prefer case sensitive matching
-let g:ParaMenuFilterCaseInsensitive = 0
-" Disable regex
-let g:ParaMenuFilterRegex = 0
-" Disable fuzzing
-let g:ParaMenuFilterFuzz = 0
-" Use ramdisk for temporary directory
-let g:ParaTagsTempDir = "/dev/shm/"
-" Automatically generate tags when ParaTags is run
-let g:ParaTagsAutoCreate = 1
-
-" ------------------------------------------------------------------------------
-" - easymotion_(plugins)                                                       -
+" - EasyMotion_(plugins)                                                       -
 " ------------------------------------------------------------------------------
 "
 " Use \ as prefix for easymotion commands
@@ -735,23 +755,25 @@ let g:EasyMotion_leader_key = '\'
 " prioritizing close things is actively harmful for my use-case.
 let g:EasyMotion_grouping = 2
 " Set colorscheme
-highlight EasyMotionTarget  cterm=NONE ctermfg=Cyan      ctermbg=Black
-highlight EasyMotionShade   cterm=NONE ctermfg=DarkBlue  ctermbg=Black
+highlight EasyMotionTarget  cterm=NONE ctermfg=White ctermbg=Black
+highlight EasyMotionShade   cterm=NONE ctermfg=240   ctermbg=Black
 
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ languagetool_(plugins)                                                     ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+" ------------------------------------------------------------------------------
+" - LanguageTool_(plugins)                                                     -
+" ------------------------------------------------------------------------------
 
 " Indicate where the LanguageTool jar is located
 let g:languagetool_jar='/opt/languagetool/LanguageTool.jar'
 
 " ------------------------------------------------------------------------------
-" - GenerateTagsForBuffers                                                     -
+" - GenerateTagsForBuffers_(plugins)                                           -
 " ------------------------------------------------------------------------------
 
 execute "set tags+=/dev/shm/.vim-tags-".getpid()
-au VimLeave * call delete("/dev/shm/.vim-tags-".getpid())
-
+augroup GenerateTags
+	autocmd!
+	augroup VimLeave * call delete("/dev/shm/.vim-tags-".getpid())
+augroup END
 
 " ==============================================================================
 " = custom_functions                                                           =
