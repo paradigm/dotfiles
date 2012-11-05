@@ -632,7 +632,7 @@ augroup END
 augroup latex
 	autocmd!
 	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-	" ~ general_options (tex)                                                      ~
+	" ~ general_options_(tex)                                                      ~
 	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 	" Default to LaTeX, not Plain TeX/ConTeXt/etc
 	let g:tex_flavor='latex'
