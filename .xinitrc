@@ -36,6 +36,9 @@ export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 # Allow root to run applications
 xhost +local:root
 
+# add 100dpi fonts to PATH, fixes steam
+xset +fp /usr/share/fonts/X11/100dpi
+
 # On wintermute, the touchpad ends up being more troublesome than helpful.
 # Remove mouse by default
 if [ "$(uname -n)" = "wintermute" ]
