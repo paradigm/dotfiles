@@ -774,7 +774,7 @@ let g:languagetool_jar='/opt/languagetool/LanguageTool.jar'
 execute "set tags+=/dev/shm/.vim-tags-".getpid()
 augroup GenerateTags
 	autocmd!
-	augroup VimLeave * call delete("/dev/shm/.vim-tags-".getpid())
+	autocmd VimLeave * call delete("/dev/shm/.vim-tags-".getpid())
 augroup END
 
 " ==============================================================================
