@@ -4,3 +4,18 @@
 [submodule ".vim/bundle/languagetool"]
 	path = .vim/bundle/languagetool
 	url = git://github.com/vim-scripts/LanguageTool.git
+[submodule ".vim/bundle/easymotion"]
+	path = .vim/bundle/easymotion
+	url = git://github.com/Lokaltog/vim-easymotion.git
+[submodule ".vim/bundle/indentobject"]
+	path = .vim/bundle/indentobject
+	url = git://github.com/vim-scripts/vim-indent-object.git
+[submodule ".vim/bundle/latexbox"]
+	path = .vim/bundle/latexbox
+	url = git://github.com/LaTeX-Box-Team/LaTeX-Box.git
+[submodule ".vim/bundle/tabular"]
+	path = .vim/bundle/tabular
+	url = git://github.com/godlygeek/tabular.git
+[submodule ".vim/bundle/fanfingtastic"]
+	path = .vim/bundle/fanfingtastic
+	url = git://github.com/dahu/vim-fanfingtastic.git
