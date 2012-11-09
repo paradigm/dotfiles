@@ -121,14 +121,14 @@ nnoremap <c-w><c-j> :resize +10<cr>
 nnoremap <c-w><c-k> :resize -10<cr>
 " Move by 'display lines' rather than 'logical lines'.
 nnoremap <silent> j gj
-vnoremap <silent> j gj
+xnoremap <silent> j gj
 nnoremap <silent> k gk
-vnoremap <silent> k gk
+xnoremap <silent> k gk
 " Ensure 'logical line' movement remains accessible.
 nnoremap <silent> gj j
-vnoremap <silent> gj j
+xnoremap <silent> gj j
 nnoremap <silent> gk k
-vnoremap <silent> gk k
+xnoremap <silent> gk k
 " Toggle 'paste'
 set pastetoggle=<insert>
 " next buffer
@@ -144,17 +144,17 @@ nnoremap <space>N H$Nzb
 
 " Swap default ':', '/' and '?' with cmdline-window equivalent.
 nnoremap : q:i
-vnoremap : q:i
+xnoremap : q:i
 nnoremap / q/i
-vnoremap / q/i
+xnoremap / q/i
 nnoremap ? q?i
-vnoremap ? q?i
+xnoremap ? q?i
 nnoremap q: :
-vnoremap q: :
+xnoremap q: :
 nnoremap q/ /
-vnoremap q/ /
+xnoremap q/ /
 nnoremap q? ?
-vnoremap q? ?
+xnoremap q? ?
 " Have <esc> leave cmdline-window
 autocmd CmdwinEnter * nnoremap <buffer> <esc> :q<cr>
 
@@ -176,14 +176,14 @@ nnoremap <c-p>p dp<cr>
 " SearchParty.  See: https://github.com/dahu/SearchParty.  Thanks, bairui.
 
 " Having v_* and v_# search for visually selected area.
-vnoremap * "*y<Esc>/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><cr>
-vnoremap # "*y<Esc>?<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><cr>
+xnoremap * "*y<Esc>/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><cr>
+xnoremap # "*y<Esc>?<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><cr>
 " Prepare search based on visually-selected area.  Useful for searching for
 " something slightly different from something by the cursor.  For example, if
-" on "vnoremap" and looking for "nnoremap"
-vnoremap / "*y<Esc>q/i<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><esc>0
+" on "xnoremap" and looking for "nnoremap"
+xnoremap / "*y<Esc>q/i<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><esc>0
 " Prepare substitution based on visually-selected area.
-vnoremap & "*y<Esc>q:i%s/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr>/
+xnoremap & "*y<Esc>q:i%s/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr>/
 
 " ------------------------------------------------------------------------------
 " - insert-mode_completion_(mappings)                                          -
@@ -206,12 +206,12 @@ inoremap <c-l> <c-x><c-l>
 " to the relevant value, but also include '%s' which we want to strip out.
 autocmd BufRead * let b:commentcharacters = substitute(&commentstring,"%s","","")
 " Comment out selected lines.
-vnoremap <silent> <c-n>c :s,^,<c-r>=b:commentcharacters<cr><space>,<cr>:nohlsearch<cr>
+xnoremap <silent> <c-n>c :s,^,<c-r>=b:commentcharacters<cr><space>,<cr>:nohlsearch<cr>
 " Uncomment out selected lines.
-vnoremap <silent> <c-n>u :s,^\V<c-r>=b:commentcharacters<cr><space>,,e<cr>:nohlsearch<cr>
+xnoremap <silent> <c-n>u :s,^\V<c-r>=b:commentcharacters<cr><space>,,e<cr>:nohlsearch<cr>
 " Align by comment.
 nnoremap <silent> <c-n>a :Tabularize /<c-r>=b:commentcharacters<cr><cr>
-vnoremap <silent> <c-n>a :Tabularize /<c-r>=b:commentcharacters<cr><cr>
+xnoremap <silent> <c-n>a :Tabularize /<c-r>=b:commentcharacters<cr><cr>
 " Create comment heading.
 nnoremap <silent> <c-n>h :call CreateCommentHeading(1)<cr>
 " Create comment subheading.
@@ -238,10 +238,10 @@ cnoremap <c-l>     <c-r>=SkyBison("")<cr><cr>
 " ~ ParaIncr_(mappings)                                                        ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " Use ParaIncr to increment/decriment after visual selection.
-vnoremap <space>i :call ParaIncr(1,"","")<cr>
-vnoremap <space>I :call ParaIncr(1," ","")<cr>
-vnoremap <space>d :call ParaIncr(-1,"","")<cr>
-vnoremap <space>D :call ParaIncr(-1," ","")<cr>
+xnoremap <space>i :call ParaIncr(1,"","")<cr>
+xnoremap <space>I :call ParaIncr(1," ","")<cr>
+xnoremap <space>d :call ParaIncr(-1,"","")<cr>
+xnoremap <space>D :call ParaIncr(-1," ","")<cr>
 " Guess the range to select for ParaIncr.
 nnoremap <space>i :<c-u>call ParaIncrVisSelect(1,"","")<cr>
 nnoremap <space>I :<c-u>call ParaIncrVisSelect(1," ","")<cr>
@@ -253,10 +253,10 @@ nnoremap <space>D :<c-u>call ParaIncrVisSelect(-1," ","")<cr>
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " Find next item at same indentation level.
 nnoremap <space>j :call ParaJump("j",0)<cr>
-vnoremap <space>j :call ParaJump("j",1)<cr>
+xnoremap <space>j :call ParaJump("j",1)<cr>
 " Find previous item at same indentation level.
 nnoremap <space>k :call ParaJump("k",0)<cr>
-vnoremap <space>k :call ParaJump("k",1)<cr>
+xnoremap <space>k :call ParaJump("k",1)<cr>
 
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " ~ EasyMotion_(mappings)                                                      ~
@@ -277,9 +277,9 @@ nnoremap <space>lc :LanguageToolClear<cr>
 " ~ ParaSurround_(mappings)                                                    ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " ParaSurround - new surroundings
-vnoremap c <esc>:call ParaSurround(0)<cr>
+xnoremap c <esc>:call ParaSurround(0)<cr>
 " ParaSurround - use previous surroundings
-vnoremap C <esc>:call ParaSurround(1)<cr>
+xnoremap C <esc>:call ParaSurround(1)<cr>
 " ParaSurround - use previous region size and surroundings
 nnoremap <space>C :call ParaSurround(2)<cr>
 
@@ -295,32 +295,32 @@ nnoremap <space>G :call GenerateTagsForFiletype()<cr>
 
 " Create new text objects for pairs of identical characters
 for char in ['$',',','.','/','-','=']
-	exec 'vnoremap i' . char . ' :<C-U>silent!normal!T' . char . 'vt' . char . '<CR>'
+	exec 'xnoremap i' . char . ' :<C-U>silent!normal!T' . char . 'vt' . char . '<CR>'
 	exec 'onoremap i' . char . ' :normal vi' . char . '<CR>'
-	exec 'vnoremap a' . char . ' :<C-U>silent!normal!F' . char . 'vf' . char . '<CR>'
+	exec 'xnoremap a' . char . ' :<C-U>silent!normal!F' . char . 'vf' . char . '<CR>'
 	exec 'onoremap a' . char . ' :normal va' . char . '<CR>'
 endfor
 " Create a text object for folding regions
-vnoremap if :<C-U>silent!normal![zjV]zk<CR>
+xnoremap if :<C-U>silent!normal![zjV]zk<CR>
 onoremap if :normal Vif<CR>
-vnoremap af :<C-U>silent!normal![zV]z<CR>
+xnoremap af :<C-U>silent!normal![zV]z<CR>
 onoremap af :normal Vaf<CR>
 " Create a text object for LaTeX environments
-vnoremap iv :<C-U>call LatexEnv(1)<CR>
+xnoremap iv :<C-U>call LatexEnv(1)<CR>
 onoremap iv :normal viv<CR>
-vnoremap av :<C-U>call LatexEnv(0)<CR>
+xnoremap av :<C-U>call LatexEnv(0)<CR>
 onoremap av :normal vav<CR>
 " Create a text object for the entire buffer
-vnoremap i<cr> :<c-u>silent!normal!ggVG<cr>
+xnoremap i<cr> :<c-u>silent!normal!ggVG<cr>
 onoremap i<cr> :normal Vi<c-v><cr><cr>
-vnoremap a<cr> :<c-u>silent!normal!ggVG<cr>
+xnoremap a<cr> :<c-u>silent!normal!ggVG<cr>
 onoremap a<cr> :normal Vi<c-v><cr><cr>
 " Create text object based on indentation level
 " Replaced with http://www.vim.org/scripts/script.php?script_id=3037
 "onoremap <silent>ai :<C-u>cal IndTxtObj(0)<CR>
 "onoremap <silent>ii :<C-u>cal IndTxtObj(1)<CR>
-"vnoremap <silent>ai :<C-u>cal IndTxtObj(0)<CR><Esc>gv
-"vnoremap <silent>ii :<C-u>cal IndTxtObj(1)<CR><Esc>gv
+"xnoremap <silent>ai :<C-u>cal IndTxtObj(0)<CR><Esc>gv
+"xnoremap <silent>ii :<C-u>cal IndTxtObj(1)<CR><Esc>gv
 
 " ------------------------------------------------------------------------------
 " - git_(mappings)                                                             -
@@ -701,11 +701,11 @@ augroup latex
 	autocmd Filetype tex inoremap <buffer> ;sl \begin{solution}<cr>\end{solution}<ESC>ko<++><esc>k0f[a
 	" Tabularize mappingts for common TeX alignment situations
 	autocmd Filetype tex nnoremap <buffer> <space>& :Tab /&<cr>
-	autocmd Filetype tex vnoremap <buffer> <space>& :Tab /&<cr>
+	autocmd Filetype tex xnoremap <buffer> <space>& :Tab /&<cr>
 	autocmd Filetype tex nnoremap <buffer> <space>\ :Tab /\\\\<cr>
-	autocmd Filetype tex vnoremap <buffer> <space>\ :Tab /\\\\<cr>
+	autocmd Filetype tex xnoremap <buffer> <space>\ :Tab /\\\\<cr>
 	autocmd Filetype tex nnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
-	autocmd Filetype tex vnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
+	autocmd Filetype tex xnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
 	" Tabularize Automatically
 	" Disabled as more troublesome than helpful
 	"au Filetype tex inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a
