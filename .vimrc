@@ -551,6 +551,10 @@ augroup viml
 	autocmd Filetype vim inoremap <buffer> <c-x><c-o> <c-x><c-v>
 	" Note that c-@ is triggered by c-space.
 	autocmd Filetype vim inoremap <buffer> <c-@> <c-x><c-v>
+	" include vim tags
+	autocmd Filetype vim set tags+=,~/.vim/tags/vimtags
+	" regenerate tags
+	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vim/bundle/"]
 augroup END
 
 " ------------------------------------------------------------------------------
@@ -725,10 +729,7 @@ augroup END
 " highlighting, use that for omnicompletion
 
 if has("autocmd") && exists("+omnifunc")
-	autocmd Filetype *
-				\ if &omnifunc == "" |
-				\         setlocal omnifunc=syntaxcomplete#Complete |
-				\ endif
+	autocmd Filetype *  if &omnifunc == "" | setlocal omnifunc=syntaxcomplete#Complete | endif
 endif
 
 " ==============================================================================
