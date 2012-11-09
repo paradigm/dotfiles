@@ -1,0 +1,6 @@
+[submodule ".vim/bundle/skybison"]
+	path = .vim/bundle/skybison
+	url = git@github.com:paradigm/SkyBison.git
+[submodule ".vim/bundle/languagetool"]
+	path = .vim/bundle/languagetool
+	url = git://github.com/vim-scripts/LanguageTool.git
