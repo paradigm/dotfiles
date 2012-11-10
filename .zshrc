@@ -786,3 +786,25 @@ alias mkdir="nocorrect mkdir"
 alias cp="nocorrect cp"
 alias mv="nocorrect mv"
 alias ln="nocorrect ln"
+
+
+# experimentation with constantly showing completion options
+# issues:
+#   tab completion doesn't go into menus
+#   doesn't work well if overly many options
+#local LISTMAX=999999
+#for char in 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p' 'q' 'r' 's' 't' 'u' 'v' 'w' 'x' 'y' 'z' 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N' 'O' 'P' 'Q' 'R' 'S' 'T' 'U' 'V' 'W' 'X' 'Y' 'Z' '.' '/' '^H' '\t'
+#do
+#	if [ "$char" = '^H' ]
+#	then
+#		charname='backspace'
+#	elif [ "$char" = '\t' ]
+#	then
+#		charname='tab'
+#	else
+#		charname="$char"
+#	fi
+#	eval "$charname-list-choices(){ zle $(bindkey $char | cut -d' ' -f2-); zle list-choices }"
+#	eval "zle -N $charname-list-choices"
+#	bindkey "$char" "$charname-list-choices"
+#done
