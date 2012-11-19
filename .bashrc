@@ -359,3 +359,15 @@ then # none of these are tested, just gathered around
 	# shoW information about package
 	alias kS="emerge --searchdesc"
 fi
+
+# ==============================================================================
+# = run_tmux                                                                   =
+# ==============================================================================
+#
+# if we're on a remote machine and tmux is running ensure we're in tmux
+
+if [ -z "$TMUX" ] && ps -u $(id -u) -o cmd | grep -q "^tmux$" &&\
+	[ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
+then
+	tmux attach -d
+fi
