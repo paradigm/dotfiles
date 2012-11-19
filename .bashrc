@@ -366,8 +366,10 @@ fi
 #
 # if we're on a remote machine and tmux is running ensure we're in tmux
 
-if [ -z "$TMUX" ] && ps -u $(id -u) -o cmd | grep -q "^tmux$" &&\
-	[ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
+if [ -n "$SSH_CLIENT" ] ||\
+	[ -n "$SSH_TTY" ] &&\
+	[ -z "$TMUX" ] &&\
+	ps -u $(id -u) -o cmd | grep -q "^tmux$"
 then
 	tmux attach -d
 fi
