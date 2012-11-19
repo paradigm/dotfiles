@@ -121,8 +121,12 @@ export MAIL="~/.mail"
 # If root, the prompt should be a red pound sign.
 # Otherwise, it should be a blue dollar sign.
 
-if [ "$(id -u)" -eq "0" ]; then
+if [ "$(id -u)" -eq "0" ]
+then
 	export PS1=$'\e[0;30m\e[41m#\e[m '
+elif [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
+then
+	export PS1=$'\e[0;30m\e[46m$\e[m '
 else
 	export PS1=$'\e[0;30m\e[47m$\e[m '
 fi
