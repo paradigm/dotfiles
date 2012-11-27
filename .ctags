@@ -23,3 +23,7 @@
 --regex-conf=/^# = (.*) +=$/\1/h,heading/
 --regex-conf=/^# - (.*) +-$/\1/s,subheading/
 --regex-conf=/^# ~ (.*) +~$/\1/S,subsubheading/
+
+--regex-vhdl=/^-- = (.*) +=$/\1/h,heading/
+--regex-vhdl=/^-- - (.*) +-$/\1/s,subheading/
+--regex-vhdl=/^-- ~ (.*) +~$/\1/S,subsubheading/

@@ -1195,6 +1195,8 @@ function! GetCtagsFiletype(vimfiletype)
 		return("vera")
 	elseif a:vimfiletype == "verilog"
 		return("verilog")
+	elseif a:vimfiletype == "vhdl"
+		return("vhdl")
 	elseif a:vimfiletype == "vim"
 		return("vim")
 	elseif a:vimfiletype == "yacc"
