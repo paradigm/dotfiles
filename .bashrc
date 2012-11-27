@@ -371,5 +371,5 @@ if [ -n "$SSH_CLIENT" ] ||\
 	[ -z "$TMUX" ] &&\
 	ps -u $(id -u) -o cmd | grep -q "^tmux$"
 then
-	tmux attach -d
+	exec tmux attach -d
 fi
