@@ -43,6 +43,8 @@ set nomodeline
 set number
 " Always show cursor position in statusline.
 set ruler
+" default to dark background
+set background=dark
 " Tabs are four characters wide.  Note that this is primarily useful for those
 " who prefer tabs for indentation rather than spaces which act like tabs.  If
 " you prefer indenting with spaces, look into 'softtabstop'.
