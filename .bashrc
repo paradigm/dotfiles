@@ -206,6 +206,7 @@ alias guss='git push origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 alias gul="git pull"
 alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 alias gusu='git submodule foreach git pull origin master'
+alias gdh='git diff HEAD'
 
 # ------------------------------------------------------------------------------
 # - bedrock_clients_(aliases)                                                  -
