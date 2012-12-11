@@ -16,6 +16,6 @@
 [submodule ".vim/bundle/tabular"]
 	path = .vim/bundle/tabular
 	url = git://github.com/godlygeek/tabular.git
-[submodule "/home/paradigm/.vim/bundle/multicursor"]
-	path = /home/paradigm/.vim/bundle/multicursor
+[submodule ".vim/bundle/multicursor"]
+	path = .vim/bundle/multicursor
 	url = git@github.com:paradigm/vim-multicursor.git
