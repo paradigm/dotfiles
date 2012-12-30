@@ -2,13 +2,6 @@
 # = paradigm's .xinitrc                                                        =
 # ==============================================================================
 
-# Wintermute's backlight maxes out upon starting X11.  Immediately turn down
-# the backlight.
-if [ "$(uname -n)" = "wintermute" ]
-then
-	echo 400 > /sys/devices/pci0000:00/0000:00:02.0/drm/card0/card0-LVDS-1/intel_backlight/brightness 2>/dev/null
-fi
-
 # Use a solid black background.
 xsetroot -solid "#000000"
 
@@ -41,7 +34,7 @@ xset +fp /usr/share/fonts/X11/100dpi
 
 # On wintermute, the touchpad ends up being more troublesome than helpful.
 # Remove mouse by default
-if [ "$(uname -n)" = "wintermute" ]
+if [ "$(uname -n)" = "ea" ]
 then
 	rmmouse&
 fi
