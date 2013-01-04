@@ -9,8 +9,8 @@
   <item label="uxterm">
     <action name="Execute"><execute>uxterm</execute></action>
   </item>
-  <item label="dwb">
-    <action name="Execute"><execute>dwb</execute></action>
+  <item label="firefox">
+    <action name="Execute"><execute>firefox</execute></action>
   </item>
   <separator />
   <item label="Restart">

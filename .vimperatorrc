@@ -1,0 +1,55 @@
+" ==============================================================================
+" = paradigm's_.vimperatorrc                                                   =
+" ==============================================================================
+
+" ==============================================================================
+" = general settings                                                           =
+" ==============================================================================
+
+set editor="uxterm -e vim"
+
+set noautocomplete
+
+"bmark https://encrypted.google.com/search?btnI=I%27m+Feeling+Lucky&complete=0&q=%s -title='Google feeling lucky search' -keyword=googlelucky
+set defsearch=googlelucky
+
+" ==============================================================================
+" = mappings                                                                   =
+" ==============================================================================
+
+" use < and > to navigate tabs, elinks-style
+nnoremap < gT
+nnoremap > gt
+
+" do not require arrow keys to navigte cmdline history
+cnoremap <c-n> <down>
+cnoremap <c-p> <up>
+
+" scroll faster
+nnoremap h 5h
+nnoremap j 5j
+nnoremap k 5k
+nnoremap l 5l
+
+" toggle showing images
+nnoremap x :set! permissions.default.image=2<cr>
+nnoremap X :set! permissions.default.image=1<cr>
+
+" ==============================================================================
+" = theming                                                                    =
+" ==============================================================================
+
+highlight Normal background-color: black; color: white
+highlight CmdLine background-color: black; color: white
+highlight CompItem[selected] background-color: white; color: black
+
+highlight Hint background-color: white; color: black; border: 1px solid #000000
+highlight HintActive background-color: white; color: black; border: 1px solid #000000
+highlight HintElem background-color: white; color: black; border: 1px solid #000000
+
+" ==============================================================================
+" = firefox-settings                                                           =
+" ==============================================================================
+
+" do not show images automatically
+set! permissions.default.image=2
