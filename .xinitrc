@@ -34,7 +34,7 @@ xset +fp /usr/share/fonts/X11/100dpi
 
 # On wintermute, the touchpad ends up being more troublesome than helpful.
 # Remove mouse by default
-if [ "$(uname -n)" = "ea" ]
+if [ "$(uname -n)" = "am" ]
 then
 	rmmouse&
 fi
