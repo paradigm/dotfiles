@@ -41,6 +41,9 @@ nnoremap sS :noscript toggleperm<cr>
 nnoremap so :noscript popup<cr>
 nnoremap si :noscript info<cr>
 
+" mplay youtube video in mplayer
+command! -nargs=0 cclive :execute "!uxterm -e 'cclive -W --format=best \""+content.location.href+"\" -O /dev/shm/cclive-video & sleep 3 && mplayer /dev/shm/cclive-video'"
+
 " ==============================================================================
 " = theming                                                                    =
 " ==============================================================================
