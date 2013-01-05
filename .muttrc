@@ -1,0 +1,86 @@
+# ==============================================================================
+#  Mutt settings
+# ==============================================================================
+
+# ==============================================================================
+#  General settings
+# ==============================================================================
+
+set editor = 'vim "+:silent" "+/^$"  "+:noh" "+:normal! o" "+:startinsert"'
+push c?<tab>                           # when starting mutt, default to choosing which mailbox to use
+set edit_headers                       # include headers when editing
+set tmpdir = ~/.mutt/temp              # mutt's temp file directory
+set include                            # include messages in replies
+set user_agent                         # indicate I'm using mutt (as opposed to?)
+set copy = yes                         # keep sent messages
+alternative_order text/plain text/html # prefer plain text over html
+set quit                               # quit without confirmation
+set tilde                              # vim-style tildes in pager
+set ssl_ca_certificates_file=/etc/ssl/certs/ca-certificates.crt
+set ssl_starttls
+set ssl_force_tls
+
+
+# ==============================================================================
+#  Theming
+# ==============================================================================
+
+color status blue black
+color normal default black
+color body   brightcyan black  "^gpg: Good signature .*"
+color body   black brightred   "^gpg: BAD signature from.*"
+color index brightwhite black  '~k' # pgp
+color index green black        '~U' # unread emails
+color index red black          '~D' # about-to-be deleted emails
+color index brightyellow black '~T' # tagged emails
+
+
+# ==============================================================================
+#  Key bindings
+# ==============================================================================
+
+bind pager               gg  top
+bind index               gg  first-entry
+bind pager               G   bottom
+bind index               G   last-entry
+bind generic,pager,index \CB previous-page
+bind generic,pager,index \CF next-page
+bind generic,pager,index \CE next-line
+bind generic,pager,index \CY previous-line
+bind pager               j   next-line
+bind pager               k   previous-line
+bind index               H   current-top
+bind index               M   current-middle
+bind index               L   current-bottom
+bind index               J   sidebar-next
+bind index               K   sidebar-prev
+bind index               \C] sidebar-open
+bind pager               R   group-reply
+macro pager              o   <pipe-entry>'elinks -force-html'<enter> 'open message in elinks'
+macro pager              O   <pipe-entry>'tee >/dev/shm/tempemail.html && firefox /dev/shm/tempemail.html && rm /dev/shm/tempemail.html'<enter> 'open message in firefox'
+macro index              C   c<tab>
+
+
+# ==============================================================================
+#  pgp/gpg
+# ==============================================================================
+
+my_hdr X-PGP-Key: http://pgp.mit.edu:11371/pks/lookup?op=get&search=0xF867A8409F19D731
+set pgp_decode_command="gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
+set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"
+set pgp_decrypt_command="gpg --passphrase-fd 0 --no-verbose --batch --output - %f"
+set pgp_sign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --detach-sign --textmode %?a?-u %a? %f"
+set pgp_clearsign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a? %f"
+set pgp_import_command="gpg --no-verbose --import -v %f"
+set pgp_export_command="gpg --no-verbose --export --armor %r"
+set pgp_verify_key_command="gpg --no-verbose --batch --fingerprint --check-sigs %r"
+set pgp_list_pubring_command="gpg --no-verbose --batch --with-colons --list-keys %r" 
+set pgp_list_secring_command="gpg --no-verbose --batch --with-colons --list-secret-keys %r" 
+set pgp_autosign=yes                          # automatically sign all outgoing mail
+set pgp_sign_as=9F19D731                      # my key
+set pgp_timeout=60                            # cache password for one minute
+set pgp_good_sign="^gpg: Good signature from" # good signiture notice
+set crypt_verify_sig=yes                      # automatically verify the sign of a message when opened
+set crypt_replysignencrypted=yes              # automatically encrypt when replying to encrypted
+
+source ~/.mutt/mailboxes
