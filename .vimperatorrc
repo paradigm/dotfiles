@@ -31,11 +31,15 @@ nnoremap j 5j
 nnoremap k 5k
 nnoremap l 5l
 
-" toggle showing images
+" showing images
 nnoremap x :set! permissions.default.image=2<cr>
 nnoremap X :set! permissions.default.image=1<cr>
 
-" toggle noscript
+" custom css
+nnoremap c :styleenable -name paradigm<cr>
+nnoremap C :styledisable -name paradigm<cr>
+
+" noscript
 nnoremap ss :noscript toggletemp<cr>
 nnoremap sS :noscript toggleperm<cr>
 nnoremap so :noscript popup<cr>
@@ -48,6 +52,9 @@ command! -nargs=0 cclive :execute "!uxterm -e 'cclive -W --format=best \""+conte
 " = theming                                                                    =
 " ==============================================================================
 
+" note firefox chrome is set in userChrome.css
+
+" vimperator chrome
 highlight Normal background-color: black; color: white
 highlight CmdLine background-color: black; color: white
 highlight PromptText background-color: black; color: white
@@ -59,6 +66,25 @@ highlight Hint background-color: white; color: black; border: 1px solid #000000
 highlight HintActive background-color: white; color: black; border: 1px solid #000000
 highlight HintElem background-color: white; color: black; border: 1px solid #000000
 
+" website content
+style -name paradigm * <<EOM
+	html * {
+		background-color: #000000 !important; /* all bg */
+		background-image: none !important;
+		color: #ffffff !important; /* all fg */
+		border-color: #ffffff !important; /* all border */
+		font-family: "Terminus" !important;
+		line-height: 1.0 !important;
+	}
+	a:link {
+		color: #888888 !important; /* link fg */
+		background-color: #000000 !important; /* link bg  */
+	}
+	input {
+		border: 1px solid #ffffff !important; /* input border  */
+		color: #ffffff !important; /* input fg */
+	}
+EOM
 
 " ==============================================================================
 " = firefox-settings                                                           =
