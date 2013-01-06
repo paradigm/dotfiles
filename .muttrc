@@ -7,7 +7,7 @@
 # ==============================================================================
 
 set editor = 'vim "+:silent" "+/^$"  "+:noh" "+:normal! o" "+:startinsert"'
-push c?<tab>                           # when starting mutt, default to choosing which mailbox to use
+#push c?<tab>                           # when starting mutt, default to choosing which mailbox to use
 set edit_headers                       # include headers when editing
 set tmpdir = ~/.mutt/temp              # mutt's temp file directory
 set include                            # include messages in replies
