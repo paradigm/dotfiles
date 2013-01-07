@@ -25,10 +25,17 @@ set ssl_force_tls
 #  Theming
 # ==============================================================================
 
-color status blue black
 color normal default black
+
+color tree color244 black # '└─>' reply indicator
+color status color240 black # chrome
+color indicator black white # selected item
+
+color header color244 black '.*'
+color header white black '(Subject|From): .*'
 color body   brightcyan black  "^gpg: Good signature .*"
 color body   black brightred   "^gpg: BAD signature from.*"
+
 color index brightwhite black  '~k' # pgp
 color index green black        '~U' # unread emails
 color index red black          '~D' # about-to-be deleted emails
