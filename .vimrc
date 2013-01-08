@@ -57,6 +57,8 @@ set title
 set textwidth=0 wrap linebreak
 " Enable unicode characters.  This is needed for 'listchars' below.
 set encoding=utf-8
+" use spellcheck
+set spell
 " Disable capitalization check in spellcheck.
 set spellcapcheck=""
 " Enable syntax highlighting.
@@ -540,6 +542,13 @@ endif
 " ==============================================================================
 " = filetype-specific_settings                                                 =
 " ==============================================================================
+
+" ------------------------------------------------------------------------------
+" - misc_(filetype-specific)                                                   -
+" ------------------------------------------------------------------------------
+
+autocmd BufRead,BufNewFile .vimperatorrc setfiletype vim
+autocmd BufRead,BufNewFile .pentadactylrc setfiletype vim
 
 " ------------------------------------------------------------------------------
 " - viml_(filetype-specific)                                                   -
