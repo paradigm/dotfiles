@@ -434,7 +434,7 @@ if &t_Co == 256
 	let nbg  = 0   " black
 	let hfg  = 0   " black
 	let hbg  = 231 " white
-	let ifg  = 240 " about 30% white
+	let ifg  = 244 " gray 50
 	let ibg  = 0   " black
 	let efg  = 196 " red
 	let ebg  = 0   " black
