@@ -32,11 +32,10 @@ xhost +local:root
 # add 100dpi fonts to PATH, fixes steam
 xset +fp /usr/share/fonts/X11/100dpi
 
-# On wintermute, the touchpad ends up being more troublesome than helpful.
-# Remove mouse by default
 if [ "$(uname -n)" = "am" ]
 then
 	rmmouse&
+	xbacklight -set 30%
 fi
 
 # If the xcape program is available, use it.

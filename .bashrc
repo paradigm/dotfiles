@@ -212,7 +212,7 @@ alias gdh='git diff HEAD'
 # - bedrock_clients_(aliases)                                                  -
 # ------------------------------------------------------------------------------
 
-if which brc >/dev/null
+if which brc 1>/dev/null 2>/dev/null
 then
 	for CLIENT in $(bri -l)
 	do

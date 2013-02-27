@@ -142,6 +142,10 @@ nnoremap + :bn<cr>
 nnoremap <space>n L$nzt
 nnoremap <space>N H$Nzb
 
+" technically not a map, but I don't want to create a new section for it
+" opens :help for argument in same window
+command!  -nargs=1 -complete=help H :help <args> | let helpfile = expand("%") | close | execute "view ".helpfile
+
 " ------------------------------------------------------------------------------
 " - cmdline-window_(mappings)                                                  -
 " ------------------------------------------------------------------------------
@@ -233,7 +237,7 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 nnoremap <cr>     2:<c-u>call SkyBison("b ")<cr>
 autocmd CmdwinEnter * nnoremap <buffer> <cr> a<cr>
 nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
-nnoremap <space>h 2:<c-u>call SkyBison("h ")<cr>
+nnoremap <space>h 2:<c-u>call SkyBison("H ")<cr>
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
 nnoremap <space>;  :<c-u>call SkyBison("")<cr>
 cnoremap <c-l>     <c-r>=SkyBison("")<cr><cr>
@@ -430,7 +434,7 @@ if &t_Co == 256
 	let nbg  = 0   " black
 	let hfg  = 0   " black
 	let hbg  = 231 " white
-	let ifg  = 240 " about 30% white
+	let ifg  = 244 " gray 50
 	let ibg  = 0   " black
 	let efg  = 196 " red
 	let ebg  = 0   " black

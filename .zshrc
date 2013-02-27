@@ -86,7 +86,7 @@ WORDCHARS=${WORDCHARS//\/}
 # load/store the caches.
 CACHEDIR="$HOME/.zsh/$(uname -n)"
 # If on Bedrock, separate out caches by client.
-if which brw >/dev/null
+if which brw 1>/dev/null 2>/dev/null
 then
 	CACHEDIR="$CACHEDIR-$(brw)"
 fi
@@ -607,7 +607,7 @@ alias gdh='git diff HEAD'
 # - bedrock_clients_(aliases)                                                  -
 # ------------------------------------------------------------------------------
 
-if which brc >/dev/null
+if which brc 1>/dev/null 2>/dev/null
 then
 	for CLIENT in $(bri -l)
 	do
