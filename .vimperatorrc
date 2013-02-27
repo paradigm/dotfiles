@@ -66,25 +66,25 @@ highlight Hint background-color: white; color: black; border: 1px solid #000000
 highlight HintActive background-color: white; color: black; border: 1px solid #000000
 highlight HintElem background-color: white; color: black; border: 1px solid #000000
 
-" website content
-style -name paradigm * <<EOM
-	html * {
-		background-color: #000000 !important; /* all bg */
-		background-image: none !important;
-		color: #ffffff !important; /* all fg */
-		border-color: #ffffff !important; /* all border */
-		font-family: "Terminus" !important;
-		line-height: 1.0 !important;
-	}
-	a:link {
-		color: #888888 !important; /* link fg */
-		background-color: #000000 !important; /* link bg  */
-	}
-	input {
-		border: 1px solid #ffffff !important; /* input border  */
-		color: #ffffff !important; /* input fg */
-	}
-EOM
+"" website content
+"style -name paradigm * <<EOM
+"	html * {
+"		background-color: #000000 !important; /* all bg */
+"		background-image: none !important;
+"		color: #ffffff !important; /* all fg */
+"		border-color: #ffffff !important; /* all border */
+"		font-family: "Terminus" !important;
+"		line-height: 1.0 !important;
+"	}
+"	a:link {
+"		color: #aaaaaa !important; /* link fg */
+"		background-color: #000000 !important; /* link bg  */
+"	}
+"	input {
+"		border: 1px solid #ffffff !important; /* input border  */
+"		color: #ffffff !important; /* input fg */
+"	}
+"EOM
 
 " ==============================================================================
 " = firefox-settings                                                           =
