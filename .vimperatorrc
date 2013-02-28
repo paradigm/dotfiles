@@ -77,7 +77,7 @@ style -name paradigm * <<EOM
 		line-height: 1.0 !important;
 	}
 	a:link {
-		color: #888888 !important; /* link fg */
+		color: #aaaaaa !important; /* link fg */
 		background-color: #000000 !important; /* link bg  */
 	}
 	input {
