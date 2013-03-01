@@ -59,9 +59,15 @@ setopt nohup
 # Do not warn about closing the shell with background jobs running.
 setopt nocheckjobs
 
+# history
+HISTSIZE=1000
+SAVEHIST=1000
+HISTFILE=~/.history
 # Do not record repeated lines in history.  Note that this line is largely
 # non-functional in this .zshrc as history has not been enabled.
 setopt histignoredups
+# share history between shells - very useful with Bedrock Linux
+setopt share_history
 
 # Allow comments on the command line.  Without this comments are only allowed
 # in scripts.
