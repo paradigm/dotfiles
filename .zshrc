@@ -415,6 +415,10 @@ bindkey -M viins "^X^L" history-beginning-search-backward-then-append
 # have a Vim parallel.
 bindkey -M viins "^X^H" _complete_help
 
+# attempt to complete line based on history, roughly as i_ctrl-x_ctrl-l does in
+# Vim.
+bindkey -M viins "^X^L" history-incremental-search-backward
+
 # Cut the contents of the line and paste immediately when the next prompt
 # appears.  This does not have a clean Vim parallel.
 bindkey -M viins "^Y" push-line
