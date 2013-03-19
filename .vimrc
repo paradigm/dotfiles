@@ -597,10 +597,8 @@ augroup python
 	autocmd Filetype python retab!
 	" Convert indentation from tabs to spaces when wring a file to disk, then
 	" immediately back when saving is done.
-	autocmd Filetype python autocmd BufWritePre * :setlocal expandtab
-	autocmd Filetype python autocmd BufWritePre * :retab!
-	autocmd Filetype python autocmd BufWritePost * :setlocal noexpandtab!
-	autocmd Filetype python autocmd BufWritePost * :retab!
+	autocmd Filetype python autocmd BufWritePre * :setlocal expandtab | retab!
+	autocmd Filetype python autocmd BufWritePost * :setlocal noexpandtab | retab!
 	" 'Compile' with pep8.
 	autocmd Filetype python setlocal makeprg=pep8
 	autocmd Filetype python setlocal errorformat=%f:%l:%c:%m
