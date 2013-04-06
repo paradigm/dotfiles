@@ -19,3 +19,6 @@
 [submodule ".vim/bundle/multicursor"]
 	path = .vim/bundle/multicursor
 	url = git@github.com:paradigm/vim-multicursor.git
+[submodule ".vim/bundle/textobjectify"]
+	path = .vim/bundle/textobjectify
+	url = git@github.com:paradigm/TextObjectify.git
