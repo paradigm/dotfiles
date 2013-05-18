@@ -190,7 +190,7 @@ delete-in() {
 		return
 	# diw was unique.  For everything else, we just have to define the
 	# characters to the left and right of the cursor to be removed
-	elif [ "$CHAR" = "(" ] || [ "$CHAR" = ")" ]
+	elif [ "$CHAR" = "(" ] || [ "$CHAR" = ")" ] || [ "$CHAR" = "b" ]
 	then # di), delete inside of a pair of parenthesis
 		LCHAR="("
 		RCHAR=")"
@@ -198,7 +198,7 @@ delete-in() {
 	then # di], delete inside of a pair of square brackets
 		LCHAR="["
 		RCHAR="]"
-	elif [ $CHAR = "{" ] || [ $CHAR = "}" ]
+	elif [ $CHAR = "{" ] || [ $CHAR = "}" ] || [ "$CHAR" = "B" ]
 	then # di], delete inside of a pair of braces
 		LCHAR="{"
 		RCHAR="}"
@@ -436,11 +436,17 @@ bindkey -M vicmd "ca" change-around
 # Mimics Vim's "ci" text object functionality.
 bindkey -M vicmd "ci" change-in
 
+# If not explicitly set, above ca/ci bindings will cause a delay
+bindkey -M vicmd "cc" vi-change-whole-line
+
 # Mimic Vim's da text-object functionality.
 bindkey -M vicmd "da" delete-around
 
 # Mimic Vim's di text-object functionality.
 bindkey -M vicmd "di" delete-in
+#
+# If not explicitly set, above da/di bindings will cause a delay
+bindkey -M vicmd "dd" kill-whole-line
 
 # Have ctrl-e work as it does in Vim.
 bindkey -M vicmd "^E" vi-add-eol
