@@ -609,12 +609,19 @@ augroup END
 
 augroup python
 	autocmd!
-	" Convert indentation from spaces to tabs when opening a file.
-	autocmd Filetype python retab!
-	" Convert indentation from tabs to spaces when wring a file to disk, then
-	" immediately back when saving is done.
-	autocmd Filetype python autocmd BufWritePre * :setlocal expandtab | retab!
-	autocmd Filetype python autocmd BufWritePost * :setlocal noexpandtab | retab!
+	" I got way to many dirty looks for this
+	"" Convert indentation from spaces to tabs when opening a file.
+	"autocmd Filetype python retab!
+	"" Convert indentation from tabs to spaces when wring a file to disk, then
+	"" immediately back when saving is done.
+	"autocmd Filetype python autocmd BufWritePre * :setlocal expandtab | retab!
+	"autocmd Filetype python autocmd BufWritePost * :setlocal noexpandtab | retab!
+
+	" pep8-friendly tab stuff
+	autocmd Filetype python setlocal expandtab
+	autocmd Filetype python setlocal tabstop=4
+	autocmd Filetype python setlocal shiftwidth=4
+	autocmd Filetype python setlocal softtabstop=4
 	" 'Compile' with pep8 and, if that is successful, pylint
 	autocmd Filetype python setlocal makeprg=pep8\ $*\ &&\ pylint\ \-r\ n\ \-f\ parseable\ $*\ \\\|\ awk\ \-F:\ '{print\ $1\":\"$2\":0:\"$3}'
 	autocmd Filetype python setlocal errorformat=%f:%l:%c:\ %m
