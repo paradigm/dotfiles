@@ -113,7 +113,7 @@ nnoremap <space>q :q<cr>
 " Re-source the .vimrc
 nnoremap <space>s :so $MYVIMRC<cr>
 " Run :make
-nnoremap <space>m :w<cr>:!clear<cr>:silent make %<cr>:cc<cr>
+nnoremap <space>m :w<cr>:!clear<cr>:silent make %<cr>:call CCOnError()<cr>
 " Execute buffer ("run")
 nnoremap <space>r :cd %:p:h<cr>:!clear;./%<cr>
 " Faster mapping for spelling correction
@@ -1293,3 +1293,12 @@ function! GetProject()
 	endfor
 endfunction
 call GetProject()
+
+function! CCOnError()
+	redraw
+	if(len(getqflist())==0)
+		echo 'no errors'
+	else
+		cc
+	endif
+endfunction
