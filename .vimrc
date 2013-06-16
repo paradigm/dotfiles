@@ -615,9 +615,9 @@ augroup python
 	" immediately back when saving is done.
 	autocmd Filetype python autocmd BufWritePre * :setlocal expandtab | retab!
 	autocmd Filetype python autocmd BufWritePost * :setlocal noexpandtab | retab!
-	" 'Compile' with pep8.
-	autocmd Filetype python setlocal makeprg=pep8
-	autocmd Filetype python setlocal errorformat=%f:%l:%c:%m
+	" 'Compile' with pep8 and, if that is successful, pylint
+	autocmd Filetype python setlocal makeprg=pep8\ $*\ &&\ pylint\ \-r\ n\ \-f\ parseable\ $*\ \\\|\ awk\ \-F:\ '{print\ $1\":\"$2\":0:\"$3}'
+	autocmd Filetype python setlocal errorformat=%f:%l:%c:\ %m
 	" Execute.
 	autocmd Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
 	" include python tags
