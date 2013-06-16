@@ -13,9 +13,9 @@
 " ==============================================================================
 "
 " These are general shell settings that don't fit well into any of the
-" catagories used below.  Order may matter for some of these.
+" categories used below.  Order may matter for some of these.
 
-" Disable vi compatibilty restrictions.
+" Disable vi compatibility restrictions.
 set nocompatible
 " When creating a new line, set indentation same as previous line.
 set autoindent
@@ -144,7 +144,10 @@ nnoremap <space>N H$Nzb
 
 " technically not a map, but I don't want to create a new section for it
 " opens :help for argument in same window
-command!  -nargs=1 -complete=help H :help <args> | let helpfile = expand("%") | close | execute "view ".helpfile
+command! -nargs=1 -complete=help H :help <args> |
+			\let helpfile = expand("%") |
+			\close |
+			\execute "view ".helpfile
 
 " ------------------------------------------------------------------------------
 " - cmdline-window_(mappings)                                                  -
@@ -295,7 +298,8 @@ nnoremap <space>C :call ParaSurround(2)<cr>
 " ~ GenerateTags_(mappings)                                                    ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <space>g :call GenerateTagsForBuffers()<cr>
-nnoremap <space>G :call GenerateTagsForFiletype()<cr>
+nnoremap <space>Gp :call GenerateTagsForProject()<cr>
+nnoremap <space>Gf :call GenerateTagsForFiletype()<cr>
 
 " ------------------------------------------------------------------------------
 " - custom_text_objects_(mappings)                                             -
@@ -604,6 +608,10 @@ augroup python
 	autocmd Filetype python setlocal errorformat=%f:%l:%c:%m
 	" Execute.
 	autocmd Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
+	" include python tags
+	autocmd Filetype c set tags+=,~/.vim/tags/pythontags
+	" regenerate tags
+	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/pythontags /usr/lib/py* /usr/local/lib/py*"]
 augroup END
 
 " ------------------------------------------------------------------------------
@@ -742,7 +750,7 @@ augroup END
 " highlighting, use that for omnicompletion
 
 if has("autocmd") && exists("+omnifunc")
-	autocmd Filetype *  if &omnifunc == "" | setlocal omnifunc=syntaxcomplete#Complete | endif
+	autocmd Filetype * if &omnifunc == "" | setlocal omnifunc=syntaxcomplete#Complete | endif
 endif
 
 " ==============================================================================
@@ -773,6 +781,17 @@ let g:EasyMotion_grouping = 2
 " Set colorscheme
 highlight EasyMotionTarget  cterm=NONE ctermfg=White ctermbg=Black
 highlight EasyMotionShade   cterm=NONE ctermfg=240   ctermbg=Black
+
+" ------------------------------------------------------------------------------
+" - jedi_(plugins)                                                             -
+" ------------------------------------------------------------------------------
+" jedi has some uses, but the defaults are terribly intrusive
+
+let g:jedi#use_tabs_not_buffers = 0
+let g:jedi#popup_select_first = 0
+let g:jedi#autocompletion_command = "<leader>zzz"
+let g:jedi#auto_vim_configuration = 0
+let g:jedi#show_function_def = 0
 
 " ------------------------------------------------------------------------------
 " - LanguageTool_(plugins)                                                     -
@@ -1111,6 +1130,20 @@ function! GenerateTagsForBuffers()
 endfunction
 
 " ------------------------------------------------------------------------------
+" - generatetagsforproject()_(functions)                                      -
+" ------------------------------------------------------------------------------
+"
+" (re)generates tag files for project
+
+function! GenerateTagsForProject()
+	echo "Generating project-specific tags, may take a few seconds..."
+	let l:projpath = substitute(g:project,'+','/','g')
+	call system('ctags -R -f '.$HOME.'.vim/projects/'.g:project.' '.l:projpath)
+	redraw
+	echo "Done generating tags."
+endfunction
+
+" ------------------------------------------------------------------------------
 " - generatetagsforfiletype()_(functions)                                      -
 " ------------------------------------------------------------------------------
 "
@@ -1218,3 +1251,26 @@ function! GetCtagsFiletype(vimfiletype)
 		return("")
 	endif
 endfunction
+
+" ==============================================================================
+" = quick and dirty code                                                       =
+" ==============================================================================
+
+function! MarkProjectRoot()
+	" make initial/empty tags file
+	call system('touch '.$HOME.'.vim/projects/'.substitute(getcwd(),'/','+','g'))
+	call GetProject()
+endfunction
+
+" set current project (if any)
+function! GetProject()
+	let cwd = substitute(getcwd(),'/','+','g')
+	for project in split(system('ls '.$HOME.'.vim/projects/'))
+		if stridx(cwd,project) == 0
+			let g:project = project
+			execute "set tags+=,~/.vim/projects/".g:project
+			break
+		endif
+	endfor
+endfunction
+call GetProject()
