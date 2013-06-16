@@ -585,6 +585,7 @@ augroup viml
 	autocmd Filetype vim set tags+=,~/.vim/tags/vimtags
 	" regenerate tags
 	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vim/bundle/"]
+	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vimrc"]
 augroup END
 
 " ------------------------------------------------------------------------------
