@@ -80,6 +80,9 @@ set timeout ttimeoutlen=10 timeoutlen=500
 " was disabled as it proved more troublesome than helpful.
 "au BufWinLeave * silent! mkview!  " automatically save view on exit
 "au BufWinEnter * silent! loadview " automatically load view on load
+if exists('&relativenumber')
+	set relativenumber
+endif
 " If available, have pathogen load plugins form ~/.vim/bundle.
 if filereadable($HOME."/.vim/autoload/pathogen.vim")
 	call pathogen#runtime_append_all_bundles()
@@ -480,6 +483,14 @@ if &t_Co == 256
 	execute "highlight Type       cterm   = NONE"
 	execute "highlight Type       ctermfg = " . m4fg
 	execute "highlight Type       ctermbg = " . m4bg
+	execute "highlight Todo       cterm   = NONE"
+	execute "highlight Todo       ctermfg = " . hfg
+	execute "highlight Todo       ctermbg = " . hbg
+	if exists('&relativenumber')
+		execute "highlight CursorLineNr cterm   = NONE"
+		execute "highlight CursorLineNr ctermfg = " . nfg
+		execute "highlight CursorLineNr ctermbg = " . nbg
+	endif
 	" spelling
 	highlight clear SpellBad
 	highlight SpellBad cterm=underline
