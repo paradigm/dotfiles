@@ -13,35 +13,31 @@
 # ==============================================================================
 #
 # These are general shell settings that don't fit well into any of the
-# catagories used below.
+# categories used below.
 
 # The default permissions on newly-created files will not be readable,
-# writable, or executable by anyone other than the owner of the file. 
+# writable, or executable by anyone other than the owner of the file.
 umask 077
 
-# None of the lines following this point are useful for non-interactive
-# instances of this shell.  If the $PS1 variable does not exist, this instances
-# of the shell is non-interactive, so exit the rc file.
-# TODO: This is known to work in bash, needs confirmation it works in zsh.
-[ -z "$PS1" ] && return
+# In bash, none of the comparable items below would be beneficial in
+# non-interstice instances of the shell; thus, we'd stop sourcing the .bashrc
+# here.  However, zsh does not seem to source the .zshrc file in
+# non-interactive instances anyways, and so the line below is not necessary.
+#[ -z "$PS1" ] && return
 
 # If non-ambiguous, allow changing into a directory just by typing its name
 # (ie, make "cd" optional)
 setopt autocd
 
 # Detect and prompt to correct typos in commands.
-# Note there is a "correctall" varient which also prompts to correct arguments
+# Note there is a "correctall" variant which also prompts to correct arguments
 # to commands, but this ends up being more troublesome than useful.
 setopt correct
-
-# When offering typo corrections, do not propose anything which starts with an
-# underscore (such as many of Zsh's shell functions).
-CORRECT_IGNORE='_*'
 
 # Enable extended globbing functionality.
 setopt extendedglob
 
-# Disables the beep Zsh would otherwise make when giving invalid input (such as
+# Disables the beep zsh would otherwise make when giving invalid input (such as
 # hitting backspace on an command line).
 setopt nobeep
 
@@ -59,25 +55,127 @@ setopt nohup
 # Do not warn about closing the shell with background jobs running.
 setopt nocheckjobs
 
-# history
-HISTSIZE=1000
-SAVEHIST=1000
-HISTFILE=~/.history
 # Do not record repeated lines in history.  Note that this line is largely
 # non-functional in this .zshrc as history has not been enabled.
 setopt histignoredups
-# share history between shells - very useful with Bedrock Linux
-setopt share_history
 
 # Allow comments on the command line.  Without this comments are only allowed
 # in scripts.
 setopt interactivecomments
 
+# ==============================================================================
+# = environmental_variables                                                    =
+# ==============================================================================
+#
+# ------------------------------------------------------------------------------
+# - general_(environmental_variables)                                          -
+# ------------------------------------------------------------------------------
+
+# "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
+# should not be necessary, but it's not a bad idea to have just in case.
+export SHELL="/bin/zsh"
+
+# Set the default text editor.
+if which vim >/dev/null 2>&1
+then
+	export EDITOR="vim"
+elif which vi >/dev/null 2>&1
+then
+	export EDITOR="vi"
+fi
+
+# Set the default web browser.
+if [ -n "$DISPLAY" ] && which "dwb" >/dev/null 2>&1
+then
+	export BROWSER="dwb"
+elif [ -n "$DISPLAY" ] && which "firefox" >/dev/null 2>&1
+then
+	export BROWSER="firefox"
+elif [ -z "$DISPLAY" ] && which "elinks" >/dev/null 2>&1
+then
+	export BROWSER="elinks"
+fi
+
+# If in a terminal that can use 256 colors, ensure TERM reflects that fact.
+if [ "$TERM" = "xterm" ]
+then
+	export TERM="xterm-256color"
+elif [ "$TERM" = "screen" ]
+then
+	export TERM="screen-256color"
+fi
+
+# set PDF reader
+if which mupdf >/dev/null 2>&1
+then
+	export PDFREADER="mupdf"
+	export PDFVIEWER="mupdf"
+fi
+
+# Set the default image viewer.
+if which sxiv >/dev/null 2>&1
+then
+	export IMAGEVIEWER="sxiv"
+fi
+
+# Set Sage's PDF/DVI/PNG browser.  This goes to a shell script which will call
+# the appropriate PDF viewer or image viewer.
+if which sage_browser >/dev/null 2>&1
+then
+	export SAGE_BROWSER="sage_browser"
+fi
+
+# sets mail directory
+export MAIL="~/.mail"
+
+# When offering typo corrections, do not propose anything which starts with an
+# underscore (such as many of zsh's shell functions).
+export CORRECT_IGNORE='_*'
+
 # Do not consider "/" a word character.  One benefit of this is that when
 # hitting ctrl-w in insert mode (which deletes the word before the cursor) just
 # before a filesystem path, it only removes the last item of the path and not
 # the entire thing.
-WORDCHARS=${WORDCHARS//\/}
+export WORDCHARS=${WORDCHARS//\/}
+
+# ------------------------------------------------------------------------------
+# - theme_(environmental_variables)                                            -
+# ------------------------------------------------------------------------------
+#
+# parse theme file
+if [ $(tput colors) -eq "256" ] && [ -r ~/.themes/current/terminal/256-theme ]
+then
+	source ~/.themes/current/terminal/256-theme
+
+	# set the colors ls --color uses, if available
+	export LS_COLORS="\
+di=38;5;${MISCELLANEOUS_FOREGROUND};48;5;${MISCELLANEOUS_BACKGROUND}:\
+ex=38;5;${HIGHLIGHT_FOREGROUND};48;5;${HIGHLIGHT_BACKGROUND}:\
+ln=04:\
+su=38;5;${ERROR2_FOREGROUND};48;5;${ERROR2_BACKGROUND}:\
+sg=38;5;${ERROR2_FOREGROUND};48;5;${ERROR2_BACKGROUND}:\
+"
+fi
+
+# ------------------------------------------------------------------------------
+# - prompt_(environmental_variables)                                           -
+# ------------------------------------------------------------------------------
+#
+# If root, the prompt should be a red pound sign.
+# Otherwise, "$ " with highlight from theme
+
+if [ $(tput colors) -eq "256" ] && [ -r ~/.themes/current/terminal/256-theme ]
+then
+	if [ $EUID -eq "0" ]
+	then
+		export PROMPT="%F{$ERROR_FOREGROUND}%K{$ERROR_BACKGROUND}#%f%k "
+	elif [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
+	then
+		export PROMPT="%F{$MISCELLANEOUS_FOREGROUND}%K{$MISCELLANEOUS_BACKGROUND}$%f%k "
+	else
+		export PROMPT="%F{$HIGHLIGHT_FOREGROUND}%K{$HIGHLIGHT_BACKGROUND}$%f%k "
+	fi
+fi
 
 # ==============================================================================
 # = completion                                                                 =
@@ -115,7 +213,7 @@ zstyle ':completion:*' cache-path $CACHEDIR/cache
 # options.  If the options are printed, begin cycling through them.
 zstyle ':completion:*' menu select
 
-# Print the catagories the completion options fit into.
+# Print the categories the completion options fit into.
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 
 # Set format for warnings
@@ -470,74 +568,6 @@ bindkey -M vicmd v edit-command-line
 bindkey -M vicmd "^X" decrement-number
 
 # ==============================================================================
-# = environmental_variables                                                    =
-# ==============================================================================
-#
-# ------------------------------------------------------------------------------
-# - general_(evironmental_variables)                                           -
-# ------------------------------------------------------------------------------
-
-# "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
-# should not be necessary, but it's not a bad idea to have just in case.
-export SHELL="/bin/zsh"
-
-# Set the default text editor.
-export EDITOR="vim"
-
-# Set the default web browser.
-if [ -z "$DISPLAY" ]
-then
-	export BROWSER="elinks"
-else
-	if which dwb 1>/dev/null 2>/dev/null
-	then
-		export BROWSER="dwb"
-	else
-		export BROWSER="firefox"
-	fi
-fi
-
-# If in a terminal that can use 256 colors, ensure TERM reflects that fact.
-if [ "$TERM" = "xterm" ]
-then
-	export TERM="xterm-256color"
-elif [ "$TERM" = "screen" ]
-then
-	export TERM="screen-256color"
-fi
-
-# set PDF reader
-export PDFREADER="mupdf"
-export PDFVIEWER="mupdf"
-
-# Set the default image viewer.
-export IMAGEVIEWER="mupdf"
-
-# Set Sage's PDF/DVI/PNG browser.  This goes to a shell script which will call
-# the appropriate PDF viewer or image viewer.
-export SAGE_BROWSER="sage_browser"
-
-# sets mail directory
-export MAIL="~/.mail"
-
-# ------------------------------------------------------------------------------
-# - prompt_(environmental_variables)                                           -
-# ------------------------------------------------------------------------------
-#
-# If root, the prompt should be a red pound sign.
-# Otherwise, it should be a blue dollar sign.
-
-if [ $(id -u) -eq "0" ]
-then
-	export PROMPT=$'%{\e[0;30m\e[41m%}#%{\e[m%} '
-elif [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
-then
-	export PROMPT=$'%{\e[0;30m\e[46m%}$%{\e[m%} '
-else
-	export PROMPT=$'%{\e[0;30m\e[47m%}$%{\e[m%} '
-fi
-
-# ==============================================================================
 # = aliases                                                                    =
 # ==============================================================================
 
@@ -776,6 +806,7 @@ alias -g B="&exit"
 alias -g H="|head"
 alias -g T="|tail"
 alias -g V="|vim -m -c 'set nomod' -"
+alias -g Q=">/dev/null 2>&1"
 
 # ------------------------------------------------------------------------------
 # - suffix_(aliases)                                                           -
