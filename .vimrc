@@ -114,6 +114,8 @@ nnoremap <space>q :q<cr>
 nnoremap <space>s :so $MYVIMRC<cr>
 " Run :make
 nnoremap <space>m :w<cr>:!clear<cr>:silent make %<cr>:call CCOnError()<cr>
+" Run open quickfix window
+nnoremap <space>u :cw<cr>:nunmap <buffer> <cr>
 " Execute buffer ("run")
 nnoremap <space>r :cd %:p:h<cr>:!clear;./%<cr>
 " Faster mapping for spelling correction
@@ -786,7 +788,7 @@ let g:generate_tags=[]
 " - SkyBison_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 
-let g:skybison_fuzz = 2
+let g:skybison_fuzz = 0
 
 " ------------------------------------------------------------------------------
 " - EasyMotion_(plugins)                                                       -
@@ -1277,14 +1279,14 @@ endfunction
 
 function! MarkProjectRoot()
 	" make initial/empty tags file
-	call system('touch '.$HOME.'.vim/projects/'.substitute(getcwd(),'/','+','g'))
+	call system('touch ~/.vim/projects/'.substitute(getcwd(),'/','+','g'))
 	call GetProject()
 endfunction
 
 " set current project (if any)
 function! GetProject()
 	let cwd = substitute(getcwd(),'/','+','g')
-	for project in split(system('ls '.$HOME.'.vim/projects/'))
+	for project in split(system('ls ~/.vim/projects/'))
 		if stridx(cwd,project) == 0
 			let g:project = project
 			execute "set tags+=,~/.vim/projects/".g:project
