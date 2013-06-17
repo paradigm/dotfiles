@@ -314,6 +314,28 @@ then
 	alias kw="apt-cache show"
 	# Find package containing file
 	alias kf="apt-file search"
+	# install package containing file
+	kfi(){
+		results=$(apt-file search $1 | grep "$1$")
+		count=$(echo $results | wc -l)
+		if [ $cout -eq 1 ]
+		then
+			sudo apt-get install $(echo results | awk '{print$1}')
+		else
+			echo $results
+		fi
+	}
+	# install search result
+	ksi(){
+		results=$(apt-cache search $1 | grep "$1$")
+		count=$(echo $results | wc -l)
+		if [ $cout -eq 1 ]
+		then
+			sudo apt-get install $(echo results | awk '{print$1}')
+		else
+			echo $results
+		fi
+	}
 elif [ "$DISTRO" = "Arch" ]
 then
 	if which packer >/dev/null
