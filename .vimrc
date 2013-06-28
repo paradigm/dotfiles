@@ -22,7 +22,7 @@ set autoindent
 " Make i_backspace act as it does in most other programs.
 set backspace=2
 " Folding should be set manually, never automatically.
-set foldmethod=manual
+set foldmethod=syntax
 " Do not fold anything by default.
 set foldlevel=999
 " Allow modified/unsaved buffers in the background.
@@ -92,6 +92,9 @@ endif
 filetype plugin on
 " Utilize filetype-specific automatic indentation.
 filetype indent on
+
+" clear default tags
+set tags=""
 
 " ==============================================================================
 " = mappings                                                                   =
@@ -584,7 +587,7 @@ augroup viml
 	" Note that c-@ is triggered by c-space.
 	autocmd Filetype vim inoremap <buffer> <c-@> <c-x><c-v>
 	" include vim tags
-	autocmd Filetype vim set tags+=,~/.vim/tags/vimtags
+	autocmd Filetype vim set tags+=~/.vim/tags/vimtags
 	" regenerate tags
 	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vim/bundle/"]
 	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vimrc"]
@@ -1304,3 +1307,9 @@ function! CCOnError()
 		cc
 	endif
 endfunction
+
+" add current tags from current git project, if any
+
+if system("git rev-parse --show-toplevel") != ""
+	exec "set tags+=" . system("git rev-parse --show-toplevel")[:-2] . "/.git/tags"
+endif
