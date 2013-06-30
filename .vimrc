@@ -38,7 +38,7 @@ set ignorecase
 set smartcase
 " Disable modeline.  I know the settings I like; I don't need others telling me
 " what to use.  Also, historically, this has been a security vulnerability.
-set nomodeline
+"set nomodeline
 " Print line numbers on the left.
 set number
 " Always show cursor position in statusline.
@@ -144,7 +144,11 @@ xnoremap <silent> gk k
 " Toggle 'paste'
 set pastetoggle=<insert>
 " next buffer
-nnoremap + :bn<cr>
+nnoremap + :bn\<cr>
+nnoremap - :bp\<cr>
+" next tag
+nnoremap <end> :tn<cr>
+nnoremap <home> :tp<cr>
 " Find next/previous search item which is not visible in the window.
 " Note that 'scrolloff' probably breaks this.
 nnoremap <space>n L$nzt
@@ -247,7 +251,7 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <cr>     2:<c-u>call SkyBison("b ")<cr>
 autocmd CmdwinEnter * nnoremap <buffer> <cr> a<cr>
-nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
+nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("T ")<cr>
 nnoremap <space>h 2:<c-u>call SkyBison("H ")<cr>
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
 nnoremap <space>;  :<c-u>call SkyBison("")<cr>
@@ -791,7 +795,7 @@ let g:generate_tags=[]
 " - SkyBison_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 
-let g:skybison_fuzz = 0
+let g:skybison_fuzz = 2
 
 " ------------------------------------------------------------------------------
 " - EasyMotion_(plugins)                                                       -
@@ -1309,7 +1313,44 @@ function! CCOnError()
 endfunction
 
 " add current tags from current git project, if any
-
 if system("git rev-parse --show-toplevel") != ""
 	exec "set tags+=" . system("git rev-parse --show-toplevel")[:-2] . "/.git/tags"
 endif
+
+
+" alternative to :tagselect
+command! -nargs=* -complete=custom,ParaTagSelectCompl T :call ParaTagSelect("<args>")
+function! ParaTagSelectCompl(ArgLead, Cmdline, CursorPos)
+	" This is intended for SkyBison which currently does not allow the cursor
+	" to be anywhere but the end of the line.
+
+	let terms = split(a:Cmdline)
+
+	if len(terms) == 1 || (len(terms) == 2 && a:Cmdline[-1:] != " ")
+		let l:d={}
+		execute "silent normal! :tag " . a:ArgLead . "\<c-a>\<c-\>eextend(l:d, {'cmdline':getcmdline()}).cmdline\n"
+		if has_key(l:d, 'cmdline') && l:d['cmdline'] !~ ''
+			return join(split(l:d['cmdline'])[1:],"\n")
+		else
+			return ""
+		endif
+	endif
+	if len(terms) == 2 || (len(terms) == 3 && a:Cmdline[-1:] != " ")
+		let results = []
+		for tag in taglist(terms[1])
+			if count(results, tag['filename']) == 0
+				let results += [tag['filename']]
+			endif
+		endfor
+		return join(results,"\n")
+	endif
+	return ""
+endfunction
+function! ParaTagSelect(Cmdline)
+	let terms = split(a:Cmdline)
+
+	if len(terms) == 2
+		execute "normal :e " . terms[1] . "\<cr>"
+	endif
+	execute "normal :tag " . terms[0] . "\<cr>"
+endfunction
