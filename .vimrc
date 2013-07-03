@@ -667,7 +667,7 @@ augroup python
 	" Execute.
 	autocmd Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
 	" include python tags
-	autocmd Filetype c set tags+=,~/.vim/tags/pythontags
+	autocmd Filetype python set tags+=,~/.vim/tags/pythontags
 	" regenerate tags
 	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/pythontags /usr/lib/py* /usr/local/lib/py*"]
 augroup END
@@ -1414,7 +1414,7 @@ set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 function! SearchSigns()
 	let l:cursor = getpos(".")
-	sign define search text=// texthl=Normal
+	sign define search text=// texthl=Error
 	sign unplace *
 	let index = 1
 	execute "g/". @/ ."/execute 'sign place ' . index . ' line=' . line('.') . ' name=search buffer=' . bufnr('%') | let index += 1"
@@ -1423,3 +1423,6 @@ endfunction
 augroup signs
 	autocmd CmdwinLeave * if g:lastcmdwin == "/" || g:lastcmdwin == "?" | call feedkeys(":call SearchSigns()","n") | endif
 augroup END
+
+nnoremap <space>p <c-w>}
+nnoremap <space>P :pclose<cr>
