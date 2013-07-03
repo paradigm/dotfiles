@@ -108,7 +108,7 @@ set tags=""
 nnoremap <f1> <esc>
 inoremap <f1> <esc>
 " Clear search highlighting and messages at bottom when redrawing
-nnoremap <silent> <c-l> :nohlsearch<cr><c-l>
+nnoremap <silent> <c-l> :nohlsearch<cr>:sign unplace *<cr><c-l>
 " Faster mapping for saving
 nnoremap <space>w :w<cr>
 " Faster mapping for closing window / quitting
@@ -143,17 +143,6 @@ nnoremap <silent> gk k
 xnoremap <silent> gk k
 " Toggle 'paste'
 set pastetoggle=<insert>
-" next buffer
-nnoremap + :bn\<cr>
-nnoremap - :bp\<cr>
-" next tag
-nnoremap <end> :tn<cr>
-nnoremap <home> :tp<cr>
-" Find next/previous search item which is not visible in the window.
-" Note that 'scrolloff' probably breaks this.
-nnoremap <space>n L$nzt
-nnoremap <space>N H$Nzb
-
 " technically not a map, but I don't want to create a new section for it
 " opens :help for argument in same window
 command! -nargs=1 -complete=help H :help <args> |
@@ -162,16 +151,49 @@ command! -nargs=1 -complete=help H :help <args> |
 			\execute "view ".helpfile
 
 " ------------------------------------------------------------------------------
+" - next_previous_(mappings)                                                   -
+" ------------------------------------------------------------------------------
+" Find next/previous search item which is not visible in the window.
+" Note that 'scrolloff' probably breaks this.
+nnoremap <space>n L$nzt
+nnoremap <space>N H$Nzb
+" next/previous/first/last buffer
+nnoremap ]b :bnext<cr>
+nnoremap [b :bprevious<cr>
+nnoremap [B :bfirst<cr>
+nnoremap ]B :blast<cr>
+" next/previous/first/last tag
+nnoremap ]t :tnext<cr>
+nnoremap [t :tprevious<cr>
+nnoremap [T :tfirst<cr>
+nnoremap ]T :tlast<cr>
+" next/previous/first/last quickfix item
+nnoremap ]q :cnext<cr>
+nnoremap [q :cprevious<cr>
+nnoremap [Q :cfirst<cr>
+nnoremap ]Q :clast<cr>
+" next/previous/first/last location list item
+nnoremap ]l :lnext<cr>
+nnoremap [l :lprevious<cr>
+nnoremap [L :lfirst<cr>
+nnoremap ]L :llast<cr>
+" next/previous/first/last argument list item
+nnoremap ]a :next<cr>
+nnoremap [a :previous<cr>
+nnoremap [A :first<cr>
+nnoremap ]A :last<cr>
+
+" ------------------------------------------------------------------------------
 " - cmdline-window_(mappings)                                                  -
 " ------------------------------------------------------------------------------
 
 " Swap default ':', '/' and '?' with cmdline-window equivalent.
-nnoremap : q:i
-xnoremap : q:i
-nnoremap / q/i
-xnoremap / q/i
-nnoremap ? q?i
-xnoremap ? q?i
+nnoremap : :let g:lastcmdwin=":"<cr>q:i
+xnoremap : :let g:lastcmdwin=":"<cr>q:i
+nnoremap / :let g:lastcmdwin="/"<cr>q/i
+xnoremap / :let g:lastcmdwin="/"<cr>q/i
+nnoremap ? :let g:lastcmdwin="?"<cr>q?i
+xnoremap ? :let g:lastcmdwin="?"<cr>q?i
 nnoremap q: :
 xnoremap q: :
 nnoremap q/ /
@@ -179,7 +201,7 @@ xnoremap q/ /
 nnoremap q? ?
 xnoremap q? ?
 " Have <esc> leave cmdline-window
-autocmd CmdwinEnter * nnoremap <buffer> <esc> :q<cr>
+autocmd CmdwinEnter * nnoremap <buffer> <esc> :let g:lastcmdwin=""\|q\|echo ""<cr>
 
 " ------------------------------------------------------------------------------
 " - diff_(mappings)                                                            -
@@ -250,7 +272,8 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " ~ SkyBison_(mappings)                                                        ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <cr>     2:<c-u>call SkyBison("b ")<cr>
-autocmd CmdwinEnter * nnoremap <buffer> <cr> a<cr>
+autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>
+autocmd FileType qf nnoremap <buffer> <cr> <cr>
 nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("T ")<cr>
 nnoremap <space>h 2:<c-u>call SkyBison("H ")<cr>
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
@@ -564,6 +587,7 @@ if &t_Co == 256
 	execute "highlight Visual       cterm   = NONE"
 	execute "highlight Visual       ctermfg = " . nbg
 	execute "highlight Visual       ctermbg = " . nfg
+	execute "highlight SignColumn   ctermbg = " . nbg
 endif
 
 
@@ -631,8 +655,14 @@ augroup python
 	autocmd Filetype python setlocal tabstop=4
 	autocmd Filetype python setlocal shiftwidth=4
 	autocmd Filetype python setlocal softtabstop=4
-	" 'Compile' with pep8 and, if that is successful, pylint
-	autocmd Filetype python setlocal makeprg=pep8\ $*\ &&\ pylint\ \-r\ n\ \-f\ parseable\ $*\ \\\|\ awk\ \-F:\ '{print\ $1\":\"$2\":0:\"$3}'
+	" 'Compile' with pep8 and pylint
+	let g:makeprg = escape('sh -c "pep8 $*; pylint -r n -f parseable --include-ids=y $* \\| ' .
+				\ "awk -F: '{print \\$1" .
+				\ '\":\"\$2\":1:\"\$3\$4\$5\$6\$7\$8\$9' .
+				\"}'" .
+				\ '"', "\" \\")
+	autocmd Filetype python execute "setlocal makeprg=" . g:makeprg
+	"pep8\ $*\ &&\ pylint\ -r\ n\ -f\ parseable\ --include-ids=y\ $*
 	autocmd Filetype python setlocal errorformat=%f:%l:%c:\ %m
 	" Execute.
 	autocmd Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
@@ -819,7 +849,7 @@ let g:jedi#use_tabs_not_buffers = 0
 let g:jedi#popup_select_first = 0
 let g:jedi#autocompletion_command = "<leader>zzz"
 let g:jedi#auto_vim_configuration = 0
-let g:jedi#show_function_def = 0
+let g:jedi#show_function_definition = 0
 
 " ------------------------------------------------------------------------------
 " - LanguageTool_(plugins)                                                     -
@@ -846,7 +876,7 @@ augroup END
 " - paraincr()_(functions)                                                     -
 " ------------------------------------------------------------------------------
 "
-" Increments/decriments column of numbers.
+" Increments/decrements column of numbers.
 
 function! ParaIncr(direction,bufferingchar,bufferingside)
 	" get register data to restore later
@@ -1166,7 +1196,7 @@ endfunction
 function! GenerateTagsForProject()
 	echo "Generating project-specific tags, may take a few seconds..."
 	let l:projpath = substitute(g:project,'+','/','g')
-	call system('ctags -R -f '.$HOME.'.vim/projects/'.g:project.' '.l:projpath)
+	call system('ctags -R -f ~/.vim/projects/'.g:project.' '.l:projpath)
 	redraw
 	echo "Done generating tags."
 endfunction
@@ -1354,3 +1384,42 @@ function! ParaTagSelect(Cmdline)
 	endif
 	execute "normal :tag " . terms[0] . "\<cr>"
 endfunction
+
+function! QuickFixSigns()
+	sign define warning text=WW texthl=Error
+	sign define error text=EE texthl=Error
+	sign define convention text=CC texthl=Error
+	sign define misc text=>> texthl=Error
+	sign unplace *
+	let qflines = []
+	let index = 1
+	for item in getqflist()
+		if item['text'][0] == 'E' || item['text'][1] == 'E'
+			execute "sign place " . index . " line=" . item['lnum'] . " name=error buffer=" . item['bufnr']
+		elseif item['text'][0] == 'W' || item['text'][1] == 'W'
+			execute "sign place " . index . " line=" . item['lnum'] . " name=warning buffer=" . item['bufnr']
+		elseif item['text'][0] == 'W' || item['text'][1] == 'C'
+			execute "sign place " . index . " line=" . item['lnum'] . " name=convention buffer=" . item['bufnr']
+		else
+			execute "sign place " . index . " line=" . item['lnum'] . " name=misc buffer=" . item['bufnr']
+		endif
+		let index += 1
+	endfor
+endfunction
+augroup signs
+	autocmd QuickFixCmdPost * call QuickFixSigns()
+augroup END
+
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+
+function! SearchSigns()
+	let l:cursor = getpos(".")
+	sign define search text=// texthl=Normal
+	sign unplace *
+	let index = 1
+	execute "g/". @/ ."/execute 'sign place ' . index . ' line=' . line('.') . ' name=search buffer=' . bufnr('%') | let index += 1"
+	call setpos(".", l:cursor)
+endfunction
+augroup signs
+	autocmd CmdwinLeave * if g:lastcmdwin == "/" || g:lastcmdwin == "?" | call feedkeys(":call SearchSigns()","n") | endif
+augroup END
