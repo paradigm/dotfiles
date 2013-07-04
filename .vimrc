@@ -189,11 +189,11 @@ nnoremap ]A :last<cr>
 
 " Swap default ':', '/' and '?' with cmdline-window equivalent.
 nnoremap : :let g:lastcmdwin=":"<cr>q:i
-xnoremap : :let g:lastcmdwin=":"<cr>q:i
+xnoremap : <cr>q:i
 nnoremap / :let g:lastcmdwin="/"<cr>q/i
-xnoremap / :let g:lastcmdwin="/"<cr>q/i
+xnoremap / <cr>q/i
 nnoremap ? :let g:lastcmdwin="?"<cr>q?i
-xnoremap ? :let g:lastcmdwin="?"<cr>q?i
+xnoremap ? <cr>q?i
 nnoremap q: :
 xnoremap q: :
 nnoremap q/ /
@@ -208,8 +208,8 @@ autocmd CmdwinEnter * nnoremap <buffer> <esc> :let g:lastcmdwin=""\|q\|echo ""<c
 " ------------------------------------------------------------------------------
 
 nnoremap <c-p>t :diffthis<cr>
-nnoremap <c-p>u :diffupdate<cr>
-nnoremap <c-p>x :diffoff<cr>
+nnoremap <c-p>u :diffupdate<cr><c-l>
+nnoremap <c-p>x :diffoff<cr>:sign unplace *<cr>
 nnoremap <c-p>y do<cr>
 nnoremap <c-p>p dp<cr>
 
@@ -274,7 +274,7 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 nnoremap <cr>     2:<c-u>call SkyBison("b ")<cr>
 autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>
 autocmd FileType qf nnoremap <buffer> <cr> <cr>
-nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("T ")<cr>
+nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
 nnoremap <space>h 2:<c-u>call SkyBison("H ")<cr>
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
 nnoremap <space>;  :<c-u>call SkyBison("")<cr>
@@ -588,6 +588,21 @@ if &t_Co == 256
 	execute "highlight Visual       ctermfg = " . nbg
 	execute "highlight Visual       ctermbg = " . nfg
 	execute "highlight SignColumn   ctermbg = " . nbg
+	execute "highlight DiffAdd      cterm   = NONE"
+	execute "highlight DiffAdd      ctermfg = NONE"
+	execute "highlight DiffAdd      ctermbg = NONE"
+	execute "highlight DiffChange   cterm   = NONE"
+	execute "highlight DiffChange   ctermfg = NONE"
+	execute "highlight DiffChange   ctermbg = NONE"
+	execute "highlight DiffDelete   cterm   = NONE"
+	execute "highlight DiffDelete   ctermfg = NONE"
+	execute "highlight DiffDelete   ctermbg = NONE"
+	execute "highlight DiffText     cterm   = NONE"
+	execute "highlight DiffText     ctermfg = NONE"
+	execute "highlight DiffText     ctermbg = NONE"
+	execute "highlight FoldColumn   cterm   = NONE"
+	execute "highlight FoldColumn   ctermfg = " . nfg
+	execute "highlight FoldColumn   ctermbg = " . nbg
 endif
 
 
@@ -662,7 +677,6 @@ augroup python
 				\"}'" .
 				\ '"', "\" \\")
 	autocmd Filetype python execute "setlocal makeprg=" . g:makeprg
-	"pep8\ $*\ &&\ pylint\ -r\ n\ -f\ parseable\ --include-ids=y\ $*
 	autocmd Filetype python setlocal errorformat=%f:%l:%c:\ %m
 	" Execute.
 	autocmd Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
@@ -1426,3 +1440,66 @@ augroup END
 
 nnoremap <space>p <c-w>}
 nnoremap <space>P :pclose<cr>
+
+set diffexpr=DiffSigns()
+function! DiffSigns()
+	sign define added   text=++ texthl=DiffAdd
+	sign define deleted text=-- texthl=DiffDelete
+	sign define changed text=!! texthl=DiffChange
+	sign unplace *
+	let opt = ""
+	if &diffopt =~ "icase"
+		let opt = opt . "-i "
+	endif
+	if &diffopt =~ "iwhite"
+		let opt = opt . "-b "
+	endif
+	silent execute "!diff -a --binary " . opt . v:fname_in . " " . v:fname_new . " > " . v:fname_out
+	let diff = system("cat " . v:fname_out)
+"	for bufnr in range(1,bufnr("$"))
+"	endfor
+	for line in split(diff,"\n")
+		if line =~ "^[0-9]"
+			let left_side = split(line, "[acd]")[0]
+			let right_side = split(line, "[acd]")[1]
+			let changetype = split(line, "[0-9,]")[0]
+			if left_side =~ ","
+				let left_start = split(left_side, ",")[0]
+				let left_end = split(left_side, ",")[1]
+			else
+				let left_start = left_side
+				let left_end = left_side
+			endif
+			if right_side =~ ","
+				let right_start = split(right_side, ",")[0]
+				let right_end = split(right_side, ",")[1]
+			else
+				let right_start = right_side
+				let right_end = right_side
+			endif
+			if changetype == "a"
+				let left_signtype = "deleted"
+				let right_signtype = "added"
+			elseif changetype == "d"
+				let left_signtype = "added"
+				let right_signtype = "deleted"
+			elseif changetype == "c"
+				let left_signtype = "changed"
+				let right_signtype = "changed"
+			else
+				left_signtype = "???"
+				right_signtype = "???"
+			endif
+			for linenr in range(left_start, left_end)
+				if left_signtype != "deleted"
+					execute "sign place " . 1 . " line=" . linenr . " name=" . left_signtype . " buffer=" . winbufnr(1)
+				endif
+			endfor
+			for linenr in range(right_start, right_end)
+				if right_signtype != "deleted"
+					execute "sign place " . 1 . " line=" . linenr . " name=" . right_signtype . " buffer=" . winbufnr(2)
+				endif
+			endfor
+		endif
+	endfor
+endfunction
