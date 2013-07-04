@@ -46,6 +46,31 @@ cds() {
 	cd $1 && clear && ls
 }
 
+# print a field from the output of the last command
+# useful for acting on the output of the last command, e.g.:
+# $ alias Z='field_from_last_command'
+# $ grep -RH "error"
+# ./README.md:ignore errors
+# ./exceptions.py:# error
+# $ vim $(Z 2 :)
+# -> now editing exceptions.py
+field_from_last_command(){
+	if [ "$#" -eq 0 ]
+	then
+		fc -l -1 | tr -s " " | cut -d" " -f3-
+	elif [ "$#" -eq 1 ]
+	then
+		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | sed -n "$1p"
+	elif [ "$#" -eq 2 ]
+	then
+		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk "NR==$1{print\$$2}"
+	elif [ "$#" -eq 3 ]
+	then
+		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk -F"$3" "NR==$1{print\$$2}"
+	else
+	fi
+}
+
 # ==============================================================================
 # = key_bindings                                                               =
 # ==============================================================================
@@ -215,6 +240,7 @@ alias ta="tmux attach"
 alias v="vim"
 alias vs="vim --servername vim"
 alias vv="cd /dev/shm"
+alias Z="field_from_last_command"
 
 # ------------------------------------------------------------------------------
 # - set_default_flags_(aliases)                                                -
