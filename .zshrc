@@ -49,7 +49,7 @@ setopt nobgnice
 setopt noflowcontrol
 stty -ixon
 
-# Do not kill background processes when closing the shell. 
+# Do not kill background processes when closing the shell.
 setopt nohup
 
 # Do not warn about closing the shell with background jobs running.

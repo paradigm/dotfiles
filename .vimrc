@@ -21,7 +21,7 @@ set nocompatible
 set autoindent
 " Make i_backspace act as it does in most other programs.
 set backspace=2
-" Folding should be set manually, never automatically.
+" Automatically determine folds based on syntax
 set foldmethod=syntax
 " Do not fold anything by default.
 set foldlevel=999
@@ -621,6 +621,9 @@ autocmd BufRead,BufNewFile .pentadactylrc setfiletype vim
 " - viml_(filetype-specific)                                                   -
 " ------------------------------------------------------------------------------
 
+" enable vim folding based on syntax
+let g:vimsyn_folding = "afmpPrt"
+
 augroup viml
 	autocmd!
 	" VimL has its own omnicompletion mapping by default, separate from the normal
@@ -684,6 +687,9 @@ augroup python
 	autocmd Filetype python set tags+=,~/.vim/tags/pythontags
 	" regenerate tags
 	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/pythontags /usr/lib/py* /usr/local/lib/py*"]
+	" python syntax-based folding
+	" yanked from http://vim.wikia.com/wiki/Syntax_folding_of_Python_files
+	autocmd Filetype python setlocal foldtext=substitute(getline(v:foldstart),'\\t','\ \ \ \ ','g')
 augroup END
 
 " ------------------------------------------------------------------------------
@@ -722,6 +728,26 @@ augroup cpp
 	autocmd Filetype cpp set makeprg=g++
 	" Execute.
 	autocmd Filetype cpp nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
+augroup END
+
+" ------------------------------------------------------------------------------
+" - sh_(filetype-specific)                                                     -
+" ------------------------------------------------------------------------------
+
+" enable if/do/for folding
+let g:sh_fold_enabled= 4
+
+" syntax highlight embedded awk
+" Taken from syntax.txt, which took it from Aaron Hope's aspperl.vim
+augroup sh
+	autocmd Filetype sh if exists("b:current_syntax")
+	autocmd Filetype sh   unlet b:current_syntax
+	autocmd Filetype sh endif
+	autocmd Filetype sh syn include @AWKScript syntax/awk.vim
+	autocmd Filetype sh syn region AWKScriptCode matchgroup=AWKCommand start=+[=\\]\@<!'+ skip=+\\'+ end=+'+ contains=@AWKScript contained
+	autocmd Filetype sh syn region AWKScriptEmbedded matchgroup=AWKCommand start=+\<awk\>+ skip=+\\$+ end=+[=\\]\@<!'+me=e-1 contains=@shIdList,@shExprList2 nextgroup=AWKScriptCode
+	autocmd Filetype sh syn cluster shCommandSubList add=AWKScriptEmbedded
+	autocmd Filetype sh hi def link AWKCommand Type
 augroup END
 
 " ------------------------------------------------------------------------------
@@ -1406,18 +1432,16 @@ function! QuickFixSigns()
 	sign define misc text=>> texthl=Error
 	sign unplace *
 	let qflines = []
-	let index = 1
 	for item in getqflist()
 		if item['text'][0] == 'E' || item['text'][1] == 'E'
-			execute "sign place " . index . " line=" . item['lnum'] . " name=error buffer=" . item['bufnr']
+			execute "sign place 1 line=" . item['lnum'] . " name=error buffer=" . item['bufnr']
 		elseif item['text'][0] == 'W' || item['text'][1] == 'W'
-			execute "sign place " . index . " line=" . item['lnum'] . " name=warning buffer=" . item['bufnr']
+			execute "sign place 1 line=" . item['lnum'] . " name=warning buffer=" . item['bufnr']
 		elseif item['text'][0] == 'W' || item['text'][1] == 'C'
-			execute "sign place " . index . " line=" . item['lnum'] . " name=convention buffer=" . item['bufnr']
+			execute "sign place 1 line=" . item['lnum'] . " name=convention buffer=" . item['bufnr']
 		else
-			execute "sign place " . index . " line=" . item['lnum'] . " name=misc buffer=" . item['bufnr']
+			execute "sign place 1 line=" . item['lnum'] . " name=misc buffer=" . item['bufnr']
 		endif
-		let index += 1
 	endfor
 endfunction
 augroup signs
@@ -1430,8 +1454,7 @@ function! SearchSigns()
 	let l:cursor = getpos(".")
 	sign define search text=// texthl=Error
 	sign unplace *
-	let index = 1
-	execute "g/". @/ ."/execute 'sign place ' . index . ' line=' . line('.') . ' name=search buffer=' . bufnr('%') | let index += 1"
+	execute "g/". @/ ."/execute 'sign place 1 line=' . line('.') . ' name=search buffer=' . bufnr('%')"
 	call setpos(".", l:cursor)
 endfunction
 augroup signs
@@ -1492,14 +1515,38 @@ function! DiffSigns()
 			endif
 			for linenr in range(left_start, left_end)
 				if left_signtype != "deleted"
-					execute "sign place " . 1 . " line=" . linenr . " name=" . left_signtype . " buffer=" . winbufnr(1)
+					execute "sign place 1 line=" . linenr . " name=" . left_signtype . " buffer=" . winbufnr(1)
 				endif
 			endfor
 			for linenr in range(right_start, right_end)
 				if right_signtype != "deleted"
-					execute "sign place " . 1 . " line=" . linenr . " name=" . right_signtype . " buffer=" . winbufnr(2)
+					execute "sign place 1 line=" . linenr . " name=" . right_signtype . " buffer=" . winbufnr(2)
 				endif
 			endfor
 		endif
 	endfor
+endfunction
+
+nnoremap <space>M :call SignMarks()<cr>
+function! SignMarks()
+	sign unplace *
+	for mark in ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z", "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9", "[","]","<",">","'",'"',"^",".","`","(",")","{","}"]
+		let char = mark
+		let pos = getpos("'" . char)
+		if pos != [0,0,0,0]
+			if pos[0] != 0
+				let bufnr = pos[0]
+			else
+				let bufnr = bufnr("%")
+			endif
+			execute "sign define mark" . char . " text='" . char . " texthl=NonText"
+			execute "sign place 1 line=" . pos[1] . " name=mark" . char . " buffer=" . bufnr
+		endif
+	endfor
+endfunction
+
+nnoremap m :call DropMark()<cr>
+function! DropMark()
+	execute "normal! m" . nr2char(getchar())
+	call SignMarks()
 endfunction
