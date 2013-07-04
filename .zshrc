@@ -471,7 +471,6 @@ field_from_last_command(){
 	elif [ "$#" -eq 3 ]
 	then
 		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk -F"$3" "NR==$1{print\$$2}"
-	else
 	fi
 }
 
