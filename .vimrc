@@ -189,11 +189,11 @@ nnoremap ]A :last<cr>
 
 " Swap default ':', '/' and '?' with cmdline-window equivalent.
 nnoremap : :let g:lastcmdwin=":"<cr>q:i
-xnoremap : <cr>q:i
+xnoremap : q:i
 nnoremap / :let g:lastcmdwin="/"<cr>q/i
-xnoremap / <cr>q/i
+xnoremap / q/i
 nnoremap ? :let g:lastcmdwin="?"<cr>q?i
-xnoremap ? <cr>q?i
+xnoremap ? q?i
 nnoremap q: :
 xnoremap q: :
 nnoremap q/ /
