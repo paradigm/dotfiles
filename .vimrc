@@ -709,7 +709,7 @@ augroup END
 augroup c
 	autocmd!
 	" Set compiler.
-	autocmd Filetype c set makeprg=gcc
+	autocmd Filetype c setlocal makeprg=make\ all
 	" Execute result.
 	autocmd Filetype c nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
 	" include c tags
@@ -725,7 +725,7 @@ augroup END
 augroup cpp
 	autocmd!
 	" Set compiler.
-	autocmd Filetype cpp set makeprg=g++
+	autocmd Filetype cpp setlocal makeprg=g++
 	" Execute.
 	autocmd Filetype cpp nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
 augroup END
@@ -1375,11 +1375,13 @@ call GetProject()
 
 function! CCOnError()
 	redraw
-	if(len(getqflist())==0)
-		echo 'no errors'
-	else
-		cc
-	endif
+	for error in getqflist()
+		if error['bufnr'] != 0
+			cc
+			return
+		endif
+	endfor
+	echo 'no errors'
 endfunction
 
 " add current tags from current git project, if any
@@ -1433,14 +1435,16 @@ function! QuickFixSigns()
 	sign unplace *
 	let qflines = []
 	for item in getqflist()
-		if item['text'][0] == 'E' || item['text'][1] == 'E'
-			execute "sign place 1 line=" . item['lnum'] . " name=error buffer=" . item['bufnr']
-		elseif item['text'][0] == 'W' || item['text'][1] == 'W'
-			execute "sign place 1 line=" . item['lnum'] . " name=warning buffer=" . item['bufnr']
-		elseif item['text'][0] == 'W' || item['text'][1] == 'C'
-			execute "sign place 1 line=" . item['lnum'] . " name=convention buffer=" . item['bufnr']
-		else
-			execute "sign place 1 line=" . item['lnum'] . " name=misc buffer=" . item['bufnr']
+		if item['bufnr'] != 0
+			if item['text'][0] == 'E' || item['text'][1] == 'E'
+				execute "sign place 1 line=" . item['lnum'] . " name=error buffer=" . item['bufnr']
+			elseif item['text'][0] == 'W' || item['text'][1] == 'W'
+				execute "sign place 1 line=" . item['lnum'] . " name=warning buffer=" . item['bufnr']
+			elseif item['text'][0] == 'W' || item['text'][1] == 'C'
+				execute "sign place 1 line=" . item['lnum'] . " name=convention buffer=" . item['bufnr']
+			else
+				execute "sign place 1 line=" . item['lnum'] . " name=misc buffer=" . item['bufnr']
+			endif
 		endif
 	endfor
 endfunction
@@ -1530,7 +1534,7 @@ endfunction
 nnoremap <space>M :call SignMarks()<cr>
 function! SignMarks()
 	sign unplace *
-	for mark in ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z", "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9", "[","]","<",">","'",'"',"^",".","`","(",")","{","}"]
+	for mark in ["}","{",")","(","`",".","^",'"',"'",">","<","]","[" ,"9","8","7","6","5","4","3","2","1","0","Z","Y","X","W","V","U","T","S","R","Q","P","O","N","M","L","K","J","I","H","G","F","E","D","C","B","A" ,"z","y","x","w","v","u","t","s","r","q","p","o","n","m","l","k","j","i","h","g","f","e","d","c","b","a"]
 		let char = mark
 		let pos = getpos("'" . char)
 		if pos != [0,0,0,0]
@@ -1545,8 +1549,5 @@ function! SignMarks()
 	endfor
 endfunction
 
-nnoremap m :call DropMark()<cr>
-function! DropMark()
-	execute "normal! m" . nr2char(getchar())
-	call SignMarks()
-endfunction
+inoremap <expr> ( len(taglist("^".split(getline(".")[0:col(".")],'\W\+')[-1]."$")) > 0 ? "<c-o><c-w>}(" : "("
+inoremap ) <c-o><c-w>z)
