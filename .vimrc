@@ -1548,6 +1548,3 @@ function! SignMarks()
 		endif
 	endfor
 endfunction
-
-inoremap <expr> ( len(taglist("^".split(getline(".")[0:col(".")],'\W\+')[-1]."$")) > 0 ? "<c-o><c-w>}(" : "("
-inoremap ) <c-o><c-w>z)
