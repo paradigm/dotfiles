@@ -22,3 +22,12 @@
 [submodule ".vim/bundle/textobjectify"]
 	path = .vim/bundle/textobjectify
 	url = git@github.com:paradigm/TextObjectify.git
+[submodule ".vim/bundle/jedi-vim"]
+	path = .vim/bundle/jedi-vim
+	url = git://github.com/davidhalter/jedi-vim.git
+[submodule ".vim/bundle/vim-fugitive"]
+	path = .vim/bundle/vim-fugitive
+	url = git://github.com/tpope/vim-fugitive.git
+[submodule ".vim/bundle/SimpylFold"]
+	path = .vim/bundle/SimpylFold
+	url = https://github.com/tmhedberg/SimpylFold

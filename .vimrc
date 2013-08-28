@@ -13,16 +13,16 @@
 " ==============================================================================
 "
 " These are general shell settings that don't fit well into any of the
-" catagories used below.  Order may matter for some of these.
+" categories used below.  Order may matter for some of these.
 
-" Disable vi compatibilty restrictions.
+" Disable vi compatibility restrictions.
 set nocompatible
 " When creating a new line, set indentation same as previous line.
 set autoindent
 " Make i_backspace act as it does in most other programs.
 set backspace=2
-" Folding should be set manually, never automatically.
-set foldmethod=manual
+" Automatically determine folds based on syntax
+set foldmethod=syntax
 " Do not fold anything by default.
 set foldlevel=999
 " Allow modified/unsaved buffers in the background.
@@ -38,7 +38,7 @@ set ignorecase
 set smartcase
 " Disable modeline.  I know the settings I like; I don't need others telling me
 " what to use.  Also, historically, this has been a security vulnerability.
-set nomodeline
+"set nomodeline
 " Print line numbers on the left.
 set number
 " Always show cursor position in statusline.
@@ -80,6 +80,9 @@ set timeout ttimeoutlen=10 timeoutlen=500
 " was disabled as it proved more troublesome than helpful.
 "au BufWinLeave * silent! mkview!  " automatically save view on exit
 "au BufWinEnter * silent! loadview " automatically load view on load
+if exists('&relativenumber')
+	set relativenumber
+endif
 " If available, have pathogen load plugins form ~/.vim/bundle.
 if filereadable($HOME."/.vim/autoload/pathogen.vim")
 	call pathogen#runtime_append_all_bundles()
@@ -89,6 +92,9 @@ endif
 filetype plugin on
 " Utilize filetype-specific automatic indentation.
 filetype indent on
+
+" clear default tags
+set tags=""
 
 " ==============================================================================
 " = mappings                                                                   =
@@ -102,7 +108,7 @@ filetype indent on
 nnoremap <f1> <esc>
 inoremap <f1> <esc>
 " Clear search highlighting and messages at bottom when redrawing
-nnoremap <silent> <c-l> :nohlsearch<cr><c-l>
+nnoremap <silent> <c-l> :nohlsearch<cr>:sign unplace *<cr><c-l>
 " Faster mapping for saving
 nnoremap <space>w :w<cr>
 " Faster mapping for closing window / quitting
@@ -110,7 +116,9 @@ nnoremap <space>q :q<cr>
 " Re-source the .vimrc
 nnoremap <space>s :so $MYVIMRC<cr>
 " Run :make
-nnoremap <space>m :w<cr>:!clear<cr>:silent make %<cr>:cc<cr>
+nnoremap <space>m :w<cr>:!clear<cr>:silent make %<cr>:call CCOnError()<cr>
+" Run open quickfix window
+nnoremap <space>u :cw<cr>:nunmap <buffer> <cr>
 " Execute buffer ("run")
 nnoremap <space>r :cd %:p:h<cr>:!clear;./%<cr>
 " Faster mapping for spelling correction
@@ -135,27 +143,56 @@ nnoremap <silent> gk k
 xnoremap <silent> gk k
 " Toggle 'paste'
 set pastetoggle=<insert>
-" next buffer
-nnoremap + :bn<cr>
+" technically not a map, but I don't want to create a new section for it
+" opens :help for argument in same window
+command! -nargs=1 -complete=help H :help <args> |
+			\let helpfile = expand("%") |
+			\close |
+			\execute "view ".helpfile
+
+" ------------------------------------------------------------------------------
+" - next_previous_(mappings)                                                   -
+" ------------------------------------------------------------------------------
 " Find next/previous search item which is not visible in the window.
 " Note that 'scrolloff' probably breaks this.
 nnoremap <space>n L$nzt
 nnoremap <space>N H$Nzb
-
-" technically not a map, but I don't want to create a new section for it
-" opens :help for argument in same window
-command!  -nargs=1 -complete=help H :help <args> | let helpfile = expand("%") | close | execute "view ".helpfile
+" next/previous/first/last buffer
+nnoremap ]b :bnext<cr>
+nnoremap [b :bprevious<cr>
+nnoremap [B :bfirst<cr>
+nnoremap ]B :blast<cr>
+" next/previous/first/last tag
+nnoremap ]t :tnext<cr>
+nnoremap [t :tprevious<cr>
+nnoremap [T :tfirst<cr>
+nnoremap ]T :tlast<cr>
+" next/previous/first/last quickfix item
+nnoremap ]q :cnext<cr>
+nnoremap [q :cprevious<cr>
+nnoremap [Q :cfirst<cr>
+nnoremap ]Q :clast<cr>
+" next/previous/first/last location list item
+nnoremap ]l :lnext<cr>
+nnoremap [l :lprevious<cr>
+nnoremap [L :lfirst<cr>
+nnoremap ]L :llast<cr>
+" next/previous/first/last argument list item
+nnoremap ]a :next<cr>
+nnoremap [a :previous<cr>
+nnoremap [A :first<cr>
+nnoremap ]A :last<cr>
 
 " ------------------------------------------------------------------------------
 " - cmdline-window_(mappings)                                                  -
 " ------------------------------------------------------------------------------
 
 " Swap default ':', '/' and '?' with cmdline-window equivalent.
-nnoremap : q:i
+nnoremap : :let g:lastcmdwin=":"<cr>q:i
 xnoremap : q:i
-nnoremap / q/i
+nnoremap / :let g:lastcmdwin="/"<cr>q/i
 xnoremap / q/i
-nnoremap ? q?i
+nnoremap ? :let g:lastcmdwin="?"<cr>q?i
 xnoremap ? q?i
 nnoremap q: :
 xnoremap q: :
@@ -164,15 +201,15 @@ xnoremap q/ /
 nnoremap q? ?
 xnoremap q? ?
 " Have <esc> leave cmdline-window
-autocmd CmdwinEnter * nnoremap <buffer> <esc> :q<cr>
+autocmd CmdwinEnter * nnoremap <buffer> <esc> :let g:lastcmdwin=""\|q\|echo ""<cr>
 
 " ------------------------------------------------------------------------------
 " - diff_(mappings)                                                            -
 " ------------------------------------------------------------------------------
 
 nnoremap <c-p>t :diffthis<cr>
-nnoremap <c-p>u :diffupdate<cr>
-nnoremap <c-p>x :diffoff<cr>
+nnoremap <c-p>u :diffupdate<cr><c-l>
+nnoremap <c-p>x :diffoff<cr>:sign unplace *<cr>
 nnoremap <c-p>y do<cr>
 nnoremap <c-p>p dp<cr>
 
@@ -235,7 +272,8 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " ~ SkyBison_(mappings)                                                        ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <cr>     2:<c-u>call SkyBison("b ")<cr>
-autocmd CmdwinEnter * nnoremap <buffer> <cr> a<cr>
+autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>
+autocmd FileType qf nnoremap <buffer> <cr> <cr>
 nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
 nnoremap <space>h 2:<c-u>call SkyBison("H ")<cr>
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
@@ -295,7 +333,8 @@ nnoremap <space>C :call ParaSurround(2)<cr>
 " ~ GenerateTags_(mappings)                                                    ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <space>g :call GenerateTagsForBuffers()<cr>
-nnoremap <space>G :call GenerateTagsForFiletype()<cr>
+nnoremap <space>Gp :call GenerateTagsForProject()<cr>
+nnoremap <space>Gf :call GenerateTagsForFiletype()<cr>
 
 " ------------------------------------------------------------------------------
 " - custom_text_objects_(mappings)                                             -
@@ -476,6 +515,14 @@ if &t_Co == 256
 	execute "highlight Type       cterm   = NONE"
 	execute "highlight Type       ctermfg = " . m4fg
 	execute "highlight Type       ctermbg = " . m4bg
+	execute "highlight Todo       cterm   = NONE"
+	execute "highlight Todo       ctermfg = " . hfg
+	execute "highlight Todo       ctermbg = " . hbg
+	if exists('&relativenumber')
+		execute "highlight CursorLineNr cterm   = NONE"
+		execute "highlight CursorLineNr ctermfg = " . nfg
+		execute "highlight CursorLineNr ctermbg = " . nbg
+	endif
 	" spelling
 	highlight clear SpellBad
 	highlight SpellBad cterm=underline
@@ -540,6 +587,22 @@ if &t_Co == 256
 	execute "highlight Visual       cterm   = NONE"
 	execute "highlight Visual       ctermfg = " . nbg
 	execute "highlight Visual       ctermbg = " . nfg
+	execute "highlight SignColumn   ctermbg = " . nbg
+	execute "highlight DiffAdd      cterm   = NONE"
+	execute "highlight DiffAdd      ctermfg = NONE"
+	execute "highlight DiffAdd      ctermbg = NONE"
+	execute "highlight DiffChange   cterm   = NONE"
+	execute "highlight DiffChange   ctermfg = NONE"
+	execute "highlight DiffChange   ctermbg = NONE"
+	execute "highlight DiffDelete   cterm   = NONE"
+	execute "highlight DiffDelete   ctermfg = NONE"
+	execute "highlight DiffDelete   ctermbg = NONE"
+	execute "highlight DiffText     cterm   = NONE"
+	execute "highlight DiffText     ctermfg = NONE"
+	execute "highlight DiffText     ctermbg = NONE"
+	execute "highlight FoldColumn   cterm   = NONE"
+	execute "highlight FoldColumn   ctermfg = " . nfg
+	execute "highlight FoldColumn   ctermbg = " . nbg
 endif
 
 
@@ -558,6 +621,9 @@ autocmd BufRead,BufNewFile .pentadactylrc setfiletype vim
 " - viml_(filetype-specific)                                                   -
 " ------------------------------------------------------------------------------
 
+" enable vim folding based on syntax
+let g:vimsyn_folding = "afmpPrt"
+
 augroup viml
 	autocmd!
 	" VimL has its own omnicompletion mapping by default, separate from the normal
@@ -567,9 +633,10 @@ augroup viml
 	" Note that c-@ is triggered by c-space.
 	autocmd Filetype vim inoremap <buffer> <c-@> <c-x><c-v>
 	" include vim tags
-	autocmd Filetype vim set tags+=,~/.vim/tags/vimtags
+	autocmd Filetype vim set tags+=~/.vim/tags/vimtags
 	" regenerate tags
 	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vim/bundle/"]
+	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vimrc"]
 augroup END
 
 " ------------------------------------------------------------------------------
@@ -593,17 +660,36 @@ augroup END
 
 augroup python
 	autocmd!
-	" Convert indentation from spaces to tabs when opening a file.
-	autocmd Filetype python retab!
-	" Convert indentation from tabs to spaces when wring a file to disk, then
-	" immediately back when saving is done.
-	autocmd Filetype python autocmd BufWritePre * :setlocal expandtab | retab!
-	autocmd Filetype python autocmd BufWritePost * :setlocal noexpandtab | retab!
-	" 'Compile' with pep8.
-	autocmd Filetype python setlocal makeprg=pep8
-	autocmd Filetype python setlocal errorformat=%f:%l:%c:%m
+	" I got way to many dirty looks for this
+	"" Convert indentation from spaces to tabs when opening a file.
+	"autocmd Filetype python retab!
+	"" Convert indentation from tabs to spaces when wring a file to disk, then
+	"" immediately back when saving is done.
+	"autocmd Filetype python autocmd BufWritePre * :setlocal expandtab | retab!
+	"autocmd Filetype python autocmd BufWritePost * :setlocal noexpandtab | retab!
+
+	" pep8-friendly tab stuff
+	autocmd Filetype python setlocal expandtab
+	autocmd Filetype python setlocal tabstop=4
+	autocmd Filetype python setlocal shiftwidth=4
+	autocmd Filetype python setlocal softtabstop=4
+	" 'Compile' with pep8 and pylint
+	let g:makeprg = escape('sh -c "pep8 $*; pylint -r n -f parseable --include-ids=y $* \\| ' .
+				\ "awk -F: '{print \\$1" .
+				\ '\":\"\$2\":1:\"\$3\$4\$5\$6\$7\$8\$9' .
+				\"}'" .
+				\ '"', "\" \\")
+	autocmd Filetype python execute "setlocal makeprg=" . g:makeprg
+	autocmd Filetype python setlocal errorformat=%f:%l:%c:\ %m
 	" Execute.
 	autocmd Filetype python nnoremap <buffer> <space>r :cd %:p:h<cr>:!python %<cr>
+	" include python tags
+	autocmd Filetype python set tags+=,~/.vim/tags/pythontags
+	" regenerate tags
+	autocmd Filetype vim let g:generate_tags+=["ctags -R -f ~/.vim/tags/pythontags /usr/lib/py* /usr/local/lib/py*"]
+	" python syntax-based folding
+	" yanked from http://vim.wikia.com/wiki/Syntax_folding_of_Python_files
+	autocmd Filetype python setlocal foldtext=substitute(getline(v:foldstart),'\\t','\ \ \ \ ','g')
 augroup END
 
 " ------------------------------------------------------------------------------
@@ -623,7 +709,7 @@ augroup END
 augroup c
 	autocmd!
 	" Set compiler.
-	autocmd Filetype c set makeprg=gcc
+	autocmd Filetype c setlocal makeprg=make\ all
 	" Execute result.
 	autocmd Filetype c nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
 	" include c tags
@@ -639,9 +725,29 @@ augroup END
 augroup cpp
 	autocmd!
 	" Set compiler.
-	autocmd Filetype cpp set makeprg=g++
+	autocmd Filetype cpp setlocal makeprg=g++
 	" Execute.
 	autocmd Filetype cpp nnoremap <buffer> <space>r :cd %:p:h<cr>:!clear;./a.out<cr>
+augroup END
+
+" ------------------------------------------------------------------------------
+" - sh_(filetype-specific)                                                     -
+" ------------------------------------------------------------------------------
+
+" enable if/do/for folding
+let g:sh_fold_enabled= 4
+
+" syntax highlight embedded awk
+" Taken from syntax.txt, which took it from Aaron Hope's aspperl.vim
+augroup sh
+	autocmd Filetype sh if exists("b:current_syntax")
+	autocmd Filetype sh   unlet b:current_syntax
+	autocmd Filetype sh endif
+	autocmd Filetype sh syn include @AWKScript syntax/awk.vim
+	autocmd Filetype sh syn region AWKScriptCode matchgroup=AWKCommand start=+[=\\]\@<!'+ skip=+\\'+ end=+'+ contains=@AWKScript contained
+	autocmd Filetype sh syn region AWKScriptEmbedded matchgroup=AWKCommand start=+\<awk\>+ skip=+\\$+ end=+[=\\]\@<!'+me=e-1 contains=@shIdList,@shExprList2 nextgroup=AWKScriptCode
+	autocmd Filetype sh syn cluster shCommandSubList add=AWKScriptEmbedded
+	autocmd Filetype sh hi def link AWKCommand Type
 augroup END
 
 " ------------------------------------------------------------------------------
@@ -742,7 +848,7 @@ augroup END
 " highlighting, use that for omnicompletion
 
 if has("autocmd") && exists("+omnifunc")
-	autocmd Filetype *  if &omnifunc == "" | setlocal omnifunc=syntaxcomplete#Complete | endif
+	autocmd Filetype * if &omnifunc == "" | setlocal omnifunc=syntaxcomplete#Complete | endif
 endif
 
 " ==============================================================================
@@ -775,6 +881,17 @@ highlight EasyMotionTarget  cterm=NONE ctermfg=White ctermbg=Black
 highlight EasyMotionShade   cterm=NONE ctermfg=240   ctermbg=Black
 
 " ------------------------------------------------------------------------------
+" - jedi_(plugins)                                                             -
+" ------------------------------------------------------------------------------
+" jedi has some uses, but the defaults are terribly intrusive
+
+let g:jedi#use_tabs_not_buffers = 0
+let g:jedi#popup_select_first = 0
+let g:jedi#autocompletion_command = "<leader>zzz"
+let g:jedi#auto_vim_configuration = 0
+let g:jedi#show_function_definition = 0
+
+" ------------------------------------------------------------------------------
 " - LanguageTool_(plugins)                                                     -
 " ------------------------------------------------------------------------------
 
@@ -799,7 +916,7 @@ augroup END
 " - paraincr()_(functions)                                                     -
 " ------------------------------------------------------------------------------
 "
-" Increments/decriments column of numbers.
+" Increments/decrements column of numbers.
 
 function! ParaIncr(direction,bufferingchar,bufferingside)
 	" get register data to restore later
@@ -1111,6 +1228,20 @@ function! GenerateTagsForBuffers()
 endfunction
 
 " ------------------------------------------------------------------------------
+" - generatetagsforproject()_(functions)                                      -
+" ------------------------------------------------------------------------------
+"
+" (re)generates tag files for project
+
+function! GenerateTagsForProject()
+	echo "Generating project-specific tags, may take a few seconds..."
+	let l:projpath = substitute(g:project,'+','/','g')
+	call system('ctags -R -f ~/.vim/projects/'.g:project.' '.l:projpath)
+	redraw
+	echo "Done generating tags."
+endfunction
+
+" ------------------------------------------------------------------------------
 " - generatetagsforfiletype()_(functions)                                      -
 " ------------------------------------------------------------------------------
 "
@@ -1217,4 +1348,203 @@ function! GetCtagsFiletype(vimfiletype)
 	else
 		return("")
 	endif
+endfunction
+
+" ==============================================================================
+" = quick and dirty code                                                       =
+" ==============================================================================
+
+function! MarkProjectRoot()
+	" make initial/empty tags file
+	call system('touch ~/.vim/projects/'.substitute(getcwd(),'/','+','g'))
+	call GetProject()
+endfunction
+
+" set current project (if any)
+function! GetProject()
+	let cwd = substitute(getcwd(),'/','+','g')
+	for project in split(system('ls ~/.vim/projects/'))
+		if stridx(cwd,project) == 0
+			let g:project = project
+			execute "set tags+=,~/.vim/projects/".g:project
+			break
+		endif
+	endfor
+endfunction
+call GetProject()
+
+function! CCOnError()
+	redraw
+	for error in getqflist()
+		if error['bufnr'] != 0
+			cc
+			return
+		endif
+	endfor
+	echo 'no errors'
+endfunction
+
+" add current tags from current git project, if any
+if system("git rev-parse --show-toplevel") != ""
+	exec "set tags+=" . system("git rev-parse --show-toplevel")[:-2] . "/.git/tags"
+endif
+
+
+" alternative to :tagselect
+command! -nargs=* -complete=custom,ParaTagSelectCompl T :call ParaTagSelect("<args>")
+function! ParaTagSelectCompl(ArgLead, Cmdline, CursorPos)
+	" This is intended for SkyBison which currently does not allow the cursor
+	" to be anywhere but the end of the line.
+
+	let terms = split(a:Cmdline)
+
+	if len(terms) == 1 || (len(terms) == 2 && a:Cmdline[-1:] != " ")
+		let l:d={}
+		execute "silent normal! :tag " . a:ArgLead . "\<c-a>\<c-\>eextend(l:d, {'cmdline':getcmdline()}).cmdline\n"
+		if has_key(l:d, 'cmdline') && l:d['cmdline'] !~ ''
+			return join(split(l:d['cmdline'])[1:],"\n")
+		else
+			return ""
+		endif
+	endif
+	if len(terms) == 2 || (len(terms) == 3 && a:Cmdline[-1:] != " ")
+		let results = []
+		for tag in taglist(terms[1])
+			if count(results, tag['filename']) == 0
+				let results += [tag['filename']]
+			endif
+		endfor
+		return join(results,"\n")
+	endif
+	return ""
+endfunction
+function! ParaTagSelect(Cmdline)
+	let terms = split(a:Cmdline)
+
+	if len(terms) == 2
+		execute "normal :e " . terms[1] . "\<cr>"
+	endif
+	execute "normal :tag " . terms[0] . "\<cr>"
+endfunction
+
+function! QuickFixSigns()
+	sign define warning text=WW texthl=Error
+	sign define error text=EE texthl=Error
+	sign define convention text=CC texthl=Error
+	sign define misc text=>> texthl=Error
+	sign unplace *
+	let qflines = []
+	for item in getqflist()
+		if item['bufnr'] != 0
+			if item['text'][0] == 'E' || item['text'][1] == 'E'
+				execute "sign place 1 line=" . item['lnum'] . " name=error buffer=" . item['bufnr']
+			elseif item['text'][0] == 'W' || item['text'][1] == 'W'
+				execute "sign place 1 line=" . item['lnum'] . " name=warning buffer=" . item['bufnr']
+			elseif item['text'][0] == 'W' || item['text'][1] == 'C'
+				execute "sign place 1 line=" . item['lnum'] . " name=convention buffer=" . item['bufnr']
+			else
+				execute "sign place 1 line=" . item['lnum'] . " name=misc buffer=" . item['bufnr']
+			endif
+		endif
+	endfor
+endfunction
+augroup signs
+	autocmd QuickFixCmdPost * call QuickFixSigns()
+augroup END
+
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+
+function! SearchSigns()
+	let l:cursor = getpos(".")
+	sign define search text=// texthl=Error
+	sign unplace *
+	execute "g/". @/ ."/execute 'sign place 1 line=' . line('.') . ' name=search buffer=' . bufnr('%')"
+	call setpos(".", l:cursor)
+endfunction
+augroup signs
+	autocmd CmdwinLeave * if g:lastcmdwin == "/" || g:lastcmdwin == "?" | call feedkeys(":call SearchSigns()","n") | endif
+augroup END
+
+nnoremap <space>p <c-w>}
+nnoremap <space>P :pclose<cr>
+
+set diffexpr=DiffSigns()
+function! DiffSigns()
+	sign define added   text=++ texthl=DiffAdd
+	sign define deleted text=-- texthl=DiffDelete
+	sign define changed text=!! texthl=DiffChange
+	sign unplace *
+	let opt = ""
+	if &diffopt =~ "icase"
+		let opt = opt . "-i "
+	endif
+	if &diffopt =~ "iwhite"
+		let opt = opt . "-b "
+	endif
+	silent execute "!diff -a --binary " . opt . v:fname_in . " " . v:fname_new . " > " . v:fname_out
+	let diff = system("cat " . v:fname_out)
+"	for bufnr in range(1,bufnr("$"))
+"	endfor
+	for line in split(diff,"\n")
+		if line =~ "^[0-9]"
+			let left_side = split(line, "[acd]")[0]
+			let right_side = split(line, "[acd]")[1]
+			let changetype = split(line, "[0-9,]")[0]
+			if left_side =~ ","
+				let left_start = split(left_side, ",")[0]
+				let left_end = split(left_side, ",")[1]
+			else
+				let left_start = left_side
+				let left_end = left_side
+			endif
+			if right_side =~ ","
+				let right_start = split(right_side, ",")[0]
+				let right_end = split(right_side, ",")[1]
+			else
+				let right_start = right_side
+				let right_end = right_side
+			endif
+			if changetype == "a"
+				let left_signtype = "deleted"
+				let right_signtype = "added"
+			elseif changetype == "d"
+				let left_signtype = "added"
+				let right_signtype = "deleted"
+			elseif changetype == "c"
+				let left_signtype = "changed"
+				let right_signtype = "changed"
+			else
+				left_signtype = "???"
+				right_signtype = "???"
+			endif
+			for linenr in range(left_start, left_end)
+				if left_signtype != "deleted"
+					execute "sign place 1 line=" . linenr . " name=" . left_signtype . " buffer=" . winbufnr(1)
+				endif
+			endfor
+			for linenr in range(right_start, right_end)
+				if right_signtype != "deleted"
+					execute "sign place 1 line=" . linenr . " name=" . right_signtype . " buffer=" . winbufnr(2)
+				endif
+			endfor
+		endif
+	endfor
+endfunction
+
+nnoremap <space>M :call SignMarks()<cr>
+function! SignMarks()
+	sign unplace *
+	for mark in ["}","{",")","(","`",".","^",'"',"'",">","<","]","[" ,"9","8","7","6","5","4","3","2","1","0","Z","Y","X","W","V","U","T","S","R","Q","P","O","N","M","L","K","J","I","H","G","F","E","D","C","B","A" ,"z","y","x","w","v","u","t","s","r","q","p","o","n","m","l","k","j","i","h","g","f","e","d","c","b","a"]
+		let char = mark
+		let pos = getpos("'" . char)
+		if pos != [0,0,0,0]
+			if pos[0] != 0
+				let bufnr = pos[0]
+			else
+				let bufnr = bufnr("%")
+			endif
+			execute "sign define mark" . char . " text='" . char . " texthl=NonText"
+			execute "sign place 1 line=" . pos[1] . " name=mark" . char . " buffer=" . bufnr
+		endif
+	endfor
 endfunction

@@ -68,7 +68,7 @@ bind '"":""'
 # ==============================================================================
 #
 # ------------------------------------------------------------------------------
-# - general_(evironmental_variables)                                           -
+# - general_(environmental_variables)                                          -
 # ------------------------------------------------------------------------------
 
 # "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
@@ -76,19 +76,24 @@ bind '"":""'
 export SHELL="/bin/bash"
 
 # Set the default text editor.
-export EDITOR="vim"
+if which vim >/dev/null 2>&1
+then
+	export EDITOR="vim"
+elif which vi >/dev/null 2>&1
+then
+	export EDITOR="vi"
+fi
 
 # Set the default web browser.
-if [ -z "$DISPLAY" ]
+if [ -n "$DISPLAY" ] && which "dwb" >/dev/null 2>&1
+then
+	export BROWSER="dwb"
+elif [ -n "$DISPLAY" ] && which "firefox" >/dev/null 2>&1
+then
+	export BROWSER="firefox"
+elif [ -z "$DISPLAY" ] && which "elinks" >/dev/null 2>&1
 then
 	export BROWSER="elinks"
-else
-	if which dwb 1>/dev/null 2>/dev/null
-	then
-		export BROWSER="dwb"
-	else
-		export BROWSER="firefox"
-	fi
 fi
 
 # If in a terminal that can use 256 colors, ensure TERM reflects that fact.
@@ -100,22 +105,50 @@ then
 	export TERM="screen-256color"
 fi
 
-# Set the default PDF reader.
-export PDFREADER="mupdf"
-export PDFVIEWER="mupdf"
+# set PDF reader
+if which mupdf >/dev/null 2>&1
+then
+	export PDFREADER="mupdf"
+	export PDFVIEWER="mupdf"
+fi
 
 # Set the default image viewer.
-export IMAGEVIEWER="mupdf"
+if which sxiv >/dev/null 2>&1
+then
+	export IMAGEVIEWER="sxiv"
+fi
 
 # Set Sage's PDF/DVI/PNG browser.  This goes to a shell script which will call
 # the appropriate PDF viewer or image viewer.
-export SAGE_BROWSER="sage_browser"
+if which sage_browser >/dev/null 2>&1
+then
+	export SAGE_BROWSER="sage_browser"
+fi
 
 # sets mail directory
 export MAIL="~/.mail"
 
 # ------------------------------------------------------------------------------
-# - prompt_(evironmental_variables)                                            -
+# - theme_(environmental_variables)                                            -
+# ------------------------------------------------------------------------------
+#
+# parse theme file
+if [ $(tput colors) -eq "256" ] && [ -r ~/.themes/current/terminal/256-theme ]
+then
+	source ~/.themes/current/terminal/256-theme
+
+	# set the colors ls --color uses, if available
+	export LS_COLORS="\
+di=38;5;${MISCELLANEOUS_FOREGROUND};48;5;${MISCELLANEOUS_BACKGROUND}:\
+ex=38;5;${HIGHLIGHT_FOREGROUND};48;5;${HIGHLIGHT_BACKGROUND}:\
+ln=04:\
+su=38;5;${ERROR2_FOREGROUND};48;5;${ERROR2_BACKGROUND}:\
+sg=38;5;${ERROR2_FOREGROUND};48;5;${ERROR2_BACKGROUND}:\
+"
+fi
+
+# ------------------------------------------------------------------------------
+# - prompt_(environmental_variables)                                           -
 # ------------------------------------------------------------------------------
 #
 # If root, the prompt should be a red pound sign.
@@ -129,6 +162,18 @@ then
 	export PS1=$'\e[0;30m\e[46m$\e[m '
 else
 	export PS1=$'\e[0;30m\e[47m$\e[m '
+fi
+if [ $(tput colors) -eq "256" ] && [ -r ~/.themes/current/terminal/256-theme ]
+then
+	if [ $EUID -eq "0" ]
+	then
+		export PS1=$'\e[38;5;${ERROR_FOREGROUND}m\e[48;5;${ERROR_BACKGROUND}m#\e[m '
+	elif [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
+	then
+		export PS1=$'\e[38;5;${MISCELLANEOUS_FOREGROUND}m\e[48;5;${MISCELLANEOUS_BACKGROUND}m#\e[m '
+	else
+		export PS1=$'\e[38;5;${HIGHLIGHT_FOREGROUND}m\e[48;5;${HIGHLIGHT_BACKGROUND}m#\e[m '
+	fi
 fi
 
 # ==============================================================================
@@ -170,6 +215,7 @@ alias ta="tmux attach"
 alias v="vim"
 alias vs="vim --servername vim"
 alias vv="cd /dev/shm"
+alias Z="field_from_last_command"
 
 # ------------------------------------------------------------------------------
 # - set_default_flags_(aliases)                                                -
@@ -192,7 +238,8 @@ alias mpv="mupdf -V"
 # - git_(aliases)                                                              -
 # ------------------------------------------------------------------------------
 
-alias gc="git commit -a -v"
+alias ga="git add"
+alias gc="git commit -v"
 alias gcd="git commit -a -v -m \"\$(date)\""
 alias gb="git branch"
 alias gl="git log --graph --color"
@@ -207,6 +254,7 @@ alias gul="git pull"
 alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 alias gusu='git submodule foreach git pull origin master'
 alias gdh='git diff HEAD'
+alias gt="git rev-parse --show-toplevel"
 
 # ------------------------------------------------------------------------------
 # - bedrock_clients_(aliases)                                                  -
@@ -268,6 +316,28 @@ then
 	alias kw="apt-cache show"
 	# Find package containing file
 	alias kf="apt-file search"
+	# install package containing file
+	kfi(){
+		results=$(apt-file search $1 | grep "$1$")
+		count=$(echo $results | wc -l)
+		if [ $cout -eq 1 ]
+		then
+			sudo apt-get install $(echo results | awk '{print$1}')
+		else
+			echo $results
+		fi
+	}
+	# install search result
+	ksi(){
+		results=$(apt-cache search $1 | grep "$1$")
+		count=$(echo $results | wc -l)
+		if [ $cout -eq 1 ]
+		then
+			sudo apt-get install $(echo results | awk '{print$1}')
+		else
+			echo $results
+		fi
+	}
 elif [ "$DISTRO" = "Arch" ]
 then
 	if which packer >/dev/null
