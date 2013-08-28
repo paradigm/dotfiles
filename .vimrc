@@ -818,6 +818,11 @@ augroup latex
 	autocmd Filetype tex inoremap <buffer> ;df \begin{definition}[]<cr>\end{definition}<ESC>ko<++><esc>k0f[a
 	autocmd Filetype tex inoremap <buffer> ;xp \begin{example}[]<cr>\end{example}<ESC>ko<++><esc>k0f[a
 	autocmd Filetype tex inoremap <buffer> ;sl \begin{solution}<cr>\end{solution}<ESC>ko<++><esc>k0f[a
+	" underbrace/overbrace section
+	autocmd Filetype tex vnoremap <buffer> ;u <esc>`>a}_{}<++><esc>`<i\underbrace{<esc>`>2f}i
+	autocmd Filetype tex vnoremap <buffer> ;U <esc>`>a}}_{}$<++><esc>`<i$\underbrace{\text{<esc>`>3f}i
+	autocmd Filetype tex vnoremap <buffer> ;o <esc>`>a}^{}<++><esc>`<i\overbrace{<esc>`>2f}i
+	autocmd Filetype tex vnoremap <buffer> ;O <esc>`>a}}^{}$<++><esc>`<i$\overbrace{\text{<esc>`>3f}i
 	" Tabularize mappingts for common TeX alignment situations
 	autocmd Filetype tex nnoremap <buffer> <space>& :Tab /&<cr>
 	autocmd Filetype tex xnoremap <buffer> <space>& :Tab /&<cr>
@@ -1452,7 +1457,7 @@ augroup signs
 	autocmd QuickFixCmdPost * call QuickFixSigns()
 augroup END
 
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+"set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 
 function! SearchSigns()
 	let l:cursor = getpos(".")
