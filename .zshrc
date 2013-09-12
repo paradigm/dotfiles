@@ -63,6 +63,10 @@ setopt histignoredups
 # in scripts.
 setopt interactivecomments
 
+# Automatically run pushd after every cd
+# this allows for tab-completion on "cd -<tab>"
+setopt autopushd
+
 # ==============================================================================
 # = environmental_variables                                                    =
 # ==============================================================================
