@@ -45,6 +45,13 @@ nnoremap sS :noscript toggleperm<cr>
 nnoremap so :noscript popup<cr>
 nnoremap si :noscript info<cr>
 
+" clear search highlighting
+nnoremap <c-l> :noh<cr>
+
+" per-site mappings
+autocmd PageLoad slashdot.org nnoremap c fRead
+autocmd PageLoad reddit.com nnoremap c f commen
+
 " mplay youtube video in mplayer
 command! -nargs=0 cclive :execute "!uxterm -e 'cclive -W --format=best \""+content.location.href+"\" -O /dev/shm/cclive-video & sleep 3 && mplayer /dev/shm/cclive-video'"
 
@@ -74,7 +81,7 @@ style -name paradigm * <<EOM
 		color: #ffffff !important; /* all fg */
 		border-color: #ffffff !important; /* all border */
 		font-family: "Terminus" !important;
-		line-height: 1.0 !important;
+		/*line-height: 1.0 !important;*/
 	}
 	a:link {
 		color: #aaaaaa !important; /* link fg */
