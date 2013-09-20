@@ -795,8 +795,11 @@ augroup latex
 	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 	" ~ custom_mappings_(tex)                                                      ~
 	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-	" Compile TeX document and, if successful, reload pdf reader
-	autocmd Filetype tex nnoremap <buffer> <space>m :w<cr>:!clear<cr>:silent make %<cr>:if(len(getqflist())==0)<cr>execute '!pkill -HUP mupdf'<cr>endif<cr><cr>:cc<cr>
+	"" Compile TeX document and, if successful, reload pdf reader
+	"autocmd Filetype tex nnoremap <buffer> <space>m :w<cr>:!clear<cr>:silent make %<cr>:if(len(getqflist())==0)<cr>execute '!pkill -HUP mupdf'<cr>endif<cr><cr>:cc<cr>
+	autocmd Filetype tex nnoremap <buffer> <space>m :w<cr>:!clear<cr>:silent make %<cr>:cc<cr>
+	" Open PDF reader
+	autocmd Filetype tex nnoremap <buffer> <space>o :silent execute "!mupdf " . expand("%:r").".pdf &"<cr>
 	" Reload PDF reader
 	autocmd Filetype tex nnoremap <buffer> <space>r :silent !pkill -HUP mupdf<cr><C-L>
 	" Utilize vim-latexsuite style jumping
