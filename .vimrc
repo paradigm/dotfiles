@@ -97,6 +97,11 @@ endif
 filetype plugin on
 " Utilize filetype-specific automatic indentation.
 filetype indent on
+" Loading a session loses some settings such as syntax highlighting defined
+" below.  Automatically re-source this vimrc after loading a session to remedy
+" this.  I rarely want something in a session that conflicts with my vimrc -
+" usually the union of the two settings is what I want.
+autocmd SessionLoadPost * source $MYVIMRC
 
 " clear default tags
 set tags=""
