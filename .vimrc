@@ -126,7 +126,7 @@ nnoremap <space>q :q<cr>
 " Re-source the .vimrc
 nnoremap <space>s :so $MYVIMRC<cr>
 " Run :make
-nnoremap <space>m :w<cr>:!clear<cr>:silent make %<cr>:call CCOnError()<cr>
+nnoremap <space>m :w<cr>:execute "cd " . expand("%:p:h")<cr>:!clear<cr>:silent make %<cr>:call CCOnError()<cr>
 " Run open quickfix window
 nnoremap <space>u :cw<cr>:nunmap <buffer> <cr>
 " Execute buffer ("run")
@@ -797,7 +797,6 @@ augroup latex
 	" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 	"" Compile TeX document and, if successful, reload pdf reader
 	"autocmd Filetype tex nnoremap <buffer> <space>m :w<cr>:!clear<cr>:silent make %<cr>:if(len(getqflist())==0)<cr>execute '!pkill -HUP mupdf'<cr>endif<cr><cr>:cc<cr>
-	autocmd Filetype tex nnoremap <buffer> <space>m :w<cr>:!clear<cr>:silent make %<cr>:cc<cr>
 	" Open PDF reader
 	autocmd Filetype tex nnoremap <buffer> <space>o :silent execute "!mupdf " . expand("%:r").".pdf &"<cr>
 	" Reload PDF reader
