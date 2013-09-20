@@ -1411,7 +1411,7 @@ function! CCOnError()
 			return
 		endif
 	endfor
-	echo 'no errors'
+	echo 'no errors/results'
 endfunction
 
 " add current tags from current git project, if any
@@ -1577,4 +1577,21 @@ function! SignMarks()
 			execute "sign place 1 line=" . pos[1] . " name=mark" . char . " buffer=" . bufnr
 		endif
 	endfor
+endfunction
+
+command! -nargs=* G :call GrepBuffers("<args>")
+function! GrepBuffers(arg)
+	let initbufnr = bufnr("%")
+	call setqflist([])
+	for b in range(1,bufnr("$"))
+		if buflisted(b)
+			execute "b " . b
+			normal gg
+			while searchpos(a:arg, 'W') != [0,0]
+				call setqflist([{'bufnr': b, 'lnum': line("."), 'col': col("."), 'text': getline(".")}], 'a')
+			endwhile
+		endif
+	endfor
+	execute "b " . initbufnr
+	call CCOnError()
 endfunction
