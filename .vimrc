@@ -83,6 +83,11 @@ set timeout ttimeoutlen=10 timeoutlen=500
 if exists('&relativenumber')
 	set relativenumber
 endif
+" Add ~/.vim to the runtimepath in Windows so I can use the same ~/.vim across
+" OSs
+if has('win32') || has('win64')
+	set runtimepath+=~/.vim
+endif
 " If available, have pathogen load plugins form ~/.vim/bundle.
 if filereadable($HOME."/.vim/autoload/pathogen.vim")
 	call pathogen#runtime_append_all_bundles()
