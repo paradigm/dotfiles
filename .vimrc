@@ -97,11 +97,6 @@ endif
 filetype plugin on
 " Utilize filetype-specific automatic indentation.
 filetype indent on
-" Loading a session loses some settings such as syntax highlighting defined
-" below.  Automatically re-source this vimrc after loading a session to remedy
-" this.  I rarely want something in a session that conflicts with my vimrc -
-" usually the union of the two settings is what I want.
-autocmd SessionLoadPost * source $MYVIMRC
 
 " clear default tags
 set tags=""
@@ -159,6 +154,7 @@ command! -nargs=1 -complete=help H :help <args> |
 			\let helpfile = expand("%") |
 			\close |
 			\execute "view ".helpfile
+command! CD :execute ":cd " . expand("%:p:h")
 
 " ------------------------------------------------------------------------------
 " - next_previous_(mappings)                                                   -
@@ -288,6 +284,8 @@ nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("
 nnoremap <space>h 2:<c-u>call SkyBison("H ")<cr>
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
 nnoremap <space>;  :<c-u>call SkyBison("")<cr>
+" Startify's session loader
+nnoremap <space>t 2:<c-u>call SkyBison("SLoad ")<cr>
 cnoremap <c-l>     <c-r>=SkyBison("")<cr><cr>
 
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
@@ -840,8 +838,8 @@ augroup latex
 	autocmd Filetype tex xnoremap <buffer> <space>& :Tab /&<cr>
 	autocmd Filetype tex nnoremap <buffer> <space>\ :Tab /\\\\<cr>
 	autocmd Filetype tex xnoremap <buffer> <space>\ :Tab /\\\\<cr>
-	autocmd Filetype tex nnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
-	autocmd Filetype tex xnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
+	"autocmd Filetype tex nnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
+	"autocmd Filetype tex xnoremap <buffer> <space>tl :Tab /&=\?/r0l0r0l0r0l0<cr>gv:Tab /\\\\<cr>
 	" Tabularize Automatically
 	" Disabled as more troublesome than helpful
 	"au Filetype tex inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a
@@ -888,14 +886,16 @@ let g:skybison_fuzz = 2
 " - Startify_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 
-let g:startify_custom_header = [
-			\ '  __          __             __       ',
-			\ '  \ \_________\ \____________\ \___   ',
-			\ '   \  _ \  _\ _  \  _\ __ \ __\   /   ',
-			\ '    \___/\__/\__/ \_\ \___/\__/\_\_\  ',
-			\ '                     bedrocklinux.org ',
-			\ '',
-			\ ]
+" disable start page by default
+let g:startify_disable_at_vimenter = 1
+
+" sane defaults
+let g:startify_session_savecmds = []
+let g:startify_session_savevars = [
+			\ "g:startify_session_savevars",
+			\ "g:startify_session_savevars"]
+" automatically save a session on quit
+let g:startify_session_persistence = 1
 
 " ------------------------------------------------------------------------------
 " - EasyMotion_(plugins)                                                       -
