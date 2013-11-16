@@ -430,9 +430,11 @@ autocmd Filetype asm setlocal tabstop=8
 " ------------------------------------------------------------------------------
 
 " - Language-specific tag settings.
+" - open manpage in preview window
 autocmd Filetype c
 			\  setlocal tags+=,~/.vim/tags/ctags
 			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/ctags /usr/include"]
+			\| nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
 
 " ------------------------------------------------------------------------------
 " - c++_(filetype-specific)                                                    -
@@ -457,6 +459,8 @@ autocmd Filetype sh syn region AWKScriptCode matchgroup=AWKCommand start=+[=\\]\
 autocmd Filetype sh syn region AWKScriptEmbedded matchgroup=AWKCommand start=+\<awk\>+ skip=+\\$+ end=+[=\\]\@<!'+me=e-1 contains=@shIdList,@shExprList2 nextgroup=AWKScriptCode
 autocmd Filetype sh syn cluster shCommandSubList add=AWKScriptEmbedded
 autocmd Filetype sh hi def link AWKCommand Type
+" - open man page in preview window
+autocmd Filetype sh nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
 
 " ------------------------------------------------------------------------------
 " - tex_(filetype-specific)                                                    -
@@ -1053,6 +1057,20 @@ function! CCOnError()
 		endif
 	endfor
 	echo 'no errors/results'
+endfunction
+"
+" ------------------------------------------------------------------------------
+" - preview_shell                                                              -
+" ------------------------------------------------------------------------------
+" Run the provided command on the shell and open the output in the preview
+" window
+
+function! PreviewShell(cmd)
+	silent! execute "!" . a:cmd . " >/dev/shm/.vimshellout-" . getpid()
+	execute "pedit! /dev/shm/.vimshellout-" .getpid()
+	wincmd P
+	setlocal bufhidden=delete
+	wincmd p
 endfunction
 
 
