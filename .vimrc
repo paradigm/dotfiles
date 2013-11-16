@@ -595,6 +595,7 @@ let g:startify_session_savevars = [
 " jedi has some uses, but the defaults are terribly intrusive
 
 let g:jedi#use_tabs_not_buffers = 0
+let g:jedi#popup_on_dot = 0
 let g:jedi#popup_select_first = 0
 let g:jedi#completions_command = "<leader>zzz"
 let g:jedi#auto_vim_configuration = 0
