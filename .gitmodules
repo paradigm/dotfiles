@@ -37,3 +37,6 @@
 [submodule "/home/paradigm/.vim/bundle/AnsiEsc.vim"]
 	path = /home/paradigm/.vim/bundle/AnsiEsc.vim
 	url = https://github.com/vim-scripts/AnsiEsc.vim.git
+[submodule "/home/paradigm/.vim/bundle/visincr"]
+	path = /home/paradigm/.vim/bundle/visincr
+	url = https://github.com/vim-scripts/VisIncr.git
