@@ -236,8 +236,9 @@ xnoremap ? "*y<Esc>q:i%s/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', 
 " ------------------------------------------------------------------------------
 
 " Allow ctrl-f/ctrl-b to page through pop-up menu.
-inoremap <expr> <c-f> pumvisible() ? "\<pagedown>" : "\<c-f>"
-inoremap <expr> <c-b> pumvisible() ? "\<pageup>" : "\<c-b>"
+inoremap <expr> <c-f> pumvisible() ? "\<pagedown>" : "\<c-o>1\<c-w>}"
+" if done without pum, try to open tag
+inoremap <expr> <c-b> pumvisible() ? "\<pageup>" : "\<c-o>:pclose\<cr>"
 " Have i_ctrl-<space> act like i_ctrl-x_ctrl-o. Note that ctrl-@ is triggered by
 " ctrl-<space> in many terminals.
 inoremap <c-@> <c-x><c-o>
@@ -1236,14 +1237,10 @@ endfunction
 "	endfor
 "endfunction
 
+
 " ------------------------------------------------------------------------------
-" - auto-preview                                                               -
+" - close preview window on insertLeave                                        -
 " ------------------------------------------------------------------------------
-" automatically open and close the preview window
-inoremap ( <esc>:silent! execute "normal 1\<lt>c-w>}"<cr>gi(
-inoremap ) <esc>:pclose<cr>gi)
 autocmd InsertLeave * pclose
 autocmd CmdwinEnter * autocmd! InsertLeave
 autocmd CmdwinLeave * autocmd InsertLeave * pclose
-autocmd CmdwinEnter * inoremap <buffer> ( (
-autocmd CmdwinEnter * inoremap <buffer> ) )
