@@ -12,12 +12,13 @@ sage.misc.viewer.PDF_VIEWER = 'mupdf -V'
 # skip n and r, as function
 # skip x, already variable
 # skip j, want to treat as \sqrt{-i}
-var('a b c d f g h k l m o p q s t u v w y z')
+QUIET = var('a b c d f g h k l m o p q s t u v w y z')
+QUIET = var('A B C D F G H K L M O P Q S T U V W Y Z')
 # use j as \sqrt{-i}, since i is current
 j = i
 # greek values as vars
 # skip pi, as constant
-var('alpha beta gamma delta epsilon zeta eta theta iota kappa mu nu xi omicron rho sigma tau upsilon phi chi psi omega')
+QUIET = var('alpha beta gamma delta epsilon zeta eta theta iota kappa mu nu xi omicron rho sigma tau upsilon phi chi psi omega');
 
 # shortcuts for units
 #class un:
