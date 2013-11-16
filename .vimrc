@@ -1402,9 +1402,7 @@ endfunction
 " - auto-preview                                                               -
 " ------------------------------------------------------------------------------
 " automatically open and close the preview window
-"inoremap ( <esc><c-w>}a(
-set previewheight=1
-inoremap ( <esc>:execute "silent! ptag ". expand("<cword>")<cr>gi(
+inoremap ( <esc>:silent! execute "normal 1\<lt>c-w>}"<cr>gi(
 inoremap ) <esc>:pclose<cr>gi)
 autocmd InsertLeave * pclose
 autocmd CmdwinEnter * autocmd! InsertLeave
