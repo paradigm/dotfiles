@@ -635,8 +635,10 @@ function! Make()
 	" default)
 	" 3. Otherwise, use a filetype-specific compiler/linter
 	if exists("g:makeprg")
-		execute "setlocal makeprg=" . g:makeprg
-		execute "setlocal errorformat=" . g:errorformat
+		execute "setlocal makeprg=" . escape(g:makeprg, " \\")
+		if exists("g:errorformat")
+			execute "setlocal errorformat=" . escape(g:errorformat, " \\")
+		endif
 	elseif filereadable("./Makefile") || filereadable("./makefile")
 		setlocal makeprg&vim
 		setlocal errorformat&vim
@@ -653,9 +655,9 @@ function! Make()
 		setlocal errorformat=%f:%l:\ %m
 	elseif &ft == "python"
 		" Run pep8 and pylint, then massage with awk so they can both be
-		" parsed by the same errorformat.  Apologies for the ugliness.
-		execute "setlocal makeprg=" escape(
-					\ 'sh -c "pep8 $*; pylint -r n -f parseable --include-ids=y $* \\| ' .
+		" parsed by the same errorformat.
+		execute "setlocal makeprg=" . escape(
+					\ 'sh -c "pep8 %; pylint -r n -f parseable --include-ids=y % \\| ' .
 					\ "awk -F: '{print \\$1" .
 					\ '\":\"\$2\":1:\"\$3\$4\$5\$6\$7\$8\$9' .
 					\ "}'" .
