@@ -13,19 +13,27 @@ NORMAL_BACKGROUND=0   # black
 HIGHLIGHT_FOREGROUND=0   # black
 HIGHLIGHT_BACKGROUND=231 # white
 
-# miscellaneous (for things like UI chrome if applicable)
-MISCELLANEOUS_FOREGROUND=244 # gray50
+# insensitive (for things like UI chrome if applicable)
+INSENSITIVE_FOREGROUND=244 # gray50
+INSENSITIVE_BACKGROUND=0   # black
+
+# miscellaneous
+MISCELLANEOUS_FOREGROUND=250 # gray74
 MISCELLANEOUS_BACKGROUND=0   # black
 
-# miscellaneous 2
+# more miscellaneous
 MISCELLANEOUS2_FOREGROUND=248 # gray66
 MISCELLANEOUS2_BACKGROUND=0   # black
 
-# miscellaneous 3
-MISCELLANEOUS3_FOREGROUND=250 # gray74
+# even more miscellaneous
+MISCELLANEOUS3_FOREGROUND=244 # gray50
 MISCELLANEOUS3_BACKGROUND=0   # black
 
-# error1 - red on black
+# even more miscellaneous
+MISCELLANEOUS4_FOREGROUND=257 # gray82
+MISCELLANEOUS4_BACKGROUND=0   # black
+
+# error - red on black
 ERROR_FOREGROUND=196 # red
 ERROR_BACKGROUND=0   # black
 
