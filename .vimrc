@@ -548,9 +548,9 @@ autocmd Filetype tex endif
 " If a filetype doesn't have it's own omnicompletion, but it does have syntax
 " highlighting, use that for omnicompletion
 
-autocmd Filetype * 
-			\  if &omnifunc == "" 
-			\|   setlocal omnifunc=syntaxcomplete#Complete 
+autocmd Filetype *
+			\  if &omnifunc == ""
+			\|   setlocal omnifunc=syntaxcomplete#Complete
 			\| endif
 
 
@@ -726,7 +726,7 @@ function! Run()
 		" reload pdf reader
 		let l:runcmd = "!pkill -HUP mupdf"
 	endif
-	if runcmd == "runpath" 
+	if runcmd == "runpath"
 		if !executable(l:runpath)
 			redraw!
 			echo "Set " . runpath . " as executable? (y/n) "
