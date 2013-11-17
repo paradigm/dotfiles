@@ -129,10 +129,10 @@ nnoremap <c-w><c-l> :vertical resize +10<cr>
 nnoremap <c-w><c-j> :resize +10<cr>
 nnoremap <c-w><c-k> :resize -10<cr>
 " Move by 'display lines' rather than 'logical lines'.
-nnoremap <expr> j v:count > 0 'j' : 'gj'
-xnoremap <expr> j v:count > 0 'j' : 'gj'
-nnoremap <expr> k v:count > 0 'k' : 'gk'
-xnoremap <expr> k v:count > 0 'k' : 'gk'
+nnoremap <expr> j v:count > 0 ? 'j' : 'gj'
+xnoremap <expr> j v:count > 0 ? 'j' : 'gj'
+nnoremap <expr> k v:count > 0 ? 'k' : 'gk'
+xnoremap <expr> k v:count > 0 ? 'k' : 'gk'
 " Ensure 'logical line' movement remains accessible.
 nnoremap <silent> gj j
 xnoremap <silent> gj j
