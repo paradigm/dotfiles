@@ -1070,7 +1070,7 @@ function! CCOnError()
 	endfor
 	echo 'no errors/results'
 endfunction
-"
+
 " ------------------------------------------------------------------------------
 " - preview_shell                                                              -
 " ------------------------------------------------------------------------------
@@ -1084,6 +1084,138 @@ function! PreviewShell(cmd)
 	setlocal bufhidden=delete
 	autocmd VimLeave * call delete("/dev/shm/.vimshellout-".getpid())
 	wincmd p
+	redraw!
+endfunction
+
+" ------------------------------------------------------------------------------
+" - thesaurus                                                                  -
+" ------------------------------------------------------------------------------
+" If word is not in local thesaurus, gets it from thesaurus.com
+inoremap <c-x><c-t> <c-o>:call Thesaurus(expand("<cword>"))<cr><c-x><c-t>
+function! Thesaurus(word)
+	" check if given word is already in local thesaurus
+	if filereadable(g:thesaurusfile)
+		for line in readfile(g:thesaurusfile)
+			if match(line, "^" . a:word . " ") != -1
+				return
+			endif
+		endfor
+	endif
+
+	" we don't yet have the word, get the thesaurus.com page
+	let out = "/dev/shm/.vim-thesaurus-out-" . getpid()
+	execute "autocmd VimLeave * call delete(\"".out."\")"
+	echo "Looking up \"" . a:word . "\"..."
+	silent! execute "silent !wget -qO " . out . " http://thesaurus.com/browse/" . a:word
+	if !filereadable(out)
+		redraw!
+		echo "Could not find " . a:word . " at thesaurus.com"
+		call input("ENTER to continue")
+		return
+	endif
+
+	" parse page for synonyms
+	let results = []
+	for line in readfile(out)
+		let fields = split(line, "\<\\|\>\\|&quot;")
+		if len(fields) > 2 && fields[1] == 'span class="text"'
+			let results += [fields[2]]
+		endif
+	endfor
+
+	" append synonyms to local thesaurus
+	if filereadable(g:thesaurusfile)
+		let thesaurus = readfile(g:thesaurusfile)
+	else
+		let thesaurus = []
+	endif
+	let thesaurus += [a:word . ' ' . join(results)]
+	call writefile(thesaurus, g:thesaurusfile)
+	redraw!
+endfunction
+
+" ------------------------------------------------------------------------------
+" - dictionary                                                                 -
+" ------------------------------------------------------------------------------
+" If word is not in local dictionary, gets it from dictionary.com.  Then
+" displays it in preview window.
+
+nnoremap g<c-d> :call Dictionary(expand("<cword>"))<cr>
+function! Dictionary(word)
+	" check if given word is already in local dictionary
+	let line = ""
+	let found = 0
+	if filereadable(g:dictionaryfile)
+		for line in readfile(g:dictionaryfile)
+			if match(line, "^" . a:word . " ") != -1
+				let found = 1
+				break
+			endif
+		endfor
+	endif
+
+	" we don't yet have the word, get the dictionary.com page
+	if found == 0
+		let out = "/dev/shm/.vim-dictionary-out-" . getpid()
+		execute "autocmd VimLeave * call delete(\"".out."\")"
+		echo "Looking up \"" . a:word . "\"..."
+		silent! execute "silent !wget -qO " . out . " http://dictionary.com/browse/" . a:word
+		if !filereadable(out)
+			redraw!
+			echo "Could not find " . a:word . " at dictionary.com"
+			call input("ENTER to continue")
+			return
+		endif
+
+		" parse page for definitions
+		" find line with definition on it
+		for line in readfile(out)
+			let fields = split(line, "\<\\|\>")
+			if len(fields) > 2 && fields[2] == 'div class="luna-Ent"'
+				break
+			endif
+		endfor
+		let pronounce = substitute(line, '^.*\(\[</span><span class="pron">.*<span class="prondelim">\]\).*$', '\1', '')
+
+		" remove extraneous markup and content
+		for tag in ['<a [^>]*>','</a>', '<div[^>]*>','</div>']
+			let line = substitute(line, tag, '', 'g')
+		endfor
+		echo pronounce
+		let pronounce = substitute(pronounce, '<[^>]*>', '', 'g')
+		let line = join(filter(split(line, "\<[^>]*\>"), 'v:val !~ "^[ \t]*$"'))
+		let line = line[match(line, "Show IPA")+10:]
+		let line = a:word . " " . pronounce . " " . line
+	"
+		" append synonyms to local dictionary
+		if filereadable(g:dictionaryfile)
+			let dictionary = readfile(g:dictionaryfile)
+		else
+			let dictionary = []
+		endif
+		let dictionary += [line]
+		call writefile(dictionary, g:dictionaryfile)
+	endif
+	
+	" show definition in preview window
+	let fmt = [join(split(line)[:1])]
+	for def in split(line, ' \ze\d\+\.')[1:]
+		for subdef in split(def, ' \ze[a-z]\.')
+			if subdef =~ '^[a-z]\.'
+				let fmt += [substitute("  " . subdef, '[ \t]\+$', '', '')]
+			else
+				let fmt += [substitute(subdef, '[ \t]\+$', '', '')]
+			endif
+		endfor
+	endfor
+	let out = "/dev/shm/.vim-definition-".getpid()
+	execute "autocmd VimLeave * call delete(\"".out."\")"
+	call writefile(fmt, out)
+	execute "pedit! " . out
+	wincmd P
+	setlocal nomodifiable
+	normal gg
+	setlocal bufhidden=delete
 	redraw!
 endfunction
 
@@ -1274,139 +1406,7 @@ endfunction
 " ------------------------------------------------------------------------------
 " - close preview window on insertLeave                                        -
 " ------------------------------------------------------------------------------
+
 autocmd InsertLeave * pclose
 autocmd CmdwinEnter * autocmd! InsertLeave
 autocmd CmdwinLeave * autocmd InsertLeave * pclose
-
-
-" ------------------------------------------------------------------------------
-" - thesaurus                                                                  -
-" ------------------------------------------------------------------------------
-" If word is not in local thesaurus, gets it from thesaurus.com
-inoremap <c-x><c-t> <c-o>:call Thesaurus(expand("<cword>"))<cr><c-x><c-t>
-function! Thesaurus(word)
-	" check if given word is already in local thesaurus
-	if filereadable(g:thesaurusfile)
-		for line in readfile(g:thesaurusfile)
-			if match(line, "^" . a:word . " ") != -1
-				return
-			endif
-		endfor
-	endif
-
-	" we don't yet have the word, get the thesaurus.com page
-	let out = "/dev/shm/.vim-thesaurus-out-" . getpid()
-	execute "autocmd VimLeave * call delete(\"".out."\")"
-	echo "Looking up \"" . a:word . "\"..."
-	silent! execute "silent !wget -qO " . out . " http://thesaurus.com/browse/" . a:word
-	if !filereadable(out)
-		redraw!
-		echo "Could not find " . a:word . " at thesaurus.com"
-		call input("ENTER to continue")
-		return
-	endif
-
-	" parse page for synonyms
-	let results = []
-	for line in readfile(out)
-		let fields = split(line, "\<\\|\>\\|&quot;")
-		if len(fields) > 2 && fields[1] == 'span class="text"'
-			let results += [fields[2]]
-		endif
-	endfor
-
-	" append synonyms to local thesaurus
-	if filereadable(g:thesaurusfile)
-		let thesaurus = readfile(g:thesaurusfile)
-	else
-		let thesaurus = []
-	endif
-	let thesaurus += [a:word . ' ' . join(results)]
-	call writefile(thesaurus, g:thesaurusfile)
-	redraw!
-endfunction
-
-" ------------------------------------------------------------------------------
-" - dictionary                                                                 -
-" ------------------------------------------------------------------------------
-" If word is not in local dictionary, gets it from dictionary.com.  Then
-" displays it in preview window.
-
-nnoremap g<c-d> :call Dictionary(expand("<cword>"))<cr>
-function! Dictionary(word)
-	" check if given word is already in local dictionary
-	let line = ""
-	let found = 0
-	if filereadable(g:dictionaryfile)
-		for line in readfile(g:dictionaryfile)
-			if match(line, "^" . a:word . " ") != -1
-				let found = 1
-				break
-			endif
-		endfor
-	endif
-
-	" we don't yet have the word, get the dictionary.com page
-	if found == 0
-		let out = "/dev/shm/.vim-dictionary-out-" . getpid()
-		execute "autocmd VimLeave * call delete(\"".out."\")"
-		echo "Looking up \"" . a:word . "\"..."
-		silent! execute "silent !wget -qO " . out . " http://dictionary.com/browse/" . a:word
-		if !filereadable(out)
-			redraw!
-			echo "Could not find " . a:word . " at dictionary.com"
-			call input("ENTER to continue")
-			return
-		endif
-
-		" parse page for definitions
-		" find line with definition on it
-		for line in readfile(out)
-			let fields = split(line, "\<\\|\>")
-			if len(fields) > 2 && fields[2] == 'div class="luna-Ent"'
-				break
-			endif
-		endfor
-		let pronounce = substitute(line, '^.*\(\[</span><span class="pron">.*<span class="prondelim">\]\).*$', '\1', '')
-
-		" remove extraneous markup and content
-		for tag in ['<a [^>]*>','</a>', '<div[^>]*>','</div>']
-			let line = substitute(line, tag, '', 'g')
-		endfor
-		echo pronounce
-		let pronounce = substitute(pronounce, '<[^>]*>', '', 'g')
-		let line = join(filter(split(line, "\<[^>]*\>"), 'v:val !~ "^[ \t]*$"'))
-		let line = line[match(line, "Show IPA")+10:]
-		let line = a:word . " " . pronounce . " " . line
-	"
-		" append synonyms to local dictionary
-		if filereadable(g:dictionaryfile)
-			let dictionary = readfile(g:dictionaryfile)
-		else
-			let dictionary = []
-		endif
-		let dictionary += [line]
-		call writefile(dictionary, g:dictionaryfile)
-	endif
-	
-	" show definition in preview window
-	let fmt = [join(split(line)[:1])]
-	for def in split(line, ' \ze\d\+\.')[1:]
-		for subdef in split(def, ' \ze[a-z]\.')
-			if subdef =~ '^[a-z]\.'
-				let fmt += [substitute("  " . subdef, '[ \t]\+$', '', '')]
-			else
-				let fmt += [substitute(subdef, '[ \t]\+$', '', '')]
-			endif
-		endfor
-	endfor
-	let out = "/dev/shm/.vim-definition-".getpid()
-	execute "autocmd VimLeave * call delete(\"".out."\")"
-	call writefile(fmt, out)
-	execute "pedit! " . out
-	wincmd P
-	setlocal nomodifiable
-	normal gg
-	setlocal bufhidden=delete
-	redraw!
-endfunction
