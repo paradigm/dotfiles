@@ -542,6 +542,13 @@ autocmd Filetype tex endif
 "au Filetype tex inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a
 
 " ------------------------------------------------------------------------------
+" - markdown_(filetype-specific)                                               -
+" ------------------------------------------------------------------------------
+"
+" override modula2 default for .md files
+autocmd BufNewFile,BufRead *.md set ft=markdown
+
+" ------------------------------------------------------------------------------
 " - other_(filetype-specific)                                                  -
 " ------------------------------------------------------------------------------
 "
