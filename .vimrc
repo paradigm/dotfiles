@@ -966,6 +966,9 @@ function! GetCtagsFiletype(vimfiletype)
 		return("lua")
 	elseif a:vimfiletype == "make"
 		return("make")
+		" markdown is not supported by default, add to ~/.ctags
+	elseif a:vimfiletype == "markdown"
+		return("markdown")
 	elseif a:vimfiletype == "pascal"
 		return("pascal")
 	elseif a:vimfiletype == "perl"
