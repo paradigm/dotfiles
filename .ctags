@@ -10,6 +10,7 @@
 --regex-latex=/\\newcommand\{\\([^}]*)\}/\1/c,command/
 --regex-latex=/\\DeclareRobustCommand\{\\([^}]*)\}/\1/c,command/
 --regex-latex=/\\newenvironment\{([^}]*)\}/\1/e,environment/
+--regex-latex=/\\begin\{definition\}\[([^]]*)\]/\1/d,definition/
 
 --regex-vim=/^" = (.*) +=$/\1/h,heading/
 --regex-vim=/^" - (.*) +-$/\1/s,subheading/
