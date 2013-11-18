@@ -676,7 +676,7 @@ function! Make()
 	elseif &ft == "tex"
 		" Assumes lualatex.  Lots of massaging to do things like make some
 		" multi-line errors squashed to one line for errorformat.
-		setlocal makeprg=lualatex\ \-file\-line\-error\ \-interaction=nonstopmode\ $*\\\|\ awk\ '/^\\(.*.tex$/{sub(/^./,\"\",$0);X=$0}\ /^!/{sub(/^./,\"\",$0);print\ X\":1:\"$0}\ /tex:[0-9]+:\ /{A=$0;MORE=2}\ (MORE==2\ &&\ /^l.[0-9]/){sub(/^l.[0-9]+[\ \\t]+/,\"\",$0);B=$0;MORE=1}\ (MORE==1\ &&\ /^[\ ]+/){sub(/^[\ \\t]+/,\"\",$0);print\ A\":\ \"B\"·\"$0;MORE=0}'
+		setlocal makeprg=lualatex\ \-file\-line\-error\ \-interaction=nonstopmode\ %\\\|\ awk\ '/^\\(.*.tex$/{sub(/^./,\"\",$0);X=$0}\ /^!/{sub(/^./,\"\",$0);print\ X\":1:\"$0}\ /tex:[0-9]+:\ /{A=$0;MORE=2}\ (MORE==2\ &&\ /^l.[0-9]/){sub(/^l.[0-9]+[\ \\t]+/,\"\",$0);B=$0;MORE=1}\ (MORE==1\ &&\ /^[\ ]+/){sub(/^[\ \\t]+/,\"\",$0);print\ A\":\ \"B\"·\"$0;MORE=0}'
 		setlocal errorformat=%f:%l:\ %m
 	elseif &ft == "python"
 		" Run pep8 and pylint, then massage with awk so they can both be
@@ -966,6 +966,9 @@ function! GetCtagsFiletype(vimfiletype)
 		return("lua")
 	elseif a:vimfiletype == "make"
 		return("make")
+		" markdown is not supported by default, add to ~/.ctags
+	elseif a:vimfiletype == "markdown"
+		return("markdown")
 	elseif a:vimfiletype == "pascal"
 		return("pascal")
 	elseif a:vimfiletype == "perl"
@@ -1097,8 +1100,11 @@ endfunction
 " ------------------------------------------------------------------------------
 " - thesaurus                                                                  -
 " ------------------------------------------------------------------------------
-" If word is not in local thesaurus, gets it from thesaurus.com
+
+" have i_ctrl-x_ctrl-t grab synonyms from thesaurus.com if doesn't exist
+" locally
 inoremap <c-x><c-t> <c-o>:call Thesaurus(expand("<cword>"))<cr><c-x><c-t>
+" Ensure desired word is in local thesaurus
 function! Thesaurus(word)
 	" check if given word is already in local thesaurus
 	if filereadable(g:thesaurusfile)
@@ -1140,6 +1146,33 @@ function! Thesaurus(word)
 	call writefile(thesaurus, g:thesaurusfile)
 	redraw!
 endfunction
+" open synonyms in preview window
+command! -nargs=1 Thesaurus :call PreviewThesaurus("<args>")
+nnoremap g<c-t> :call PreviewThesaurus(expand("<cword>"))<cr>
+function! PreviewThesaurus(word)
+	call Thesaurus(a:word)
+	let found = 0
+	for line in readfile(g:thesaurusfile)
+		let fields = split(line)
+		if fields[0] == a:word
+			let found = 1
+			break
+		endif
+	endfor
+	if !found
+		echo "No matches"
+		return
+	endif
+	let out = "/dev/shm/.vim-synonyms-".getpid()
+	execute "autocmd VimLeave * call delete(\"".out."\")"
+	call writefile([line], out)
+	execute "pedit! " . out
+	wincmd P
+	setlocal nomodifiable
+	normal gg
+	setlocal bufhidden=delete
+	redraw!
+endfunction
 
 " ------------------------------------------------------------------------------
 " - dictionary                                                                 -
@@ -1148,6 +1181,7 @@ endfunction
 " displays it in preview window.
 
 nnoremap g<c-d> :call Dictionary(expand("<cword>"))<cr>
+command! -nargs=1 Dictionary :call Dictionary("<args>")
 function! Dictionary(word)
 	" check if given word is already in local dictionary
 	let line = ""
@@ -1185,11 +1219,13 @@ function! Dictionary(word)
 		let pronounce = substitute(line, '^.*\(\[</span><span class="pron">.*<span class="prondelim">\]\).*$', '\1', '')
 
 		" remove extraneous markup and content
+		let line = substitute(line, '<span class="pg">\([^<]\+\)</span>', '\\n\1\\n', 'g')
 		for tag in ['<a [^>]*>','</a>', '<div[^>]*>','</div>']
 			let line = substitute(line, tag, '', 'g')
 		endfor
 		echo pronounce
 		let pronounce = substitute(pronounce, '<[^>]*>', '', 'g')
+		let pronounce = substitute(pronounce, '[ ]\+', '', 'g')
 		let line = join(filter(split(line, "\<[^>]*\>"), 'v:val !~ "^[ \t]*$"'))
 		let line = line[match(line, "Show IPA")+10:]
 		let line = a:word . " " . pronounce . " " . line
@@ -1206,15 +1242,23 @@ function! Dictionary(word)
 	
 	" show definition in preview window
 	let fmt = [join(split(line)[:1])]
-	for def in split(line, ' \ze\d\+\.')[1:]
-		for subdef in split(def, ' \ze[a-z]\.')
-			if subdef =~ '^[a-z]\.'
-				let fmt += [substitute("  " . subdef, '[ \t]\+$', '', '')]
-			else
-				let fmt += [substitute(subdef, '[ \t]\+$', '', '')]
-			endif
+	if match(line, ' \d\+\.') == -1
+		" only one definition
+		let fmt += split(join(split(line)[2:]), '\\n')
+	else
+		" multiple definitions
+		for l in split(join(split(line)[2:]), '\\n')
+			for def in split(l, ' \ze\d\+\.')
+				for subdef in split(def, ' \ze[a-z]\.')
+					if subdef =~ '^[a-z]\.'
+						let fmt += [substitute("  " . subdef, '[ \t]\+$', '', '')]
+					else
+						let fmt += [substitute(subdef, '[ \t]\+$', '', '')]
+					endif
+				endfor
+			endfor
 		endfor
-	endfor
+	endif
 	let out = "/dev/shm/.vim-definition-".getpid()
 	execute "autocmd VimLeave * call delete(\"".out."\")"
 	call writefile(fmt, out)

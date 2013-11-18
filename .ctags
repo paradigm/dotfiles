@@ -28,3 +28,9 @@
 --regex-vhdl=/^-- = (.*) +=$/\1/h,heading/
 --regex-vhdl=/^-- - (.*) +-$/\1/s,subheading/
 --regex-vhdl=/^-- ~ (.*) +~$/\1/S,subsubheading/
+
+--langdef=markdown
+--langmap=markdown:.md
+--regex-markdown=/^#[ \t]+(\{.*\}[ \t]*)(.*)/\2/h,heading/
+--regex-markdown=/^##[ \t]+(\{.*\}[ \t]*)(.*)/\2/s,subheading/
+--regex-markdown=/^###[ \t]+(\{.*\}[ \t]*)(.*)/\2/S,subsubheading/
