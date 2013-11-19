@@ -1500,6 +1500,6 @@ endfunction
 " - close preview window on insertLeave                                        -
 " ------------------------------------------------------------------------------
 
-autocmd InsertLeave * pclose
-autocmd CmdwinEnter * autocmd! InsertLeave
-autocmd CmdwinLeave * autocmd InsertLeave * pclose
+"autocmd InsertLeave * pclose
+"autocmd CmdwinEnter * autocmd! InsertLeave
+"autocmd CmdwinLeave * autocmd InsertLeave * pclose
