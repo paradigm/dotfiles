@@ -118,7 +118,8 @@ nnoremap <space>s :so $MYVIMRC<cr>
 nnoremap <space>m :Make<cr>
 " Run whatever is being worked on
 nnoremap <space>r :Run<cr>
-nnoremap <space>R :RunPreview<cr>
+nnoremap <space>R :call Run("preview")<cr>
+nnoremap <space><c-r> :call Run("xterm")<cr>
 " Faster mapping for spelling correction
 nnoremap <space>z 1z=
 " Select most recently changed text - particularly useful for pastes
@@ -709,8 +710,14 @@ endfunction
 " Try to make an educated guess on what to run given the current filetype and
 " context.  Also helps set executable if needed.
 
-command! Run :call Run()
-function! Run()
+command! Run :call Run("")
+function! Run(type)
+	if a:type == ""
+		let l:type = get(g:, "last_run_type", "sh")
+	else
+		let l:type = a:type
+	endif
+	let g:last_run_type = l:type
 	" Move the directory containing the current buffer.  This is helpful in
 	" case multiple buffers are open which have different associated
 	" ./a.out or equivalent
@@ -742,47 +749,16 @@ function! Run()
 				call system("chmod u+x " . l:runpath)
 			endif
 		endif
-		let l:runcmd = "!" . l:runpath
-	endif
-	silent! :!clear
-	redraw!
-	execute l:runcmd
-endfunction
-
-command! RunPreview :call RunPreview()
-function! RunPreview()
-	" Move the directory containing the current buffer.  This is helpful in
-	" case multiple buffers are open which have different associated
-	" ./a.out or equivalent
-	execute "cd " . expand("%:p:h")
-	" Determine what to run
-	if exists("g:runcmd")
-		let l:runcmd = g:runcmd
-	elseif &ft == "c"
-		let l:runpath = "./a.out"
-		let l:runcmd = "runpath"
-	elseif &ft == "cpp"
-		let l:runpath = "./a.out"
-		let l:runcmd = "runpath"
-	elseif &ft == "python"
-		let l:runpath = expand("%:p")
-		let l:runcmd = "runpath"
-	elseif &ft == "sh"
-		let l:runpath = expand("%:p")
-		let l:runcmd = "runpath"
-	elseif &ft == "tex"
-		" reload pdf reader
-		let l:runcmd = "!pkill -HUP mupdf"
-	endif
-	if runcmd == "runpath"
-		if !executable(l:runpath)
-			redraw!
-			echo "Set " . runpath . " as executable? (y/n) "
-			if nr2char(getchar()) == "y"
-				call system("chmod u+x " . l:runpath)
+		if l:type == "sh"
+			execute "!" . l:runpath
+		elseif l:type == "preview"
+			call PreviewShell(l:runpath)
+		elseif l:type == "xterm"
+			if exists("g:last_run_pid")
+				call system('kill ' . g:last_run_pid)
 			endif
+			let g:last_run_pid = system('xterm -e "' . l:runpath . '"&; echo $!')
 		endif
-		call PreviewShell(l:runpath)
 		return
 	endif
 	silent! :!clear
