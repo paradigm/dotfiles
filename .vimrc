@@ -142,8 +142,8 @@ nnoremap <silent> gk k
 xnoremap <silent> gk k
 " filter selected area through calculator
 xnoremap <space>c :!bc -l<cr>
-xnoremap <space>C :!sage -q 2>/dev/null \| sed '$d' \| sed '$d' \| cut -c7-<cr>
-xnoremap <space>L <esc>`<ilatex(<esc>`>a)<esc>gv:!sage -q 2>/dev/null \| sed '$d' \| sed '$d' \| cut -c7-<cr>
+xnoremap <space>C :!sage -q 2>/dev/null \| head -n1 \| cut -c15-<cr>
+xnoremap <space>L <esc>`<ilatex(<esc>`>a)<esc>gv:!sage -q 2>/dev/null \| head -n1 \| cut -c15-<cr>
 
 " Toggle 'paste'
 " This particular mapping is nice because I can paste with
