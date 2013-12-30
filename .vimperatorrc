@@ -49,8 +49,10 @@ nnoremap si :noscript info<cr>
 nnoremap <c-l> :noh<cr>
 
 " per-site mappings
-autocmd PageLoad slashdot.org nnoremap c fRead
-autocmd PageLoad reddit.com nnoremap c f commen
+autocmd PageLoad slashdot.org nnoremap b fRead
+autocmd PageLoad slashdot.org nnoremap B FRead
+autocmd PageLoad reddit.com nnoremap b fcommen
+autocmd PageLoad reddit.com nnoremap B Fcommen
 
 " mplay youtube video in mplayer
 command! -nargs=0 cclive :execute "!uxterm -e 'cclive -W --format=best \""+content.location.href+"\" -O /dev/shm/cclive-video & sleep 3 && mplayer /dev/shm/cclive-video'"
