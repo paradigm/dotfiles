@@ -31,6 +31,11 @@ xhost +local:root
 
 # add 100dpi fonts to PATH, fixes steam
 xset +fp /usr/share/fonts/X11/100dpi
+# adds arch's terminus font to font sources irrelevant of who provides Xorg
+if [ -e /bedrock/clients/arch/usr/share/fonts/local/fonts.dir ]
+then
+	xset +fp /bedrock/clients/arch/usr/share/fonts/local
+fi
 
 if [ "$(uname -n)" = "am" ]
 then
