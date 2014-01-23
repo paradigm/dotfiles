@@ -40,3 +40,6 @@
 [submodule ".vim/bundle/visincr"]
 	path = .vim/bundle/visincr
 	url = https://github.com/vim-scripts/VisIncr.git
+[submodule ".vim/bundle/wmgraphviz.vim"]
+	path = .vim/bundle/wmgraphviz.vim
+	url = https://github.com/wannesm/wmgraphviz.vim.git
