@@ -551,6 +551,15 @@ autocmd Filetype tex endif
 autocmd BufNewFile,BufRead *.md set ft=markdown
 
 " ------------------------------------------------------------------------------
+" - dot_(filetype-specific)                                                    -
+" ------------------------------------------------------------------------------
+"
+" treat .gv files as dot
+autocmd BufNewFile,BufRead *.gv set ft=dot
+autocmd Filetype dot
+			\ nnoremap <buffer> <space>o :silent execute "!sxiv -V " . expand("%:r").".png &"<cr>
+
+" ------------------------------------------------------------------------------
 " - other_(filetype-specific)                                                  -
 " ------------------------------------------------------------------------------
 "
@@ -690,6 +699,9 @@ function! Make()
 					\ "}'" .
 					\ '"', "\" \\")
 		setlocal errorformat=%f:%l:%c:\ %m
+	elseif &ft == "dot"
+		setlocal makeprg=neato\ -Tpng\ %\ -o\ %:r.png
+		setlocal errorformat=Error:\ %f:%l:\ %m
 	else
 		" Couldn't figure out what is desired, fall back to Vim's default.
 		setlocal makeprg&vim
@@ -740,6 +752,9 @@ function! Run(type)
 	elseif &ft == "tex"
 		" reload pdf reader
 		let l:runcmd = "!pkill -HUP mupdf"
+	elseif &ft == "dot"
+		" reload image viewer
+		let l:runcmd = "!xdotool search --name sxiv key r"
 	endif
 	if runcmd == "runpath"
 		if !executable(l:runpath)
