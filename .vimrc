@@ -557,7 +557,7 @@ autocmd BufNewFile,BufRead *.md set ft=markdown
 " treat .gv files as dot
 autocmd BufNewFile,BufRead *.gv set ft=dot
 autocmd Filetype dot
-			\ nnoremap <buffer> <space>o :silent execute "!sxiv -V " . expand("%:r").".png &"<cr>
+			\ nnoremap <buffer> <space>o :silent execute "!sxiv -s -V " . expand("%:r").".png &"<cr>
 
 " ------------------------------------------------------------------------------
 " - other_(filetype-specific)                                                  -
