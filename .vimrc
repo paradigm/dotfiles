@@ -701,7 +701,7 @@ function! Make()
 		setlocal errorformat=%f:%l:%c:\ %m
 	elseif &ft == "dot"
 		setlocal makeprg=neato\ -Tpng\ %\ -o\ %:r.png
-		setlocal errorformat=Error:\ %f:%l:\ %m
+		setlocal errorformat=%EError:\ %f:%l:%m,%WWarning:\ %f:\ %*[^0-9]%l%m
 	else
 		" Couldn't figure out what is desired, fall back to Vim's default.
 		setlocal makeprg&vim
