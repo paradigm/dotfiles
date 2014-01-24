@@ -452,6 +452,16 @@ autocmd Filetype c
 " this page intentionally left blank
 
 " ------------------------------------------------------------------------------
+" - java_(filetype-specific)                                                   -
+" ------------------------------------------------------------------------------
+"
+" This mostly assumes eclim
+
+autocmd Filetype java
+		\  inoremap <buffer> <c-@> <c-x><c-u>
+		\| inoremap <buffer> <c-x><c-o> <c-x><c-u>
+
+" ------------------------------------------------------------------------------
 " - sh_(filetype-specific)                                                     -
 " ------------------------------------------------------------------------------
 
@@ -642,6 +652,13 @@ let g:jedi#show_call_signatures = 0
 " Indicate where the LanguageTool jar is located
 let g:languagetool_jar='/opt/languagetool/LanguageTool.jar'
 
+" ------------------------------------------------------------------------------
+" - eclim_(plugins)                                                            -
+" ------------------------------------------------------------------------------
+
+" disable automatic linting on write
+"call manually with: call eclim#lang#UpdateSrcFile('java',1)
+let g:EclimJavaValidate = 0
 
 " ==============================================================================
 " = custom_functions                                                           =
@@ -684,6 +701,17 @@ function! Make()
 	elseif &ft == "cpp"
 		setlocal makeprg=g++\ -Wall\ %
 		setlocal errorformat&vim
+	elseif &ft == "java"
+		" assumes eclim
+		call eclim#lang#UpdateSrcFile('java',1) " have eclim populate loclist
+		let g:EclimJavaValidate = 0             " disable auto-check
+		" ensure auto-check disabled
+		autocmd! eclim_java
+		" ensure pop-up error explanation disabled
+		autocmd! eclim_show_error
+		call setqflist(getloclist(0))           " transfer loclist into qflist
+		call CCOnError()
+		return
 	elseif &ft == "tex"
 		" Assumes lualatex.  Lots of massaging to do things like make some
 		" multi-line errors squashed to one line for errorformat.
