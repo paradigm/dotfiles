@@ -780,6 +780,8 @@ function! Run(type)
 		let l:runcmd = l:runpath
 	elseif &ft == "java"
 		" assumes eclim
+		autocmd! eclim_java
+		autocmd! eclim_show_error
 		let l:project = eclim#project#util#GetCurrentProjectName()
 		let l:runcmd = "eclim -editor vim -command java -p " . l:project
 	elseif &ft == "python"
