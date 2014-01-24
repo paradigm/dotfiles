@@ -117,7 +117,7 @@ nnoremap <space>s :so $MYVIMRC<cr>
 " Run wrapper for :make
 nnoremap <space>m :Make<cr>
 " Run whatever is being worked on
-nnoremap <space>r :Run<cr>
+nnoremap <space>r :call Run("sh")<cr>
 nnoremap <space>R :call Run("preview")<cr>
 nnoremap <space><c-r> :call Run("xterm")<cr>
 " Faster mapping for spelling correction
@@ -278,9 +278,9 @@ nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
 " ------------------------------------------------------------------------------
 
 " open the preview window
-nnoremap <space>p :call GenerateTagsForBuffers()<cr><c-w>}
+nnoremap <space>P :call GenerateTagsForBuffers()<cr><c-w>}
 " close the preview window
-nnoremap <space>P :pclose<cr>
+nnoremap <space>p :pclose\|cclose\|lclose<cr>
 
 " ------------------------------------------------------------------------------
 " - plugins_and_functions_(mappings)                                           -
@@ -418,6 +418,7 @@ autocmd Filetype mail setlocal spell
 " - Language-specific tag settings.
 " - python syntax-based folding yanked from
 "   http://vim.wikia.com/wiki/Syntax_folding_of_Python_files
+" - assumes jedi
 autocmd Filetype python
 			\  setlocal expandtab
 			\| setlocal tabstop=4
@@ -426,6 +427,10 @@ autocmd Filetype python
 			\| setlocal tags+=,~/.vim/tags/pythontags
 			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/pythontags /usr/lib/py* /usr/local/lib/py*"]
 			\| setlocal foldtext=substitute(getline(v:foldstart),'\\t','\ \ \ \ ','g')
+			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call jedi#goto_definitions()<cr>
+			\| nnoremap <buffer> <c-w>} :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
+			\| nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
+			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
 
 " ------------------------------------------------------------------------------
 " - assembly_(filetype-specific)                                               -
@@ -460,6 +465,11 @@ autocmd Filetype c
 autocmd Filetype java
 		\  inoremap <buffer> <c-@> <c-x><c-u>
 		\| inoremap <buffer> <c-x><c-o> <c-x><c-u>
+		\| nnoremap <buffer> <space>o :silent execute "!xterm -e eclimd &"<cr>
+		\| nnoremap <buffer> <c-]> :FTStackPush<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>
+		\| nnoremap <buffer> <c-w>} :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
+		\| nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
+		\| nnoremap <buffer> <c-t> :FTStackPop<cr>
 
 " ------------------------------------------------------------------------------
 " - sh_(filetype-specific)                                                     -
@@ -659,6 +669,8 @@ let g:languagetool_jar='/opt/languagetool/LanguageTool.jar'
 " disable automatic linting on write
 "call manually with: call eclim#lang#UpdateSrcFile('java',1)
 let g:EclimJavaValidate = 0
+" With JavaSearch/JavaSearchContextalways jump to definition in current window
+let g:EclimJavaSearchSingleResult = 'edit'
 
 " ==============================================================================
 " = custom_functions                                                           =
@@ -750,63 +762,65 @@ endfunction
 " Try to make an educated guess on what to run given the current filetype and
 " context.  Also helps set executable if needed.
 
-command! Run :call Run("")
+command! Run :call Run("sh")
 function! Run(type)
-	if a:type == ""
-		let l:type = get(g:, "last_run_type", "sh")
-	else
-		let l:type = a:type
-	endif
-	let g:last_run_type = l:type
 	" Move the directory containing the current buffer.  This is helpful in
 	" case multiple buffers are open which have different associated
 	" ./a.out or equivalent
 	execute "cd " . expand("%:p:h")
 	" Determine what to run
+	let l:quiet = 0
 	if exists("g:runcmd")
 		let l:runcmd = g:runcmd
 	elseif &ft == "c"
 		let l:runpath = "./a.out"
-		let l:runcmd = "runpath"
+		let l:runcmd = l:runpath
 	elseif &ft == "cpp"
 		let l:runpath = "./a.out"
-		let l:runcmd = "runpath"
+		let l:runcmd = l:runpath
+	elseif &ft == "java"
+		" assumes eclim
+		let l:project = eclim#project#util#GetCurrentProjectName()
+		let l:runcmd = "eclim -editor vim -command java -p " . l:project
 	elseif &ft == "python"
 		let l:runpath = expand("%:p")
-		let l:runcmd = "runpath"
+		let l:runcmd = l:runpath
 	elseif &ft == "sh"
 		let l:runpath = expand("%:p")
-		let l:runcmd = "runpath"
+		let l:runcmd = l:runpath
 	elseif &ft == "tex"
 		" reload pdf reader
-		let l:runcmd = "!pkill -HUP mupdf"
+		let l:runcmd = "pkill -HUP mupdf"
+		let l:quiet = 1
 	elseif &ft == "dot"
 		" reload image viewer
-		let l:runcmd = "!xdotool search --name sxiv key r"
+		let l:runcmd = "xdotool search --name sxiv key r"
+		let l:quiet = 1
 	endif
-	if runcmd == "runpath"
-		if !executable(l:runpath)
-			redraw!
-			echo "Set " . runpath . " as executable? (y/n) "
-			if nr2char(getchar()) == "y"
-				call system("chmod u+x " . l:runpath)
-			endif
+
+	if exists("l:runpath") && !executable(l:runpath)
+		redraw!
+		echo "Set " . runpath . " as executable? (y/n) "
+		if nr2char(getchar()) == "y"
+			call system("chmod u+x " . l:runpath)
 		endif
-		if l:type == "sh"
-			execute "!" . l:runpath
-		elseif l:type == "preview"
-			call PreviewShell(l:runpath)
-		elseif l:type == "xterm"
-			if exists("g:last_run_pid")
-				call system('kill ' . g:last_run_pid)
-			endif
-			let g:last_run_pid = system('xterm -e "' . l:runpath . '"&; echo $!')
-		endif
-		return
 	endif
-	silent! :!clear
-	redraw!
-	execute l:runcmd
+
+	if a:type == "sh" && !l:quiet
+		silent! :!clear
+		redraw!
+		execute "!" . l:runcmd
+	elseif a:type == "sh" && l:quiet
+		call system(l:runcmd . "&")
+	elseif a:type == "preview"
+		call PreviewShell(l:runcmd)
+	elseif a:type == "xterm"
+		if exists("g:last_run_pid")
+			echo system('kill ' . g:last_run_pid)
+		endif
+		let g:last_run_pid = system('xterm -e sh -c "' . l:runcmd . '; echo; echo RETURNED $?; echo PRESS ENTER TO CLOSE; read PAUSE" & echo $!')
+	endif
+	return
 endfunction
 
 " ------------------------------------------------------------------------------
@@ -1149,7 +1163,7 @@ endfunction
 " window
 
 function! PreviewShell(cmd)
-	silent! execute "!" . a:cmd . " >/dev/shm/.vimshellout-" . getpid()
+	execute "!" . a:cmd . " | tee /dev/shm/.vimshellout-" . getpid()
 	execute "pedit! /dev/shm/.vimshellout-" .getpid()
 	wincmd P
 	setlocal bufhidden=delete
@@ -1330,6 +1344,35 @@ function! Dictionary(word)
 	setlocal bufhidden=delete
 	redraw!
 endfunction
+
+" ------------------------------------------------------------------------------
+" - Fake Tag Stack                                                             -
+" ------------------------------------------------------------------------------
+"
+" Mimics the tag stack for tools that have jump-to-definition without using
+" tags
+
+command! FTStackPush :call FTStackPush()
+function! FTStackPush()
+	if !exists("g:ftstack")
+		let g:ftstack = []
+	endif
+	let g:ftstack += [[expand("%"), line("."), virtcol(".")]]
+endfunction
+
+command! FTStackPop :call FTStackPop()
+function! FTStackPop()
+	if len(g:ftstack) == 0
+		redraw
+		echo "Tag Stack Empty"
+		return
+	endif
+	execute "e " . g:ftstack[-1][0]
+	execute "normal " . g:ftstack[-1][1] . "gg"
+	execute "normal " . g:ftstack[-1][2] . "|"
+	let g:ftstack = g:ftstack[:-2]
+endfunction
+
 
 
 " ==============================================================================
