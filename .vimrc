@@ -1166,7 +1166,8 @@ endfunction
 " window
 
 function! PreviewShell(cmd)
-	execute "!" . a:cmd . " | tee /dev/shm/.vimshellout-" . getpid()
+	pclose  " so we don't get W11
+	execute "silent !" . a:cmd . " > /dev/shm/.vimshellout-" . getpid()
 	execute "pedit! /dev/shm/.vimshellout-" .getpid()
 	wincmd P
 	setlocal bufhidden=delete
