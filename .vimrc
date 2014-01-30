@@ -470,6 +470,7 @@ autocmd Filetype java
 		\| nnoremap <buffer> <c-w>} :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
 		\| nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
 		\| nnoremap <buffer> <c-t> :FTStackPop<cr>
+		\| nnoremap <buffer> K :JavaDocPreview<cr>
 
 " ------------------------------------------------------------------------------
 " - sh_(filetype-specific)                                                     -
