@@ -330,13 +330,13 @@ nnoremap <c-]> :call GenerateTagsForBuffers()<cr><c-]>
 " - custom_text_objects_(mappings)                                             -
 " ------------------------------------------------------------------------------
 
-" Create new text objects for pairs of identical characters
-for char in ['$',',','.','/','-','=']
-	exec 'xnoremap i' . char . ' :<C-U>silent!normal!T' . char . 'vt' . char . '<CR>'
-	exec 'onoremap i' . char . ' :normal vi' . char . '<CR>'
-	exec 'xnoremap a' . char . ' :<C-U>silent!normal!F' . char . 'vf' . char . '<CR>'
-	exec 'onoremap a' . char . ' :normal va' . char . '<CR>'
-endfor
+"" Create new text objects for pairs of identical characters
+"for char in ['$',',','.','/','-','=']
+"	exec 'xnoremap i' . char . ' :<C-U>silent!normal!T' . char . 'vt' . char . '<CR>'
+"	exec 'onoremap i' . char . ' :normal vi' . char . '<CR>'
+"	exec 'xnoremap a' . char . ' :<C-U>silent!normal!F' . char . 'vf' . char . '<CR>'
+"	exec 'onoremap a' . char . ' :normal va' . char . '<CR>'
+"endfor
 " Create a text object for folding regions
 xnoremap if :<C-U>silent!normal![zjV]zk<CR>
 onoremap if :normal Vif<CR>
@@ -436,6 +436,7 @@ autocmd Filetype python
 " - assembly_(filetype-specific)                                               -
 " ------------------------------------------------------------------------------
 
+autocmd BufNewFile,BufRead *.x68 set ft=asm68k
 " Set tabstop to 8 for assembly.
 autocmd Filetype asm setlocal tabstop=8
 
@@ -741,7 +742,7 @@ function! Make()
 					\ '"', "\" \\")
 		setlocal errorformat=%f:%l:%c:\ %m
 	elseif &ft == "dot"
-		setlocal makeprg=neato\ -Tpng\ %\ -o\ %:r.png
+		setlocal makeprg=dot\ -Tpng\ %\ -o\ %:r.png
 		setlocal errorformat=%EError:\ %f:%l:%m,%WWarning:\ %f:\ %*[^0-9]%l%m
 	else
 		" Couldn't figure out what is desired, fall back to Vim's default.
@@ -1003,6 +1004,8 @@ endfunction
 function! GetCtagsFiletype(vimfiletype)
 	if a:vimfiletype == "asm"
 		return("asm")
+	elseif a:vimfiletype == "asm68k"
+		return("x68")
 	elseif a:vimfiletype == "aspperl"
 		return("asp")
 	elseif a:vimfiletype == "aspvbs"

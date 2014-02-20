@@ -34,3 +34,6 @@
 --regex-markdown=/^#[ \t]+(\{.*\}[ \t]*)(.*)/\2/h,heading/
 --regex-markdown=/^##[ \t]+(\{.*\}[ \t]*)(.*)/\2/s,subheading/
 --regex-markdown=/^###[ \t]+(\{.*\}[ \t]*)(.*)/\2/S,subsubheading/
+
+--langdef=x68
+--regex-x68=/^([^ \t*:]+)/\1/l,label/
