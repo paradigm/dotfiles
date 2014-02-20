@@ -1005,7 +1005,7 @@ function! GetCtagsFiletype(vimfiletype)
 	if a:vimfiletype == "asm"
 		return("asm")
 	elseif a:vimfiletype == "asm68k"
-		return("x68")
+		return("asm68k")
 	elseif a:vimfiletype == "aspperl"
 		return("asp")
 	elseif a:vimfiletype == "aspvbs"
