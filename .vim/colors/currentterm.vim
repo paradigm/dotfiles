@@ -98,6 +98,9 @@ if loaded_theme
 		execute "highlight CursorLineNr ctermfg = " . theme_normal_fg
 		execute "highlight CursorLineNr ctermbg = " . theme_normal_bg
 	endif
+	execute "highlight ColorColumn cterm   = NONE"
+	execute "highlight ColorColumn ctermfg = " . theme_insensitive_bg
+	execute "highlight ColorColumn ctermbg = " . theme_insensitive_fg
 	" spelling
 	highlight clear SpellBad
 	highlight SpellBad cterm=underline
