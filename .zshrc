@@ -142,6 +142,9 @@ export CORRECT_IGNORE='_*'
 # the entire thing.
 export WORDCHARS=${WORDCHARS//\/}
 
+# Use gpg-agent if available
+export GPG_AGENT_INFO="$HOME/.gnupg/S.gpg-agent::1"
+
 # ------------------------------------------------------------------------------
 # - theme_(environmental_variables)                                            -
 # ------------------------------------------------------------------------------

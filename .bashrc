@@ -128,6 +128,9 @@ fi
 # sets mail directory
 export MAIL="~/.mail"
 
+# Use gpg-agent if available
+export GPG_AGENT_INFO="$HOME/.gnupg/S.gpg-agent::1"
+
 # ------------------------------------------------------------------------------
 # - theme_(environmental_variables)                                            -
 # ------------------------------------------------------------------------------
