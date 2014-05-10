@@ -662,7 +662,7 @@ let g:jedi#show_call_signatures = 0
 " ------------------------------------------------------------------------------
 
 " Indicate where the LanguageTool jar is located
-let g:languagetool_jar='/opt/languagetool/LanguageTool.jar'
+let g:languagetool_jar='/opt/languagetool/languagetool-commandline.jar'
 
 " ------------------------------------------------------------------------------
 " - eclim_(plugins)                                                            -
