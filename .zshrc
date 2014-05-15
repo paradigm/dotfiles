@@ -658,7 +658,6 @@ alias ls="ls --color=auto -h  --group-directories-first"
 alias octave="octave --silent"
 alias xpdfr="xpdf -remote 127.0.0.1"
 alias xpdfv="xpdf -rv"
-alias mpv="mupdf -V"
 alias pw="pal -r 7"
 alias pm="pal -r 31"
 
