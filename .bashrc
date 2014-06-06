@@ -237,6 +237,13 @@ alias xpdfr="xpdf -remote 127.0.0.1"
 alias xpdfv="xpdf -rv"
 alias pw="pal -r 7"
 alias pm="pal -r 31"
+if [ -r ~/.mozilla/firefox/profiles.ini ]
+then
+	for profile in $(awk -F= '/^Name=/{print$2}' ~/.mozilla/firefox/profiles.ini)
+	do
+		alias fx-$profile="firefox -P $profile -no-remote"
+	done
+fi
 
 # ------------------------------------------------------------------------------
 # - git_(aliases)                                                              -
