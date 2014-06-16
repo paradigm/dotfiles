@@ -213,6 +213,9 @@ compinit -d $CACHEDIR/zcompdump 2>/dev/null
 # Use cache to speed completion up.
 zstyle ':completion:*' use-cache on
 
+# Do not require running "rehash" manually
+zstyle ':completion:*' rehash true
+
 # Set the cache location.
 zstyle ':completion:*' cache-path $CACHEDIR/cache
 
