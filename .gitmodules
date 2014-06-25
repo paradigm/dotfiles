@@ -43,3 +43,6 @@
 [submodule ".vim/bundle/wmgraphviz.vim"]
 	path = .vim/bundle/wmgraphviz.vim
 	url = https://github.com/wannesm/wmgraphviz.vim.git
+[submodule ".vim/bundle/clang_complete-src"]
+	path = .vim/bundle/clang_complete-src
+	url = https://github.com/Rip-Rip/clang_complete.git
