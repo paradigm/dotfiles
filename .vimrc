@@ -301,7 +301,7 @@ nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
 " General SkyBison prompt
 nnoremap <space>;  :<c-u>call SkyBison("")<cr>
 " Startify's session loader
-nnoremap <space>t 2:<c-u>call SkyBison("SLoad ")<cr>
+"nnoremap <space>t 2:<c-u>call SkyBison("SLoad ")<cr>
 " Switch from normal cmdline to SkyBison
 cnoremap <c-l>     <c-r>=SkyBison("")<cr><cr>
 
@@ -1572,3 +1572,86 @@ endfunction
 "autocmd InsertLeave * pclose
 "autocmd CmdwinEnter * autocmd! InsertLeave
 "autocmd CmdwinLeave * autocmd InsertLeave * pclose
+
+" ------------------------------------------------------------------------------
+" - session management redux                                                   -
+" ------------------------------------------------------------------------------
+
+nnoremap <c-k>w :call GitBranchSessionSave()<cr>
+nnoremap <c-k>l :call GitBranchSessionLoad()<cr>
+nnoremap <c-k>p :call ProjectSave()<cr>
+nnoremap <space>t 2:<c-u>call SkyBison("ProjectLoad ")<cr>
+
+function! GitBranchSessionSave()
+	if bufname("%") == ""
+		echoerr "Refusing to overwrite when current buffer is unnamed"
+		return
+	endif
+	let git_dir = system("git rev-parse --show-toplevel")[:-2] . "/.git"
+	" ensure we're in a git session
+	if git_dir[0] != "/"
+		echoerr "Not in a git session"
+		return
+	endif
+	let branch = system("git branch | awk '$1==\"*\"{print$2}'")[:-2]
+	call system("mkdir -p " . git_dir . "/vimsessions")
+	let session_path = git_dir . "/vimsessions/" . branch
+	execute "mksession!  " . session_path
+	redraw
+	echo "Saved Session " . session_path
+endfunction
+
+function! GitBranchSessionLoad()
+	let git_dir = system("git rev-parse --show-toplevel")[:-2] . "/.git"
+	" ensure we're in a git session
+	if git_dir[0] != "/"
+		echoerr "Not in a git session"
+		return 1
+	endif
+	let branch = system("git branch | awk '$1==\"*\"{print$2}'")[:-2]
+	let session_path = git_dir . "/vimsessions/" . branch
+	if ! filereadable(session_path)
+		echoerr "no session at \"" . session_path . "\""
+		return
+	endif
+	execute "source " . session_path
+	redraw
+	echo "Loaded Session " . session_path
+endfunction
+
+function! ProjectSave(...)
+	if bufname("%") == ""
+		echoerr "Refusing to overwrite when current buffer is unnamed"
+		return
+	endif
+	if a:0 == 0
+		let name = input("Save Project name: ")
+	else
+		let name = a:1
+	endif
+	let git_top = system("git rev-parse --show-toplevel")[:-2]
+	call system("mkdir -p " . $HOME . "/.vim/sessions")
+	call system("ln -s '" . git_top . "' " . $HOME . "/.vim/sessions/" . name)
+	redraw
+	echo "Saved Project " . name
+endfunction
+
+command -nargs=1 -complete=customlist,ListProjects ProjectLoad :call ProjectLoad("<args>")
+function! ListProjects(A,L,P)
+	let sessions = []
+	for session in split(globpath($HOME . "/.vim/sessions",'*'),'\n')
+		let sessions += [fnamemodify(session, ":t")]
+	endfor
+	return sessions
+endfunction
+function! ProjectLoad(...)
+	if a:0 == 0
+		let name = input("Load Project name: ")
+	else
+		let name = a:1
+	endif
+	exec "cd $HOME/.vim/sessions/" . name
+	redraw
+	echo "Loaded Project " . name
+	call GitBranchSessionLoad()
+endfunction
