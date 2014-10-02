@@ -446,16 +446,29 @@ autocmd Filetype asm setlocal tabstop=8
 
 " - Language-specific tag settings.
 " - open manpage in preview window
+" - use clang_complete to open definition in preview window
 autocmd Filetype c
 			\  setlocal tags+=,~/.vim/tags/ctags
 			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/ctags /usr/include"]
 			\| nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
+			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call g:ClangGotoDeclaration()<cr>
+			\| nnoremap <buffer> <space>P :call g:ClangGotoDeclarationPreview()<cr>
+			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
 
 " ------------------------------------------------------------------------------
 " - c++_(filetype-specific)                                                    -
 " ------------------------------------------------------------------------------
 
-" this page intentionally left blank
+" - Language-specific tag settings.
+" - open manpage in preview window
+" - use clang_complete to open definition in preview window
+autocmd Filetype cpp
+			\  setlocal tags+=,~/.vim/tags/cpptags
+			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/cpptags /usr/include/c++"]
+			\| nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
+			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call g:ClangGotoDeclaration()<cr>
+			\| nnoremap <buffer> <space>P :call g:ClangGotoDeclarationPreview()<cr>
+			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
 
 " ------------------------------------------------------------------------------
 " - java_(filetype-specific)                                                   -
@@ -655,7 +668,14 @@ let g:jedi#show_call_signatures = 0
 " ------------------------------------------------------------------------------
 " - clang_complete_(plugins)                                                   -
 " ------------------------------------------------------------------------------
-" this page intentionally left blank
+
+" do not automatically pop up completion after a ->, ., or ::
+let g:clang_complete_auto = 0
+
+" do not have the clang plugin set mappings, as it makes some disagreeable
+" choices.  Do it directly in the .vimrc file.
+let g:clang_make_default_keymappings = 0
+
 
 " ------------------------------------------------------------------------------
 " - LanguageTool_(plugins)                                                     -
