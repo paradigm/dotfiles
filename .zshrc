@@ -455,9 +455,24 @@ zle -N history-beginning-search-backward-then-append
 # - non-zle_widget_functions                                                   -
 # ------------------------------------------------------------------------------
 
-# Change directory then immediately clear the screen and run `ls`.
-cds() {
-	cd $1 && clear && ls
+# go _d_own to the specified directory name
+d() {
+	cd $(find . -type d -name "$1" -print -quit 2>/dev/null)
+	pwd
+}
+
+# go _u_p to the specified directory OR number of levels if it is a number
+u() {
+	if [ -z "$1" ]
+	then
+		cd ..
+	elif echo "$1" | grep -q '[0-9]\+'
+	then
+		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'$1'{NF-='$1'}NF==1{print"/"}NF>1')"
+	else
+		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}{for(i=NF;i>1;i--){if($i ~ "'$1'"){NF=i;break}}}1')"
+	fi
+	pwd
 }
 
 # print a field from the output of the last command
@@ -877,6 +892,7 @@ alias -g G="|grep"
 alias -g B="&exit"
 alias -g H="|head"
 alias -g T="|tail"
+alias -g C="|column -t"
 alias -g V="|vim -m -c 'set nomod' -"
 alias -g Q=">/dev/null 2>&1"
 alias -g Z='$(field_from_last_command'
