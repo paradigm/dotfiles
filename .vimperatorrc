@@ -107,7 +107,7 @@ style -name chrome * <<EOM
 		color: #000000 !important; /* selected tab foreground */
 		background-color: #ffffff !important; /* selected tab foreground */
 	}
-	.tab-icon-image {
+	.tab-icon-image, .tab-close-button {
 		display: none !important;
 	}
 EOM

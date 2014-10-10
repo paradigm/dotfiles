@@ -61,6 +61,24 @@ u() {
 	pwd
 }
 
+# go to directory from dir history
+h() {
+	cd $(dirs -lp | awk -F/ '$NF ~ /'"$1"'/{print;exit}')
+	pwd
+}
+
+# save directory for later reference
+M() {
+	pwd >> ~/.zsh/dirmarks
+	echo "$(pwd) >> ~/.zsh/dirmarks"
+}
+
+# go to directory saved by M()
+m() {
+	cd $(tac ~/.zsh/dirmarks | awk -F/ '$NF ~ /'"$1"'/{print;exit}')
+	pwd
+}
+
 # ==============================================================================
 # = key_bindings                                                               =
 # ==============================================================================

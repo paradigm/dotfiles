@@ -43,14 +43,19 @@ then
 	xbacklight -set 30%
 fi
 
-# If the xcape program is available, use it.
-if which xcape >/dev/null
+# start xorg user session items
+if which sv >/dev/null
 then
-	xcape
+	for service in $(ls $SVDIR/*/start-xorg | awk -F/ '{print $(NF-1)}')
+	do
+		if which $service >/dev/null && [ -d $SVDIR/$service ]
+		then
+			sv u $SVDIR/$service
+		fi
+	done
 fi
 
-# Run the window manager and auxiliary programs.
-dwmstatus&
+# Run the window manager
 dwm&
 
 # Do not close X11 automatically when the window manager closes.

@@ -1,17 +1,19 @@
-# ==============================================================================
-# = paradigm's gtkrc-2.0                                                       =
-# ==============================================================================
+# DO NOT EDIT! This file will be overwritten by LXAppearance.
+# Any customization should be done in ~/.gtkrc-2.0.mine instead.
 
 gtk-theme-name="current"
+gtk-icon-theme-name="gnome"
 gtk-font-name="Terminus 8"
+gtk-cursor-theme-name="Adwaita"
 gtk-cursor-theme-size=0
-gtk-toolbar-style=GTK_TOOLBAR_TEXT
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
 gtk-toolbar-icon-size=GTK_ICON_SIZE_SMALL_TOOLBAR
 gtk-button-images=0
 gtk-menu-images=0
 gtk-enable-event-sounds=0
 gtk-enable-input-feedback-sounds=0
-gtk-xft-antialias=0
-gtk-xft-hinting=0
-gtk-xft-hintstyle="hintnone"
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle="hintfull"
 gtk-xft-rgba="none"
+include "/home/paradigm/.gtkrc-2.0.mine"

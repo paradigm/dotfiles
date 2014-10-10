@@ -468,10 +468,28 @@ u() {
 		cd ..
 	elif echo "$1" | grep -q '[0-9]\+'
 	then
-		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'$1'{NF-='$1'}NF==1{print"/"}NF>1')"
+		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'"$1"'{NF-='"$1"'}NF==1{print"/"}NF>1')"
 	else
-		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}{for(i=NF;i>1;i--){if($i ~ "'$1'"){NF=i;break}}}1')"
+		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}{for(i=NF;i>1;i--){if($i ~ "'"$1"'"){NF=i;break}}}1')"
 	fi
+	pwd
+}
+
+# go to directory from dir history
+h() {
+	cd $(dirs -lp | awk -F/ '$NF ~ /'"$1"'/{print;exit}')
+	pwd
+}
+
+# save directory for later reference
+M() {
+	pwd >> ~/.zsh/dirmarks
+	echo "$(pwd) >> ~/.zsh/dirmarks"
+}
+
+# go to directory saved by M()
+m() {
+	cd $(tac ~/.zsh/dirmarks | awk -F/ '$NF ~ /'"$1"'/{print;exit}')
 	pwd
 }
 
@@ -935,3 +953,20 @@ if [ -n "$SSH_CLIENT" ] ||\
 then
 	exec tmux attach -d
 fi
+
+# ==============================================================================
+# = runit                                                                      =
+# ==============================================================================
+
+export SVDIR=$HOME/.sv
+if ! ps -u $(id -u) -o cmd | grep -v grep | grep -qF "runsvdir $SVDIR"
+then
+	printf "Starting runsvdir: "
+	runsvdir $SVDIR &
+fi
+svall() {
+	(
+		cd $SVDIR
+		sv s *
+	)
+}
