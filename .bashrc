@@ -347,7 +347,7 @@ alias gul="git pull"
 alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 alias gusu='git submodule foreach git pull origin master'
 alias gdh='git diff HEAD'
-alias gt="git rev-parse --show-toplevel"
+alias gT='cd "$(git rev-parse --show-toplevel)"'
 
 # ------------------------------------------------------------------------------
 # - bedrock_clients_(aliases)                                                  -
