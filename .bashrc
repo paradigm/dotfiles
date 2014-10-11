@@ -42,16 +42,30 @@ stty -ixon
 # ==============================================================================
 
 # go _d_own to the specified directory name
-d() {
-	target=$(find . -type d -name "$1" -print -quit 2>/dev/null)
-	if [ "x$target" != "x" ]
-	then
-		cd $target
-	fi
-	pwd
-}
+# supports globbing
+if find --version | grep -q GNU
+then
+	d() {
+		target=$(find . -type d -name "$1" -print -quit 2>/dev/null)
+		if [ "x$target" != "x" ]
+		then
+			cd $target
+		fi
+		pwd
+	}
+else
+	d() {
+		target=$(find . -type d -name "$1" -print 2>/dev/null | head -n1)
+		if [ "x$target" != "x" ]
+		then
+			cd $target
+		fi
+		pwd
+	}
+fi
 
 # go _u_p to the specified directory OR number of levels if it is a number
+# can match directory boundary with /
 u() {
 	if [ -z "$1" ]
 	then
@@ -63,7 +77,7 @@ u() {
 	then
 		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'"$1"'{NF-='"$1"'}NF==1{print"/"}NF>1')"
 	else
-		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}{for(i=NF;i>1;i--){if($i ~ "'"$1"'"){NF=i;break}}}1')"
+		cd "$(pwd | sed 's!\('$1'[^/]*/\).*$!\1!')"
 	fi
 	pwd
 }
@@ -72,6 +86,7 @@ u() {
 # If no argument is given, prints cwd history.
 # This first looks for a match at the deepest level in the directory for every
 # item in the history, then works its way up the tree.
+# It cannot match across directory boundaries
 h() {
 	# if no argument is specified, list the history
 	if [ -z "$1" ]
@@ -107,10 +122,7 @@ h() {
 		}
 	}
 	')"
-	if [ "x$target" != "x" ]
-	then
-		cd "$target"
-	fi
+	[ "x$target" != "x" ] && cd "$target"
 	pwd
 }
 
@@ -128,7 +140,8 @@ m() {
 
 # go to directory saved by m()
 f() {
-	cd $(awk 'BEGIN{x="'"$(pwd)"'"}$1 ~ '/"$1"'/{$1="";x=$0}END{print x}' $SHELLDIR/dirmarks)
+	target="$(awk '$1 ~ "'"$1"'"{$1="";print substr($0,2);exit}' $SHELLDIR/dirmarks)"
+	[ "x$target" != "x" ] && cd "$target"
 	pwd
 }
 
