@@ -43,7 +43,11 @@ stty -ixon
 
 # go _d_own to the specified directory name
 d() {
-	cd $(find . -type d -name "$1" -print -quit 2>/dev/null)
+	target=$(find . -type d -name "$1" -print -quit 2>/dev/null)
+	if [ "x$target" != "x" ]
+	then
+		cd $target
+	fi
 	pwd
 }
 
@@ -52,30 +56,79 @@ u() {
 	if [ -z "$1" ]
 	then
 		cd ..
+	elif [ "$1" = "/" ]
+	then
+		cd /
 	elif echo "$1" | grep -q '[0-9]\+'
 	then
-		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'$1'{NF-='$1'}NF==1{print"/"}NF>1')"
+		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'"$1"'{NF-='"$1"'}NF==1{print"/"}NF>1')"
 	else
-		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}{for(i=NF;i>1;i--){if($i ~ "'$1'"){NF=i;break}}}1')"
+		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}{for(i=NF;i>1;i--){if($i ~ "'"$1"'"){NF=i;break}}}1')"
 	fi
 	pwd
 }
 
-# go to directory from dir history
+# go to directory from dir _h_istory
+# If no argument is given, prints cwd history.
+# This first looks for a match at the deepest level in the directory for every
+# item in the history, then works its way up the tree.
 h() {
-	cd $(dirs -lp | awk -F/ '$NF ~ /'"$1"'/{print;exit}')
+	# if no argument is specified, list the history
+	if [ -z "$1" ]
+	then
+		dirs -lp
+		return
+	fi
+	if [ "$1" = "/" ]
+	then
+		cd /
+		return
+	fi
+	target="$(dirs -lp | awk '
+	BEGIN {
+		FS=OFS="/"
+	}
+	{
+		if(NF>nfmax)
+			nfmax=NF;
+		rs[NR] = $0
+	}
+	END{
+		for(i=0;i<nfmax;i++) {
+			for(j=1;j<=NR;j++) {
+				$0=rs[j]
+				if (NF>=i && $(NF-i) ~ "'"$1"'") {
+					NF-=i
+					print $0
+					i=nfmax+1
+					j=NR+1
+				}
+			}
+		}
+	}
+	')"
+	if [ "x$target" != "x" ]
+	then
+		cd "$target"
+	fi
 	pwd
 }
 
 # save directory for later reference
-M() {
-	pwd >> ~/.zsh/dirmarks
-	echo "$(pwd) >> ~/.zsh/dirmarks"
+m() {
+	if [ -z "$1" ]
+	then
+		mark="$(basename $(pwd))"
+	else
+		mark="$1"
+	fi
+	echo "$mark $(pwd) >> $SHELLDIR/dirmarks"
+	echo "$mark $(pwd)" >> "$SHELLDIR/dirmarks"
 }
 
-# go to directory saved by M()
-m() {
-	cd $(tac ~/.zsh/dirmarks | awk -F/ '$NF ~ /'"$1"'/{print;exit}')
+# go to directory saved by m()
+f() {
+	cd $(awk 'BEGIN{x="'"$(pwd)"'"}$1 ~ '/"$1"'/{$1="";x=$0}END{print x}' $SHELLDIR/dirmarks)
 	pwd
 }
 
@@ -107,6 +160,10 @@ bind '"":""'
 # "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
 # should not be necessary, but it's not a bad idea to have just in case.
 export SHELL="/bin/bash"
+
+# This is where custom shell files are stored
+SHELLDIR="$HOME/.bash"
+mkdir -p SHELLDIR
 
 # Set the default text editor.
 if which vim >/dev/null 2>&1
@@ -188,28 +245,20 @@ fi
 # ------------------------------------------------------------------------------
 #
 # If root, the prompt should be a red pound sign.
-# Otherwise, it should be a blue dollar sign.
+# Otherwise, "$ " with highlight from theme
 
-if [ "$(id -u)" -eq "0" ]
-then
-	export PS1=$'\e[0;30m\e[41m#\e[m '
-elif [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
-then
-	export PS1=$'\e[0;30m\e[46m$\e[m '
-else
-	export PS1=$'\e[0;30m\e[47m$\e[m '
-fi
+#if [ "$(id -u)" -eq "0" ]
 if [ $(tput colors) -eq "256" ] && [ -r ~/.themes/current/terminal/256-theme ]
 then
-	if [ $EUID -eq "0" ]
-	then
-		export PS1=$'\e[38;5;${ERROR_FOREGROUND}m\e[48;5;${ERROR_BACKGROUND}m#\e[m '
-	elif [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
-	then
-		export PS1=$'\e[38;5;${MISCELLANEOUS_FOREGROUND}m\e[48;5;${MISCELLANEOUS_BACKGROUND}m#\e[m '
-	else
-		export PS1=$'\e[38;5;${HIGHLIGHT_FOREGROUND}m\e[48;5;${HIGHLIGHT_BACKGROUND}m#\e[m '
-	fi
+ 	if [ $EUID -eq "0" ]
+ 	then
+		export PS1="\[\e[38;5;${ERROR_FOREGROUND}m\e[48;5;${ERROR_BACKGROUND}m#\e[0m\]\] "
+ 	elif [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]
+ 	then
+		export PS1="\[\e[38;5;${MISCELLANEOUS_FOREGROUND}m\e[48;5;${MISCELLANEOUS_BACKGROUND}m$\e[0m\]\] "
+ 	else
+		export PS1="\[\e[38;5;${HIGHLIGHT_FOREGROUND}m\e[48;5;${HIGHLIGHT_BACKGROUND}m$\e[0m\]\] "
+ 	fi
 fi
 
 # ==============================================================================
@@ -488,3 +537,25 @@ if [ -n "$SSH_CLIENT" ] ||\
 then
 	exec tmux attach -d
 fi
+
+# ==============================================================================
+# = runit                                                                      =
+# ==============================================================================
+#
+# If runit is set up for a user session but not running, launch it.
+
+export SVDIR="$HOME/.sv"
+if ! ps -u $(id -u) -o cmd | grep -v grep | grep -qF "runsvdir $SVDIR"
+then
+	printf "Starting runsvdir: "
+	runsvdir $SVDIR &
+fi
+svall() {
+	if [ -z "$1" ]
+	then
+		cmd="status"
+	else
+		cmd="$1"
+	fi
+	sv $cmd $SVDIR/*
+}

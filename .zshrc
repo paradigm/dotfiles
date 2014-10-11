@@ -79,6 +79,10 @@ setopt autopushd
 # should not be necessary, but it's not a bad idea to have just in case.
 export SHELL="/bin/zsh"
 
+# This is where custom shell files are stored
+SHELLDIR="$HOME/.zsh"
+mkdir -p SHELLDIR
+
 # Set the default text editor.
 if which vim >/dev/null 2>&1
 then
@@ -190,13 +194,12 @@ fi
 
 # $fpath defines where Zsh searches for completion functions.  Include one in
 # the $HOME directory for non-root-user-made completion functions.
-
 #fpath=(~/.zsh/completion $fpath)
 
 # Zsh's completion can benefit from caching.  Set the directory in which to
 # load/store the caches.
 CACHEDIR="$HOME/.zsh/$(uname -n)"
-# If on Bedrock, separate out caches by client.
+# If on Bedrock Linux, separate out caches by client.
 if which brw 1>/dev/null 2>/dev/null
 then
 	CACHEDIR="$CACHEDIR-$(brw)"
@@ -227,10 +230,10 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 
 # Set format for warnings
-zstyle ':completion:*:warnings' format 'Sorry, no matches for: %d%b'
+zstyle ':completion:*:warnings' format 'No matches for: %d%b'
 
 # Use colors when outputting file names for completion options.
-zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 # Do not prompt to cd into current directory.
 # For example, cd ../<tab> should not prompt current directory.
@@ -457,7 +460,11 @@ zle -N history-beginning-search-backward-then-append
 
 # go _d_own to the specified directory name
 d() {
-	cd $(find . -type d -name "$1" -print -quit 2>/dev/null)
+	target=$(find . -type d -name "$1" -print -quit 2>/dev/null)
+	if [ "x$target" != "x" ]
+	then
+		cd $target
+	fi
 	pwd
 }
 
@@ -466,6 +473,9 @@ u() {
 	if [ -z "$1" ]
 	then
 		cd ..
+	elif [ "$1" = "/" ]
+	then
+		cd /
 	elif echo "$1" | grep -q '[0-9]\+'
 	then
 		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'"$1"'{NF-='"$1"'}NF==1{print"/"}NF>1')"
@@ -475,21 +485,67 @@ u() {
 	pwd
 }
 
-# go to directory from dir history
+# go to directory from dir _h_istory
+# If no argument is given, prints cwd history.
+# This first looks for a match at the deepest level in the directory for every
+# item in the history, then works its way up the tree.
 h() {
-	cd $(dirs -lp | awk -F/ '$NF ~ /'"$1"'/{print;exit}')
+	# if no argument is specified, list the history
+	if [ -z "$1" ]
+	then
+		dirs -lp
+		return
+	fi
+	if [ "$1" = "/" ]
+	then
+		cd /
+		return
+	fi
+	target="$(dirs -lp | awk '
+	BEGIN {
+		FS=OFS="/"
+	}
+	{
+		if(NF>nfmax)
+			nfmax=NF;
+		rs[NR] = $0
+	}
+	END{
+		for(i=0;i<nfmax;i++) {
+			for(j=1;j<=NR;j++) {
+				$0=rs[j]
+				if (NF>=i && $(NF-i) ~ "'"$1"'") {
+					NF-=i
+					print $0
+					i=nfmax+1
+					j=NR+1
+				}
+			}
+		}
+	}
+	')"
+	if [ "x$target" != "x" ]
+	then
+		cd "$target"
+	fi
 	pwd
 }
 
 # save directory for later reference
-M() {
-	pwd >> ~/.zsh/dirmarks
-	echo "$(pwd) >> ~/.zsh/dirmarks"
+m() {
+	if [ -z "$1" ]
+	then
+		mark="$(basename $(pwd))"
+	else
+		mark="$1"
+	fi
+	echo "$mark $(pwd) >> $SHELLDIR/dirmarks"
+	echo "$mark $(pwd)" >> "$SHELLDIR/dirmarks"
 }
 
-# go to directory saved by M()
-m() {
-	cd $(tac ~/.zsh/dirmarks | awk -F/ '$NF ~ /'"$1"'/{print;exit}')
+# go to directory saved by m()
+f() {
+	cd $(awk 'BEGIN{x="'"$(pwd)"'"}$1 ~ '/"$1"'/{$1="";x=$0}END{print x}' $SHELLDIR/dirmarks)
 	pwd
 }
 
@@ -510,10 +566,10 @@ field_from_last_command(){
 		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | sed -n "$1p"
 	elif [ "$#" -eq 2 ]
 	then
-		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk "NR==$1{print\$$2}"
+		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk "NR==$1{print\$$2;exit}"
 	elif [ "$#" -eq 3 ]
 	then
-		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk -F"$3" "NR==$1{print\$$2}"
+		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk -F"$3" "NR==$1{print\$$2;exit}"
 	fi
 }
 
@@ -708,6 +764,7 @@ fi
 # - git_(aliases)                                                              -
 # ------------------------------------------------------------------------------
 
+alias gg="git grep --color"
 alias ga="git add"
 alias gc="git commit -v"
 alias gcd="git commit -a -v -m \"\$(date)\""
@@ -957,16 +1014,21 @@ fi
 # ==============================================================================
 # = runit                                                                      =
 # ==============================================================================
+#
+# If runit is set up for a user session but not running, launch it.
 
-export SVDIR=$HOME/.sv
+export SVDIR="$HOME/.sv"
 if ! ps -u $(id -u) -o cmd | grep -v grep | grep -qF "runsvdir $SVDIR"
 then
 	printf "Starting runsvdir: "
 	runsvdir $SVDIR &
 fi
 svall() {
-	(
-		cd $SVDIR
-		sv s *
-	)
+	if [ -z "$1" ]
+	then
+		cmd="status"
+	else
+		cmd="$1"
+	fi
+	sv $cmd $SVDIR/*
 }
