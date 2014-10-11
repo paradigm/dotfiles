@@ -12,8 +12,8 @@
 " = general_settings                                                           =
 " ==============================================================================
 "
-" These are general shell settings that don't fit well into any of the
-" categories used below.  Order may matter for some of these.
+" These are general settings that don't fit well into any of the categories
+" used below.  Order may matter for some of these.
 
 " Disable vi compatibility restrictions.  Yes, this is unnecessary.
 set nocompatible
@@ -31,10 +31,10 @@ set hidden
 set hlsearch
 " When sourcing this file, do not immediately turn on highlighting.
 nohlsearch
-" Searches are case-sensitive.
+" Searches are case-insensitive, except...
 set ignorecase
-" Searches are not case sensitive if an uppercase character appears within.
-" them.
+" ...searches are not case-insensitive if an uppercase character appears
+" within them.  So just all-lowercase searches are case-insensitive.
 set smartcase
 " Print line numbers on the left.
 set number
@@ -44,7 +44,7 @@ if exists('&relativenumber')
 endif
 " Always show cursor position in statusline.
 set ruler
-" default color scheme should assume dark background
+" Default color scheme should assume dark background.
 set background=dark
 " Tabs are four characters wide.  Note that this is primarily useful for those
 " who prefer tabs for indentation rather than spaces which act like tabs.  If
@@ -56,9 +56,9 @@ set shiftwidth=4
 set title
 " Enable wordwrap.
 set textwidth=0 wrap linebreak
-" Enable unicode characters.  This is needed for 'listchars' below.
+" Enable unicode characters.  This is needed for the 'listchars' below.
 set encoding=utf-8
-" use spellcheck
+" Use spellcheck
 set spell
 " Disable capitalization check in spellcheck.
 set spellcapcheck=""
@@ -77,23 +77,35 @@ set wildmode=longest:full,full
 " Timeout for keycodes (such as arrow keys and function keys) is only 10ms.
 " Timeout for Vim keymaps is half a second.
 set timeout ttimeoutlen=10 timeoutlen=500
-" Automatically save/load settings for buffer when entering/leaving them.  This
-" was disabled as it proved more troublesome than helpful.
-"au BufWinLeave * silent! mkview!  " automatically save view on exit
-"au BufWinEnter * silent! loadview " automatically load view on load
+" set what is saved by a :mksession
+set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize,globals,localoptions,tabpages
 " Add ~/.vim to the runtimepath in Windows so I can use the same ~/.vim across
 " OSs
 if has('win32') || has('win64')
 	set runtimepath+=~/.vim
 endif
-" clear default tags
+" Clear default tags.  Other code later will set tags accordingly.
 set tags=""
+" Where to store temporary files
+let g:tmpdir = "/dev/shm/"
+" Where to store the thesaurus.
 let g:thesaurusfile = $HOME . '/.vim/thesaurus'
 execute "set thesaurus+=" . g:thesaurusfile
+" Where to store the dictionary.
 let g:dictionaryfile = $HOME . '/.vim/dictionary'
-" vim's 'dictionary' doesn't support paradigm's dictionary format
+" vim's 'dictionary' doesn't support paradigm's dictionary format, so don't
+" set 'dictionary' here.
 " leaving this blank means i_ctrl-x_ctrl-k falls back to spellcheck dictionary
 "execute "set dictionary+=" . g:dictionaryfile
+
+" Disabled general settings which may be worthwhile to retain in case they are
+" desired at a later time.
+"
+" Automatically save/load settings for buffer when entering/leaving them.
+" This was disabled as it proved more troublesome than helpful.  Instead,
+" session management code below handles this when desired.
+"au BufWinLeave * silent! mkview!  " automatically save view on exit
+"au BufWinEnter * silent! loadview " automatically load view on load
 
 " ==============================================================================
 " = mappings                                                                   =
@@ -103,7 +115,8 @@ let g:dictionaryfile = $HOME . '/.vim/dictionary'
 " - general_(mappings)                                                         -
 " ------------------------------------------------------------------------------
 
-" Disable <f1>'s default help functionality.
+" Disable <f1>'s default help functionality.  Usually when I hit this key I
+" missed an attempt at the <esc> key.
 noremap <f1> <esc>
 lnoremap <f1> <esc>
 " Clear search highlighting, sign column, messages at bottom, and redraw
@@ -122,15 +135,13 @@ nnoremap <space>R :call Run("preview")<cr>
 nnoremap <space><c-r> :call Run("xterm")<cr>
 " Faster mapping for spelling correction
 nnoremap <space>z 1z=
-" Select most recently changed text - particularly useful for pastes
-nnoremap <space>v `[v`]
-nnoremap <space>V `[V`]
 " Provide more comfortable alternative to default window resizing mappings.
 nnoremap <c-w><c-h> :vertical resize -10<cr>
 nnoremap <c-w><c-l> :vertical resize +10<cr>
 nnoremap <c-w><c-j> :resize +10<cr>
 nnoremap <c-w><c-k> :resize -10<cr>
-" Move by 'display lines' rather than 'logical lines'.
+" Move by 'display lines' rather than 'logical lines' if no v:count was
+" provided.  When a v:count is provided, move by logical lines.
 nnoremap <expr> j v:count > 0 ? 'j' : 'gj'
 xnoremap <expr> j v:count > 0 ? 'j' : 'gj'
 nnoremap <expr> k v:count > 0 ? 'k' : 'gk'
@@ -144,19 +155,12 @@ xnoremap <silent> gk k
 xnoremap <space>c :!bc -l<cr>
 xnoremap <space>C :!sage -q 2>/dev/null \| head -n1 \| cut -c15-<cr>
 xnoremap <space>L <esc>`<ilatex(<esc>`>a)<esc>gv:!sage -q 2>/dev/null \| head -n1 \| cut -c15-<cr>
-
+" copy to system clipboard
+vnoremap <space>y "+ygv"*y
 " Toggle 'paste'
 " This particular mapping is nice because I can paste with
 " <insert><s-insert><-sinrt>
 set pastetoggle=<insert>
-" technically not a map, but I don't want to create a new section for it
-" opens :help for argument in same window
-command! -nargs=1 -complete=help H :help <args> |
-			\ let helpfile = expand("%") |
-			\ close |
-			\ execute "view ".helpfile
-" cd to directory containing current buffer
-command! CD :execute ":cd " . expand("%:p:h")
 
 " ------------------------------------------------------------------------------
 " - next_previous_(mappings)                                                   -
@@ -165,6 +169,11 @@ command! CD :execute ":cd " . expand("%:p:h")
 " Note that 'scrolloff' probably breaks this.
 nnoremap <space>n L$nzt
 nnoremap <space>N H$Nzb
+" next/previous/first/last change
+"nnoremap ]c ]c " this is already default
+"nnoremap [c [c " this is already default
+nnoremap [C :call WhilePosChange("[c",1,1,1,1)<cr>
+nnoremap ]C :call WhilePosChange("]c",1,1,1,1)<cr>
 " next/previous/first/last buffer
 nnoremap ]b :bnext<cr>
 nnoremap [b :bprevious<cr>
@@ -180,6 +189,8 @@ nnoremap ]q :cnext<cr>
 nnoremap [q :cprevious<cr>
 nnoremap [Q :cfirst<cr>
 nnoremap ]Q :clast<cr>
+nnoremap [<c-q> :call WhilePosSame("[q",1,0,0,0)<cr>
+nnoremap ]<c-q> :call WhilePosSame("]q",1,0,0,0)<cr>
 " next/previous/first/last location list item
 nnoremap ]l :lnext<cr>
 nnoremap [l :lprevious<cr>
@@ -225,7 +236,7 @@ nnoremap <c-p>p dp<cr>
 " - visual-mode_searching_(mappings)                                           -
 " ------------------------------------------------------------------------------
 "
-" Many of these were either shamelessly stolen from or inspiried by
+" Many of these were either shamelessly stolen from or inspired by
 " SearchParty.  See: https://github.com/dahu/SearchParty.  Thanks, bairui.
 
 " Having v_* and v_# search for visually selected area.
@@ -243,7 +254,7 @@ xnoremap ? "*y<Esc>q:i%s/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', 
 " ------------------------------------------------------------------------------
 
 " Allow ctrl-f/ctrl-b to page through pop-up menu.
-inoremap <expr> <c-f> pumvisible() ? "\<pagedown>" : "\<c-o>:call GenerateTagsForBuffers()\<cr>\<c-o>1\<c-w>}"
+inoremap <expr> <c-f> pumvisible() ? "\<pagedown>" : "\<c-o>:call ParaTagsBuffers()\<cr>\<c-o>1\<c-w>}"
 " if done without pum, try to open tag
 inoremap <expr> <c-b> pumvisible() ? "\<pageup>" : "\<c-o>:pclose\<cr>"
 " Have i_ctrl-<space> act like i_ctrl-x_ctrl-o. Note that ctrl-@ is triggered by
@@ -253,37 +264,14 @@ inoremap <c-@> <c-x><c-o>
 inoremap <c-l> <c-x><c-l>
 
 " ------------------------------------------------------------------------------
-" - comments_(mappings)                                                        -
+" - preview_window_(mappings)                                                  -
 " ------------------------------------------------------------------------------
 
-" Determine comment character(s) based on filetype.  Vim sets &commentstring
-" to the relevant value, but also include '%s' which we want to strip out.
-autocmd BufRead * let b:commentcharacters = substitute(&commentstring,"%s","","")
-" Comment out selected lines.
-xnoremap <silent> <c-n>c :s,^,<c-r>=b:commentcharacters<cr><space>,<cr>:nohlsearch<cr>
-" Uncomment out selected lines.
-xnoremap <silent> <c-n>u :s,^\V<c-r>=b:commentcharacters<cr><space>,,e<cr>:nohlsearch<cr>
-" Align by comment.
-nnoremap <silent> <c-n>a :Tabularize /<c-r>=b:commentcharacters<cr><cr>
-xnoremap <silent> <c-n>a :Tabularize /<c-r>=b:commentcharacters<cr><cr>
-" Create comment heading.
-nnoremap <silent> <c-n>h :call CreateCommentHeading(1)<cr>
-" Create comment subheading.
-nnoremap <silent> <c-n>s :call CreateCommentHeading(2)<cr>
-" Create comment subsubheading.
-nnoremap <silent> <c-n>S :call CreateCommentHeading(3)<cr>
-
-" ------------------------------------------------------------------------------
-" - tags                                                                       -
-" ------------------------------------------------------------------------------
-
-" open the preview window
-nnoremap <space>P :call GenerateTagsForBuffers()<cr><c-w>}
 " close the preview window
 nnoremap <space>p :pclose\|cclose\|lclose<cr>
 
 " ------------------------------------------------------------------------------
-" - plugins_and_functions_(mappings)                                           -
+" - plugins_(mappings)                                                         -
 " ------------------------------------------------------------------------------
 
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
@@ -295,36 +283,23 @@ nnoremap <cr>     2:<c-u>call SkyBison("b ")<cr>
 autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>
 autocmd FileType qf nnoremap <buffer> <cr> <cr>
 " (re)generate local tags then have SkyBison prompt for tags
-nnoremap <bs>      :<c-u>call GenerateTagsForBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
-" SkyBison prompt editing a file
+nnoremap <bs>      :<c-u>call ParaTagsBuffers()<cr>2:<c-u>call SkyBison("tag ")<cr>
+" SkyBison prompt to edit a file
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
+" SkyBison prompt to edit a MarkFile
+nnoremap <space>f 2:<c-u>call SkyBison("F ")<cr>
+" SkyBison prompt to load a session
+nnoremap <space>t 2:<c-u>call SkyBison("SessionLoad ")<cr>
 " General SkyBison prompt
 nnoremap <space>;  :<c-u>call SkyBison("")<cr>
-" Startify's session loader
-"nnoremap <space>t 2:<c-u>call SkyBison("SLoad ")<cr>
 " Switch from normal cmdline to SkyBison
 cnoremap <c-l>     <c-r>=SkyBison("")<cr><cr>
-
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ ParaJump_(mappings)                                                        ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" Find next item at same indentation level.
-nnoremap <space>j :call ParaJump("j",0)<cr>
-xnoremap <space>j :call ParaJump("j",1)<cr>
-" Find previous item at same indentation level.
-nnoremap <space>k :call ParaJump("k",0)<cr>
-xnoremap <space>k :call ParaJump("k",1)<cr>
 
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 " ~ LanguageTool_(mappings)                                                    ~
 " ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 nnoremap <space>lt :LanguageToolCheck<cr>
 nnoremap <space>lc :LanguageToolClear<cr>
-
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ generate-tags_(mappings)                                                   ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-nnoremap <c-]> :call GenerateTagsForBuffers()<cr><c-]>
 
 " ------------------------------------------------------------------------------
 " - custom_text_objects_(mappings)                                             -
@@ -338,26 +313,40 @@ nnoremap <c-]> :call GenerateTagsForBuffers()<cr><c-]>
 "	exec 'onoremap a' . char . ' :normal va' . char . '<CR>'
 "endfor
 " Create a text object for folding regions
-xnoremap if :<C-U>silent!normal![zjV]zk<CR>
-onoremap if :normal Vif<CR>
-xnoremap af :<C-U>silent!normal![zV]z<CR>
-onoremap af :normal Vaf<CR>
+xnoremap if :<c-u>silent!normal![zjV]zk<CR>
+onoremap if :normal Vif<cr>
+xnoremap af :<c-u>silent!normal![zV]z<CR>
+onoremap af :normal Vaf<cr>
 " Create a text object for LaTeX environments
-xnoremap iv :<C-U>call LatexEnv(1)<CR>
-onoremap iv :normal viv<CR>
-xnoremap av :<C-U>call LatexEnv(0)<CR>
-onoremap av :normal vav<CR>
+xnoremap iv :<c-u>call LatexEnv(1)<CR>
+onoremap iv :normal viv<cr>
+xnoremap av :<c-u>call LatexEnv(0)<CR>
+onoremap av :normal vav<cr>
 " Create a text object for the entire buffer
 xnoremap i<cr> :<c-u>silent!normal!ggVG<cr>
 onoremap i<cr> :normal Vi<c-v><cr><cr>
 xnoremap a<cr> :<c-u>silent!normal!ggVG<cr>
 onoremap a<cr> :normal Vi<c-v><cr><cr>
+" Create a text object for recently changed text
+xnoremap ic :<c-u>silent!normal!`[V`]v<CR>
+onoremap ic :normal vic<cr>
+xnoremap ac :<c-u>silent!normal!`[V`]<CR>
+onoremap ac :normal vac<cr>
 "" Create text object based on indentation level
 " Replaced with http://www.vim.org/scripts/script.php?script_id=3037
-"onoremap <silent>ai :<C-u>cal IndTxtObj(0)<CR>
-"onoremap <silent>ii :<C-u>cal IndTxtObj(1)<CR>
-"xnoremap <silent>ai :<C-u>cal IndTxtObj(0)<CR><Esc>gv
-"xnoremap <silent>ii :<C-u>cal IndTxtObj(1)<CR><Esc>gv
+
+" ==============================================================================
+" = commands                                                                   =
+" ==============================================================================
+
+" open :help for argument in same window
+command! -nargs=1 -complete=help H :help <args> |
+			\ let helpfile = expand("%") |
+			\ close |
+			\ execute "view ".helpfile
+
+" cd to directory containing current buffer
+command! CD :execute ":cd " . expand("%:p:h")
 
 
 " ==============================================================================
@@ -393,15 +382,15 @@ let g:vimsyn_folding = "afmpPrt"
 " - Vim has its own omnicompletion mapping by default, separate from the
 "   normal one.  Set the normal omnicompletion mapping to cover the special
 "   VimL completion, as well as the custom ctrl-space.
-" - Language-specific tag settings.
 " - get :help for word under cursor
+" - Language-specific tag settings.
 autocmd Filetype vim
 			\  inoremap <buffer> <c-x><c-o> <c-x><c-v>
 			\| inoremap <buffer> <c-@> <c-x><c-v>
-			\| setlocal tags+=~/.vim/tags/vimtags
-			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vim/bundle/"]
-			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/vimtags ~/.vimrc"]
-			\| nnoremap <buffer> K :execute "help " . expand("<cword>")<cr>
+			\| nnoremap <buffer> K :execute ":help \| execute \"pedit! \" . expand(\"%\") \| q"<cr>
+			\| let b:paratags_lang_tags = "~/.vim/tags/vimtags"
+			\| call ParaTagsLangAdd("~/.vimrc")
+			\| call ParaTagsLangAdd("~/.vim/bundle")
 
 " ------------------------------------------------------------------------------
 " - mail_(filetype-specific)                                                   -
@@ -415,22 +404,23 @@ autocmd Filetype mail setlocal spell
 " ------------------------------------------------------------------------------
 
 " - PEP8-friendly tab settings
-" - Language-specific tag settings.
 " - python syntax-based folding yanked from
 "   http://vim.wikia.com/wiki/Syntax_folding_of_Python_files
 " - assumes jedi
+" - Language-specific tag settings.
 autocmd Filetype python
 			\  setlocal expandtab
 			\| setlocal tabstop=4
 			\| setlocal shiftwidth=4
 			\| setlocal softtabstop=4
 			\| setlocal tags+=,~/.vim/tags/pythontags
-			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/pythontags /usr/lib/py* /usr/local/lib/py*"]
 			\| setlocal foldtext=substitute(getline(v:foldstart),'\\t','\ \ \ \ ','g')
 			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call jedi#goto_definitions()<cr>
 			\| nnoremap <buffer> <c-w>} :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
 			\| nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
 			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
+			\| let b:paratags_lang_tags = "~/.vim/tags/pythontags"
+			\| call ParaTagsLangAdd("/usr/lib/py* /usr/local/lib/py*")
 
 " ------------------------------------------------------------------------------
 " - assembly_(filetype-specific)                                               -
@@ -444,31 +434,31 @@ autocmd Filetype asm setlocal tabstop=8
 " - c_(filetype-specific)                                                      -
 " ------------------------------------------------------------------------------
 
-" - Language-specific tag settings.
 " - open manpage in preview window
 " - use clang_complete to open definition in preview window
+" - Language-specific tag settings.
 autocmd Filetype c
-			\  setlocal tags+=,~/.vim/tags/ctags
-			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/ctags /usr/include"]
-			\| nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
+			\  nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
 			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call g:ClangGotoDeclaration()<cr>
 			\| nnoremap <buffer> <space>P :call g:ClangGotoDeclarationPreview()<cr>
 			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
+			\| let b:paratags_lang_tags = "~/.vim/tags/ctags"
+			\| call ParaTagsLangAdd("/usr/include/")
 
 " ------------------------------------------------------------------------------
 " - c++_(filetype-specific)                                                    -
 " ------------------------------------------------------------------------------
 
-" - Language-specific tag settings.
 " - open manpage in preview window
 " - use clang_complete to open definition in preview window
+" - Language-specific tag settings.
 autocmd Filetype cpp
-			\  setlocal tags+=,~/.vim/tags/cpptags
-			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/cpptags /usr/include/c++"]
-			\| nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
+			\  nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
 			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call g:ClangGotoDeclaration()<cr>
 			\| nnoremap <buffer> <space>P :call g:ClangGotoDeclarationPreview()<cr>
 			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
+			\| let b:paratags_lang_tags = "~/.vim/tags/cpptags"
+			\| call ParaTagsLangAdd("/usr/include/c++/")
 
 " ------------------------------------------------------------------------------
 " - java_(filetype-specific)                                                   -
@@ -569,11 +559,11 @@ autocmd Filetype tex endif
 			\| xnoremap <buffer> <space>& :Tab /&<cr>
 			\| nnoremap <buffer> <space>\ :Tab /\\\\<cr>
 			\| xnoremap <buffer> <space>\ :Tab /\\\\<cr>
-			\| set tags+=,~/.vim/tags/latextags
-			\| let g:generate_tags+=["ctags -R -f ~/.vim/tags/latextags /usr/share/texmf-texlive/tex/latex/"]
-			\| let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags /usr/share/texmf/tex/latex/"]
-			\| let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/texmf/tex/latex/"]
-			\| let g:generate_tags+=["ctags -a -R -f ~/.vim/tags/latextags ~/.texmf/tex/latex/"]
+			\| let b:paratags_lang_tags = "~/.vim/tags/latextags"
+			\| call ParaTagsLangAdd("/usr/share/textmf-texlive/tex/latex/")
+			\| call ParaTagsLangAdd("/usr/share/texmf/tex/latex/")
+			\| call ParaTagsLangAdd("~/texmf/tex/latex/")
+			\| call ParaTagsLangAdd("~/.texmf/tex/latex/")
 " Tabularize Automatically
 " Disabled as more troublesome than helpful
 "au Filetype tex inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a
@@ -612,7 +602,7 @@ autocmd Filetype *
 " ==============================================================================
 
 " If available, have pathogen load plugins form ~/.vim/bundle.
-if filereadable($HOME."/.vim/autoload/pathogen.vim")
+if filereadable($HOME . "/.vim/autoload/pathogen.vim")
 	" disable plugins that have missing prerequisites
 	let g:pathogen_disabled = []
 	if !isdirectory("/usr/include/clang")
@@ -627,31 +617,17 @@ filetype plugin on
 filetype indent on
 
 " ------------------------------------------------------------------------------
-" - Generate-Tags_(plugins)                                                    -
+" - ParaTags_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 
-let g:generate_tags=[]
-execute "set tags+=/dev/shm/.vim-tags-".getpid()
-autocmd VimLeave * call delete("/dev/shm/.vim-tags-".getpid())
+execute "set tags+=" . g:tmpdir . ".vim-tags-".getpid()
+autocmd VimLeave * call delete(g:tmpdir . ".vim-tags-".getpid())
 
 " ------------------------------------------------------------------------------
 " - SkyBison_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 
 let g:skybison_fuzz = 2
-
-" ------------------------------------------------------------------------------
-" - Startify_(plugins)                                                         -
-" ------------------------------------------------------------------------------
-
-" disable start page by default
-let g:startify_disable_at_vimenter = 1
-
-" sane defaults
-let g:startify_session_savecmds = []
-let g:startify_session_savevars = [
-			\ "g:startify_session_savevars",
-			\ "g:startify_session_savevars"]
 
 " ------------------------------------------------------------------------------
 " - jedi_(plugins)                                                             -
@@ -822,11 +798,20 @@ function! Run(type)
 		let l:quiet = 1
 	endif
 
+	if exists("l:runpath") && !filereadable(l:runpath)
+		echohl ErrorMsg
+		echo "Run: Could not find file at \"" . l:runpath . "\""
+		echohl None
+		return
+	endif
+
 	if exists("l:runpath") && !executable(l:runpath)
 		redraw!
 		echo "Set " . runpath . " as executable? (y/n) "
 		if nr2char(getchar()) == "y"
 			call system("chmod u+x " . l:runpath)
+		else
+			return
 		endif
 	endif
 
@@ -840,7 +825,7 @@ function! Run(type)
 		call PreviewShell(l:runcmd)
 	elseif a:type == "xterm"
 		if exists("g:last_run_pid")
-			echo system('kill ' . g:last_run_pid)
+			echo system('kill ' . g:last_run_pid . " >/dev/null 2>&1")
 		endif
 		let g:last_run_pid = system('xterm -e sh -c "' . l:runcmd . '; echo; echo RETURNED $?; echo PRESS ENTER TO CLOSE; read PAUSE" & echo $!')
 	endif
@@ -887,44 +872,49 @@ endfunction
 " - parajump()_(functions)                                                     -
 " ------------------------------------------------------------------------------
 "
-" Jump to the line with the indentation level corresponding to the cursor
-" column.
+" A direction 'j' or 'k' is specified.
+" If the next move in that direction moves the cursor over whitespace, continue
+" moving in the specified direction until the cursor is no longer on
+" whitespace.
+" If the cursor is on whitespace, move in the specified direction until the
+" If the next move in that direction moves the cursor over non-whitespace,
+" continue moving in the specified direction until the cursor moves over
+" whitespace.
 
-function! ParaJump(direction,visual)
-	" sanity check
-	if a:direction != 'k' && a:direction != 'j'
-		echo "No acceptable direction given"
-		return 1
+nnoremap <space>j :call ParaJump('j')<cr>
+nnoremap <space>k :call ParaJump('k')<cr>
+function! ParaJump(direction)
+	if a:direction == 'j'
+		let delta = 1
+	elseif a:direction == 'k'
+		let delta = -1
+	else
+		echohl ErrorMsg
+		echo "ParaJump: Illegal direction specified"
+		echohl None
+		return -1
 	endif
-	" calling functions drops out of visual mode
-	" if requested, return to visual mode
-	if a:visual == 1
-		normal! gv
-	endif
-	" no particular meaning to being beyond the indent
-	if virtcol(".") > indent(line("."))
-		exe "normal! ^"
-	endif
-	" get cursor position to compare to indent levels
-	let char_under_cursor = strpart(getline("."),col(".")-1,1)
-	let cursor_position = virtcol(".")
-	if char_under_cursor == "\t"
-		let cursor_position = cursor_position - &tabstop
-	elseif char_under_cursor != " "
-		let cursor_position = cursor_position - 1
-	endif
-	" save cursor column to return
-	let initcol = string(virtcol("."))
-	" set jump mark
-	exe "normal! " . line(".") . "G" . initcol . "|"
-	" no point in calling this for one line - assume user wants to drop one level
-	if (a:direction == 'k' && indent(line(".")-1) == cursor_position) || (a:direction == 'j' && indent(line(".")+1) == cursor_position)
-		let cursor_position = cursor_position - &tabstop
-	endif
-	exe "normal! " . a:direction
-	while line(".") != 1 && line(".") != line("$") && (indent(line(".")) != cursor_position || getline(".") =~ "^[\s\t]*$")
-		exe "normal! " . a:direction
+
+	" get starting line number
+	let line = line(".")
+
+	" check if the cursor is on whitespace or not
+	function! l:CharWhitespace(line)
+		return stridx(" \t", getline(a:line)[col(".")-1]) != -1
+	endfunction
+
+	" "move" once to start
+	let line += delta
+
+	" get starting whitespace/non-whitespace info.
+	let inittype = l:CharWhitespace(line)
+
+	while l:CharWhitespace(line) == inittype && line < line("$") && line > 1
+		let line += delta
 	endwhile
+
+	" purposefully using G here to make a jump break
+	execute "normal " . line . "G"
 endfunction
 
 " ------------------------------------------------------------------------------
@@ -961,16 +951,22 @@ function! CreateCommentHeading(level)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - generatetagsforbuffers()_(functions)                                       -
+" - ParaTags()_(functions)                                                     -
 " ------------------------------------------------------------------------------
 "
-" (re)generates tag files from open buffers
+" code to generate tag files
 
-function! GenerateTagsForBuffers()
-	echo "Generating tags from buffers, may take a few seconds..."
-	let l:localtagfile="/dev/shm/.vim-tags-".getpid()
-	if filereadable(l:localtagfile)
-		call delete(l:localtagfile)
+" This function generates tags for open buffers.  This is fast enough to do
+" before every call to use a tag.  The effect is the same as having any file
+" altered in the given Vim session has its tags updated automatically.
+nnoremap <c-]> :call ParaTagsBuffers()<cr><c-]>
+nnoremap <space>P :call ParaTagsBuffers()<cr><c-w>}
+function! ParaTagsBuffers()
+	redraw
+	echo "ParaTagsBuffers working..."
+	let l:buffertagfile = g:tmpdir . ".vim-tags-" . getpid()
+	if filereadable(l:buffertagfile)
+		call delete(l:buffertagfile)
 	endif
 	for l:buffer_number in range(1,bufnr("$"))
 		if buflisted(l:buffer_number)
@@ -978,40 +974,47 @@ function! GenerateTagsForBuffers()
 			if l:buffername[0] != "/"
 				let l:buffername = getcwd()."/".l:buffername
 			endif
-			call system("ctags -a -f ".l:localtagfile." --language-force=".GetCtagsFiletype(getbufvar(l:buffer_number,"&filetype"))." ".l:buffername)
+			call system("ctags -a -f ".l:buffertagfile." --language-force=".GetCtagsFiletype(getbufvar(l:buffer_number,"&filetype"))." ".l:buffername)
 		endif
 	endfor
 	redraw
-	echo "Done generating tags."
+	echo "ParaTagsBuffers Done"
 endfunction
 
-" ------------------------------------------------------------------------------
-" - generatetagsforproject()_(functions)                                      -
-" ------------------------------------------------------------------------------
-"
-" (re)generates tag files for project
-
-function! GenerateTagsForProject()
-	echo "Generating project-specific tags, may take a few seconds..."
-	let l:projpath = substitute(g:project,'+','/','g')
-	call system('ctags -R -f ~/.vim/projects/'.g:project.' '.l:projpath)
+" This function will generate tags for the libraries in a given language.  Note
+" that some languages have huge libraries and this could take a while
+function! ParaTagsLangGen()
+	echo "ParaTagsLanguage working..."
+	if exists("b:paratags_lang_tags") && exists("b:paratags_lang_sources")
+		call system("mkdir -p ~/.vim/tags/")
+		call system("ctags -R -f " . b:paratags_lang_tags . " " . join(b:paratags_lang_sources))
+	endif
 	redraw
-	echo "Done generating tags."
+	echo "ParaTagsBuffers Done"
 endfunction
 
-" ------------------------------------------------------------------------------
-" - generatetagsforfiletype()_(functions)                                      -
-" ------------------------------------------------------------------------------
-"
-" (re)generates tag files for filetype specific libraries
+" This function adds a source
+function! ParaTagsLangAdd(source)
+	if !exists("b:paratags_lang_sources")
+		let b:paratags_lang_sources = []
+	endif
+	if index(b:paratags_lang_sources, a:source)
+		let b:paratags_lang_sources += [a:source]
+	endif
+endfunction
 
-function! GenerateTagsForFiletype()
-	echo "Generating filetype-specific tags, may take a few seconds..."
-	for tags_command in g:generate_tags
-		call system(tags_command)
-	endfor
-	redraw
-	echo "Done generating tags."
+" This enables the language library tags
+function! ParaTagsLangEnable()
+	if exists("b:paratags_lang_tags")
+		execute "set tags +=" . b:paratags_lang_tags
+	endif
+endfunction
+
+" This disables the language library tags
+function! ParaTagsLangDisable()
+	if exists("b:paratag_lang_tags")
+		execute "set tags -=" . b:paratag_lang_tags
+	endif
 endfunction
 
 " ------------------------------------------------------------------------------
@@ -1019,7 +1022,7 @@ endfunction
 " ------------------------------------------------------------------------------
 "
 " maps vim's filetype to corresponding ctag's filetype
-" used by GenerateTags()
+" used by ParaTagsBuffers()
 
 function! GetCtagsFiletype(vimfiletype)
 	if a:vimfiletype == "asm"
@@ -1190,11 +1193,11 @@ endfunction
 
 function! PreviewShell(cmd)
 	pclose  " so we don't get W11
-	execute "silent !" . a:cmd . " > /dev/shm/.vimshellout-" . getpid()
+	execute "silent !" . a:cmd . " > " . g:tmpdir . ".vimshellout-" . getpid()
 	execute "pedit! /dev/shm/.vimshellout-" .getpid()
 	wincmd P
 	setlocal bufhidden=delete
-	autocmd VimLeave * call delete("/dev/shm/.vimshellout-".getpid())
+	autocmd VimLeave * call delete(g:tmpdir . ".vimshellout-".getpid())
 	wincmd p
 	redraw!
 endfunction
@@ -1218,13 +1221,15 @@ function! Thesaurus(word)
 	endif
 
 	" we don't yet have the word, get the thesaurus.com page
-	let out = "/dev/shm/.vim-thesaurus-out-" . getpid()
+	let out = g:tmpdir . ".vim-thesaurus-out-" . getpid()
 	execute "autocmd VimLeave * call delete(\"".out."\")"
 	echo "Looking up \"" . a:word . "\"..."
 	silent! execute "silent !wget -qO " . out . " http://thesaurus.com/browse/" . a:word
 	if !filereadable(out)
 		redraw!
+		echohl ErrorMsg
 		echo "Could not find " . a:word . " at thesaurus.com"
+		echohl None
 		call input("ENTER to continue")
 		return
 	endif
@@ -1285,83 +1290,96 @@ endfunction
 nnoremap g<c-d> :call Dictionary(expand("<cword>"))<cr>
 command! -nargs=1 Dictionary :call Dictionary("<args>")
 function! Dictionary(word)
-	" check if given word is already in local dictionary
-	let line = ""
+	" Check if given word is already in local dictionary.  If so, store it in "line"
+	let defline = ""
 	let found = 0
 	if filereadable(g:dictionaryfile)
 		for line in readfile(g:dictionaryfile)
 			if match(line, "^" . a:word . " ") != -1
-				let found = 1
+				let defline = line
 				break
 			endif
 		endfor
 	endif
+	echo defline
 
 	" we don't yet have the word, get the dictionary.com page
-	if found == 0
-		let out = "/dev/shm/.vim-dictionary-out-" . getpid()
+	if defline == ""
+		let out = g:tmpdir  . ".vim-dictionary-out-" . getpid()
 		execute "autocmd VimLeave * call delete(\"".out."\")"
+		redraw
 		echo "Looking up \"" . a:word . "\"..."
 		silent! execute "silent !wget -qO " . out . " http://dictionary.com/browse/" . a:word
 		if !filereadable(out)
 			redraw!
+			echohl ErrorMsg
 			echo "Could not find " . a:word . " at dictionary.com"
+			echohl None
 			call input("ENTER to continue")
 			return
 		endif
 
 		" parse page for definitions
-		" find line with definition on it
+		function! l:fmt(inline, indent)
+				let line = a:inline
+				let line = substitute(line, '   *', ' ', 'g')
+				let line = substitute(line, '<[^>]\+>', '', 'g')
+				let line = substitute(line, '^[ \t\r\n]*', '', 'g')
+				if line =~ "^[ \t\r\n]*$"
+					return ""
+				endif
+				return "|" . a:indent . line
+		endfunction
+		let defline = a:word
+		let last_line = ""
+		let in_sublist = 0
 		for line in readfile(out)
-			let fields = split(line, "\<\\|\>")
-			if len(fields) > 2 && fields[2] == 'div class="luna-Ent"'
-				break
+			" synonyms are put in an awkward place, just remove them
+			if match(line, "def-block-label-synonyms") != -1
+				let line = substitute(line, '<[^>]*def-block-label-synonyms.*', '', 'g')
 			endif
+			" pronunciation
+			if match(line, "spellpron") != -1
+				let defline .= l:fmt(line, "")
+			endif
+			" part of speech
+			if match(line, "dbox-pg") != -1
+				let defline .= l:fmt(line, "")
+			endif
+			" definition number
+			if match(line, "def-number") != -1
+				let defline .= l:fmt(line, "")
+			endif
+			" definition
+			if match(last_line, "def-content") != -1
+				let defline .= l:fmt(line, "  ")
+			endif
+			" sub-definition
+			if match(last_line, "def-sub-list") != -1
+				let in_sublist = 1
+			endif
+			if match(last_line, "<li>") != -1 && in_sublist
+				let defline .= l:fmt(line, "  - ")
+			endif
+			if match(last_line, "</ol>") != -1
+				let in_sublist = 0
+			endif
+			let last_line = line
 		endfor
-		let pronounce = substitute(line, '^.*\(\[</span><span class="pron">.*<span class="prondelim">\]\).*$', '\1', '')
 
-		" remove extraneous markup and content
-		let line = substitute(line, '<span class="pg">\([^<]\+\)</span>', '\\n\1\\n', 'g')
-		for tag in ['<a [^>]*>','</a>', '<div[^>]*>','</div>']
-			let line = substitute(line, tag, '', 'g')
-		endfor
-		echo pronounce
-		let pronounce = substitute(pronounce, '<[^>]*>', '', 'g')
-		let pronounce = substitute(pronounce, '[ ]\+', '', 'g')
-		let line = join(filter(split(line, "\<[^>]*\>"), 'v:val !~ "^[ \t]*$"'))
-		let line = line[match(line, "Show IPA")+10:]
-		let line = a:word . " " . pronounce . " " . line
-	"
 		" append synonyms to local dictionary
 		if filereadable(g:dictionaryfile)
 			let dictionary = readfile(g:dictionaryfile)
 		else
 			let dictionary = []
 		endif
-		let dictionary += [line]
+		let dictionary += [defline]
 		call writefile(dictionary, g:dictionaryfile)
 	endif
 	
 	" show definition in preview window
-	let fmt = [join(split(line)[:1])]
-	if match(line, ' \d\+\.') == -1
-		" only one definition
-		let fmt += split(join(split(line)[2:]), '\\n')
-	else
-		" multiple definitions
-		for l in split(join(split(line)[2:]), '\\n')
-			for def in split(l, ' \ze\d\+\.')
-				for subdef in split(def, ' \ze[a-z]\.')
-					if subdef =~ '^[a-z]\.'
-						let fmt += [substitute("  " . subdef, '[ \t]\+$', '', '')]
-					else
-						let fmt += [substitute(subdef, '[ \t]\+$', '', '')]
-					endif
-				endfor
-			endfor
-		endfor
-	endif
-	let out = "/dev/shm/.vim-definition-".getpid()
+	let fmt = split(defline,"|")
+	let out = g:tmpdir . ".vim-definition-".getpid()
 	execute "autocmd VimLeave * call delete(\"".out."\")"
 	call writefile(fmt, out)
 	execute "pedit! " . out
@@ -1373,7 +1391,7 @@ function! Dictionary(word)
 endfunction
 
 " ------------------------------------------------------------------------------
-" - Fake Tag Stack                                                             -
+" - Fake_Tag_Stack                                                             -
 " ------------------------------------------------------------------------------
 "
 " Mimics the tag stack for tools that have jump-to-definition without using
@@ -1389,18 +1407,449 @@ endfunction
 
 command! FTStackPop :call FTStackPop()
 function! FTStackPop()
-	if len(g:ftstack) == 0
+	if !exists("g:ftstack") || len(g:ftstack) == 0
 		redraw
 		echo "Tag Stack Empty"
 		return
 	endif
 	execute "e " . g:ftstack[-1][0]
-	execute "normal " . g:ftstack[-1][1] . "gg"
+	execute "normal " . g:ftstack[-1][1] . "G"
 	execute "normal " . g:ftstack[-1][2] . "|"
 	let g:ftstack = g:ftstack[:-2]
 endfunction
 
+" ------------------------------------------------------------------------------
+" - diffsigns                                                                  -
+" ------------------------------------------------------------------------------
 
+set diffexpr=DiffSigns()
+function! DiffSigns()
+	sign define added   text=++ texthl=DiffAdd
+	sign define deleted text=-- texthl=DiffDelete
+	sign define changed text=!! texthl=DiffChange
+	sign unplace *
+	let opt = ""
+	if &diffopt =~ "icase"
+		let opt = opt . "-i "
+	endif
+	if &diffopt =~ "iwhite"
+		let opt = opt . "-b "
+	endif
+	silent execute "!diff -a --binary " . opt . v:fname_in . " " . v:fname_new . " > " . v:fname_out
+	for line in readfile(v:fname_out)
+		if line =~ "^[0-9]"
+			let left_side = split(line, "[acd]")[0]
+			let right_side = split(line, "[acd]")[1]
+			let changetype = split(line, "[0-9,]")[0]
+			if left_side =~ ","
+				let left_start = split(left_side, ",")[0]
+				let left_end = split(left_side, ",")[1]
+			else
+				let left_start = left_side
+				let left_end = left_side
+			endif
+			if right_side =~ ","
+				let right_start = split(right_side, ",")[0]
+				let right_end = split(right_side, ",")[1]
+			else
+				let right_start = right_side
+				let right_end = right_side
+			endif
+			if changetype == "a"
+				let left_signtype = "deleted"
+				let right_signtype = "added"
+			elseif changetype == "d"
+				let left_signtype = "added"
+				let right_signtype = "deleted"
+			elseif changetype == "c"
+				let left_signtype = "changed"
+				let right_signtype = "changed"
+			else
+				let left_signtype = "???"
+				let right_signtype = "???"
+			endif
+			for linenr in range(left_start, left_end)
+				if left_signtype != "deleted"
+					execute "sign place 1 line=" . linenr . " name=" . left_signtype . " buffer=" . winbufnr(1)
+				endif
+			endfor
+			for linenr in range(right_start, right_end)
+				if right_signtype != "deleted"
+					execute "sign place 1 line=" . linenr . " name=" . right_signtype . " buffer=" . winbufnr(2)
+				endif
+			endfor
+		endif
+	endfor
+endfunction
+
+" ------------------------------------------------------------------------------
+" - signmarks                                                                  -
+" ------------------------------------------------------------------------------
+
+" show marks in sign column
+nnoremap <space>M :call SignMarks()<cr>
+function! SignMarks()
+	sign unplace *
+	for mark in ["}","{",")","(","`",".","^",'"',"'",">","<","]","[" ,"9","8","7","6","5","4","3","2","1","0","Z","Y","X","W","V","U","T","S","R","Q","P","O","N","M","L","K","J","I","H","G","F","E","D","C","B","A" ,"z","y","x","w","v","u","t","s","r","q","p","o","n","m","l","k","j","i","h","g","f","e","d","c","b","a"]
+		let char = mark
+		let pos = getpos("'" . char)
+		if pos != [0,0,0,0]
+			if pos[0] != 0
+				let bufnr = pos[0]
+			else
+				let bufnr = bufnr("%")
+			endif
+			execute "sign define mark" . char . " text='" . char . " texthl=NonText"
+			execute "sign place 1 line=" . pos[1] . " name=mark" . char . " buffer=" . bufnr
+		endif
+	endfor
+endfunction
+
+" ------------------------------------------------------------------------------
+" - togglecomment                                                              -
+" ------------------------------------------------------------------------------
+
+xnoremap <silent> <c-n> :call ToggleComment()<cr>
+nnoremap <silent> <c-n> :call ToggleComment()<cr>
+function! ToggleComment()
+	" Determine comment character(s) based on filetype.  Vim sets &commentstring
+	" to the relevant value, but also include '%s' which we want to strip out.
+	let b:commentcharacters = substitute(&commentstring,"%s","","")
+	" The way this function is designed, multi-line comments don't work.  For
+	" C-style languages, use // ... instead of /* ... */
+	if b:commentcharacters == "/**/"
+		let b:commentcharacters = "//"
+	endif
+	if getline(".") =~ "^" . b:commentcharacters . " "
+		" line is commented, uncomment
+		execute "s,^" . b:commentcharacters . " ,,e"
+		nohlsearch
+	else 
+		" line is not commented, comment it
+		execute "s,^," . b:commentcharacters . " ,"
+		nohlsearch
+	endif
+endfunction
+
+" ------------------------------------------------------------------------------
+" - session_management                                                         -
+" ------------------------------------------------------------------------------
+
+nnoremap <c-k>w :call SessionSave()<cr>
+nnoremap <c-k>l :call SessionLoad()<cr>
+
+command! -nargs=1 SessionSave :call SessionSave("<args>")
+function! SessionSave(...)
+	" if it looks like maybe the user wanted to load, not save, be careful
+	" not to overwrite with blank project
+	if bufname("%") == ""
+		redraw
+		echohl ErrorMsg
+		echo "Refusing to overwrite when current buffer is unnamed"
+		echohl None
+		return
+	endif
+
+	" get name for session
+	if a:0 == 0
+		let name = input("Save Session Name: ")
+	else
+		let name = a:1
+	endif
+
+	" If we're in a git-managed project, save symlink to git project and
+	" actual session info in .git as branch name.
+	"
+	" Otherwise, save session info normally.
+	let git_top = system("git rev-parse --show-toplevel")[:-2]
+	if git_top[0] == "/"
+		" make symlink to git project
+		call system("mkdir -p " . $HOME . "/.vim/sessions")
+		call system("ln -s '" . git_top . "' " . $HOME . "/.vim/sessions/" . name)
+		" make session file at .git/vimsessions/branch-name
+		let branch = system("git branch | awk '$1==\"*\"{print$2}'")[:-2]
+		let session_path = git_top . "/.git/vimsessions/" . branch
+		call system("mkdir -p " . git_top . "/.git/vimsessions")
+		execute "mksession!  " . session_path
+		redraw
+		echo "Saved Session \"" . name . "\" (" . branch . ")"
+	else
+		" make session file at ~/.vim/sessions
+		call system("mkdir -p " . $HOME . "/.vim/sessions")
+		let session_path = $HOME . "/.vim/sessions/" . name
+		execute "mksession!  " . session_path
+		redraw
+		echo "Saved Session \"" . name . "\""
+	endif
+
+	" auto-update session just before leaving vim
+	let g:session_name = name
+	augroup session
+		autocmd!
+		autocmd VimLeavePre * if bufname("%") != "" | call SessionSave(g:session_name) | endif
+	augroup END
+endfunction
+
+command! -nargs=1 -complete=customlist,SessionList SessionLoad :call SessionLoad("<args>")
+function! SessionList(A,L,P)
+	if a:A[-1:] != "*"
+		let globpattern = a:A . "*"
+	else
+		let globpattern = a:A
+	endif
+	let sessions = []
+	for session in split(globpath($HOME . "/.vim/sessions", globpattern),'\n')
+		let sessions += [fnamemodify(session, ":t")]
+	endfor
+	return sessions
+endfunction
+function! SessionLoad(...)
+	" get name for session
+	if a:0 == 0
+		let name = input("Load Session Name: ")
+	else
+		let name = a:1
+	endif
+
+	" Check if session exists
+	let session_path = $HOME . "/.vim/sessions/" . name
+	if system("[ -e " . session_path . " ]; echo $?") == 1
+		redraw
+		echohl ErrorMsg
+		echo "Cannot find session \"" . name . "\""
+		echohl None
+		return
+	endif
+
+	" If target is symlink, session file is stored in $SYMLINK/.git/$BRANCH
+	" Otherwise session file is at target
+	let branch = ""
+	if system("[ -h " . session_path . " ]; echo $?") == 0
+		exec "cd " . session_path
+		let branch = system("git branch | awk '$1==\"*\"{print$2}'")[:-2]
+		let session_path = "./.git/vimsessions/" . branch
+		execute "source " . session_path
+	endif
+
+	" auto-update session just before leaving vim
+	let g:session_name = name
+	augroup session
+		autocmd! session
+		autocmd VimLeavePre * if bufname("%") != "" | call SessionSave(g:session_name) | endif
+	augroup END
+
+	execute "source " . session_path
+	redraw
+	if branch == ""
+		echo "Loaded Session \"" . name . "\""
+	else
+		echo "Loaded Session \"" . name . "\" (" . branch . ")"
+	endif
+endfunction
+
+
+" ------------------------------------------------------------------------------
+" - switchheader                                                               -
+" ------------------------------------------------------------------------------
+"
+" switch between c/cpp file and corresponding header
+
+command! SwitchHeader :call SwitchHeader()
+function! SwitchHeader()
+	let filebase = expand("%:t:r")
+	" Add extra dir layer here so the while loop below will start at the
+	" proper place, since there's no do/while.
+	let dirbase = expand("%:p:h") . "/"
+	let extension = expand("%:t:e")
+	if extension == "h"
+		let targets = [".c", ".cpp", ".C", ".cc", "cxx"]
+	else
+		let targets = [".h", ".hh", ".hxx", ".hpp"]
+	endif
+	while dirbase != "/"
+		let dirbase = fnamemodify(dirbase, ":h")
+		for target in targets
+			for subdir in ["", "c/", "include/"]
+				let p = dirbase . "/" . subdir . filebase . target
+				if filereadable(p)
+					exec ":e " . p
+					return
+				endif
+			endfor
+		endfor
+	endwhile
+	redraw
+	echohl ErrorMsg
+	echo "Could not find header"
+	echohl None
+endfunction
+
+" ------------------------------------------------------------------------------
+" - switchheader                                                               -
+" ------------------------------------------------------------------------------
+"
+" Save a list of 'favorite' files to be able to reach quickly
+
+command! -nargs=1 MarkFile :call SetMarkFile("<args>")
+function! SetMarkFile(mark)
+	call system("mkdir -p " . $HOME . "/.vim/filemarks")
+	call system("ln -s '" . expand("%:p") . "' " . $HOME . "/.vim/filemarks/" . a:mark)
+endfunction
+
+command! -nargs=1 -complete=customlist,ListFileMarks F :call GetMarkFile("<args>")
+function! ListFileMarks(A,L,P)
+	if a:A[-1:] != "*"
+		let globpattern = a:A . "*"
+	else
+		let globpattern = a:A
+	endif
+	let filemarks = []
+	for filemark in split(globpath($HOME . "/.vim/filemarks",globpattern),'\n')
+		let filemarks += [fnamemodify(filemark, ":t")]
+	endfor
+	return filemarks
+endfunction
+function! GetMarkFile(mark)
+	" read the link and edit the actual place instead of editing the link
+	" so vim shows the real path
+	execute ":e " . system("readlink " . $HOME . "/.vim/filemarks/" . a:mark)
+endfunction
+
+
+" ------------------------------------------------------------------------------
+" - gitdiffref                                                                 -
+" ------------------------------------------------------------------------------
+"
+" Wrapper for fugitive's Git diff against a stored reference point.  The
+" variable that stores the reference contains a capital so that, with
+" sessionoptions=globals it will be carried through a session.
+
+nnoremap <space>d :GDiffRef<cr>
+command! -nargs=* -complete=customlist,ListGitRefs GDiffRef :call GDiffRef("<args>")
+function! ListGitRefs(A,L,P)
+	" attempt to simulate vim ins-completion globbing
+	let l:filter = substitute(a:A, "*", ".*", "g")
+	if (l:filter !~ "*$")
+		let l:filter = l:filter . ".*"
+	endif
+	" get refs
+	let refs = []
+	for line in split(system("git branch | sed 's/[ *]//g'"))
+		if line =~ filter
+			let refs += [line]
+		endif
+	endfor
+	for line in split(system("git tag"))
+		if line =~ filter
+			let refs += [line]
+		endif
+	endfor
+	return refs
+endfunction
+function! GDiffRef(...)
+	if a:0 != 0 && a:1 != ""
+		let g:Diffref = a:1
+	endif
+	execute "Gvdiff " . get(g:, "Diffref", "")
+endfunction
+
+" ------------------------------------------------------------------------------
+" - whileposchange                                                             -
+" ------------------------------------------------------------------------------
+"
+" Repeats the provided command so long as the cursor changes in any of the
+" specified dimensions.
+
+function! WhilePosChange(cmd, bufnum, lnum, col, off)
+	let pos = [-1,-1,-1,-1]
+	while 1
+		execute "normal " . a:cmd
+		if a:bufnum && pos[0] != bufnr("%")
+			let pos = getpos(".")
+			let pos[0] = bufnr("%")
+			continue
+		endif
+		if a:lnum && pos[1] != getpos(".")[1]
+			let pos = getpos(".")
+			let pos[0] = bufnr("%")
+			continue
+		endif
+		if a:col && pos[2] != getpos(".")[2]
+			let pos = getpos(".")
+			let pos[0] = bufnr("%")
+			continue
+		endif
+		if a:off && pos[3] != getpos(".")[3]
+			let pos = getpos(".")
+			let pos[0] = bufnr("%")
+			continue
+		endif
+		break
+	endwhile
+endfunction
+
+" ------------------------------------------------------------------------------
+" - whilepossame                                                               -
+" ------------------------------------------------------------------------------
+"
+" Repeats the provided command until the cursor changes in any of the
+" specified dimensions or it doesn't change at all.
+
+function! WhilePosSame(cmd, bufnum, lnum, col, off)
+	let pos = getpos(".")
+	let pos[0] = bufnr("%")
+	while 1
+		execute "normal " . a:cmd
+		if pos[0] == bufnr("%") && pos[1:] == getpos(".")[1:]
+			break
+		endif
+		if a:bufnum && pos[0] == bufnr("%")
+			let pos = getpos(".")
+			let pos[0] = bufnr("%")
+			continue
+		endif
+		if a:lnum && pos[1] == getpos(".")[1]
+			let pos = getpos(".")
+			let pos[0] = bufnr("%")
+			continue
+		endif
+		if a:col && pos[2] == getpos(".")[2]
+			let pos = getpos(".")
+			let pos[0] = bufnr("%")
+			continue
+		endif
+		if a:off && pos[3] == getpos(".")[3]
+			let pos = getpos(".")
+			let pos[0] = bufnr("%")
+			continue
+		endif
+		break
+	endwhile
+endfunction
+
+" ------------------------------------------------------------------------------
+" - selectsamelines                                                            -
+" ------------------------------------------------------------------------------
+"
+" Select region with neighboring lines that contain same character in same
+" column as cursor
+nnoremap <space>v :call SelectSameLines("v")<cr>
+nnoremap <space>V :call SelectSameLines("V")<cr>
+nnoremap <space><c-v> :call SelectSameLines("\<lt>c-v>")<cr>
+function! SelectSameLines(select_cmd)
+	let l:start_line = line(".")
+	let l:end_line = line(".")
+	let l:start_col = col(".")-1
+	let l:char = getline(".")[l:start_col]
+	" search backwards for start"
+	while l:start_line != 1 && getline(l:start_line-1)[l:start_col] == l:char
+		let l:start_line -= 1
+	endwhile
+	while l:start_line != line("$") && getline(l:end_line+1)[l:start_col] == l:char
+		let l:end_line += 1
+	endwhile
+	execute "normal " . start_line . "G" . a:select_cmd . end_line . "G"
+endfunction
 
 " ==============================================================================
 " = quick and dirty code                                                       =
@@ -1411,6 +1860,9 @@ endfunction
 " ------------------------------------------------------------------------------
 " - project management                                                         -
 " ------------------------------------------------------------------------------
+" The vast majority of the time, my project is tied to a git repository, making
+" this unnecessary as I can query git instead.
+"
 " track settings per project
 " probably unnecessary with session management
 "function! MarkProjectRoot()
@@ -1483,76 +1935,11 @@ endfunction
 "	execute "normal :tag " . terms[0] . "\<cr>"
 "endfunction
 
-
 " ------------------------------------------------------------------------------
-" - sign                                                                       -
+" - searchsigns                                                                -
 " ------------------------------------------------------------------------------
+" tying into / and ? is awkward
 "
-" various experimentation with sign column
-
-set diffexpr=DiffSigns()
-function! DiffSigns()
-	sign define added   text=++ texthl=DiffAdd
-	sign define deleted text=-- texthl=DiffDelete
-	sign define changed text=!! texthl=DiffChange
-	sign unplace *
-	let opt = ""
-	if &diffopt =~ "icase"
-		let opt = opt . "-i "
-	endif
-	if &diffopt =~ "iwhite"
-		let opt = opt . "-b "
-	endif
-	silent execute "!diff -a --binary " . opt . v:fname_in . " " . v:fname_new . " > " . v:fname_out
-	let diff = system("cat " . v:fname_out)
-"	for bufnr in range(1,bufnr("$"))
-"	endfor
-	for line in split(diff,"\n")
-		if line =~ "^[0-9]"
-			let left_side = split(line, "[acd]")[0]
-			let right_side = split(line, "[acd]")[1]
-			let changetype = split(line, "[0-9,]")[0]
-			if left_side =~ ","
-				let left_start = split(left_side, ",")[0]
-				let left_end = split(left_side, ",")[1]
-			else
-				let left_start = left_side
-				let left_end = left_side
-			endif
-			if right_side =~ ","
-				let right_start = split(right_side, ",")[0]
-				let right_end = split(right_side, ",")[1]
-			else
-				let right_start = right_side
-				let right_end = right_side
-			endif
-			if changetype == "a"
-				let left_signtype = "deleted"
-				let right_signtype = "added"
-			elseif changetype == "d"
-				let left_signtype = "added"
-				let right_signtype = "deleted"
-			elseif changetype == "c"
-				let left_signtype = "changed"
-				let right_signtype = "changed"
-			else
-				left_signtype = "???"
-				right_signtype = "???"
-			endif
-			for linenr in range(left_start, left_end)
-				if left_signtype != "deleted"
-					execute "sign place 1 line=" . linenr . " name=" . left_signtype . " buffer=" . winbufnr(1)
-				endif
-			endfor
-			for linenr in range(right_start, right_end)
-				if right_signtype != "deleted"
-					execute "sign place 1 line=" . linenr . " name=" . right_signtype . " buffer=" . winbufnr(2)
-				endif
-			endfor
-		endif
-	endfor
-endfunction
-
 " emphasize lines with search results by populating the signs column
 "function! SearchSigns()
 "	let l:cursor = getpos(".")
@@ -1565,25 +1952,6 @@ endfunction
 "	autocmd CmdwinLeave * if g:lastcmdwin == "/" || g:lastcmdwin == "?" | call feedkeys(":call SearchSigns()","n") | endif
 "augroup END
 
-" show marks in sign column
-"nnoremap <space>M :call SignMarks()<cr>
-"function! SignMarks()
-"	sign unplace *
-"	for mark in ["}","{",")","(","`",".","^",'"',"'",">","<","]","[" ,"9","8","7","6","5","4","3","2","1","0","Z","Y","X","W","V","U","T","S","R","Q","P","O","N","M","L","K","J","I","H","G","F","E","D","C","B","A" ,"z","y","x","w","v","u","t","s","r","q","p","o","n","m","l","k","j","i","h","g","f","e","d","c","b","a"]
-"		let char = mark
-"		let pos = getpos("'" . char)
-"		if pos != [0,0,0,0]
-"			if pos[0] != 0
-"				let bufnr = pos[0]
-"			else
-"				let bufnr = bufnr("%")
-"			endif
-"			execute "sign define mark" . char . " text='" . char . " texthl=NonText"
-"			execute "sign place 1 line=" . pos[1] . " name=mark" . char . " buffer=" . bufnr
-"		endif
-"	endfor
-"endfunction
-
 
 " ------------------------------------------------------------------------------
 " - close preview window on insertLeave                                        -
@@ -1592,86 +1960,3 @@ endfunction
 "autocmd InsertLeave * pclose
 "autocmd CmdwinEnter * autocmd! InsertLeave
 "autocmd CmdwinLeave * autocmd InsertLeave * pclose
-
-" ------------------------------------------------------------------------------
-" - session management redux                                                   -
-" ------------------------------------------------------------------------------
-
-nnoremap <c-k>w :call GitBranchSessionSave()<cr>
-nnoremap <c-k>l :call GitBranchSessionLoad()<cr>
-nnoremap <c-k>p :call ProjectSave()<cr>
-nnoremap <space>t 2:<c-u>call SkyBison("ProjectLoad ")<cr>
-
-function! GitBranchSessionSave()
-	if bufname("%") == ""
-		echoerr "Refusing to overwrite when current buffer is unnamed"
-		return
-	endif
-	let git_dir = system("git rev-parse --show-toplevel")[:-2] . "/.git"
-	" ensure we're in a git session
-	if git_dir[0] != "/"
-		echoerr "Not in a git session"
-		return
-	endif
-	let branch = system("git branch | awk '$1==\"*\"{print$2}'")[:-2]
-	call system("mkdir -p " . git_dir . "/vimsessions")
-	let session_path = git_dir . "/vimsessions/" . branch
-	execute "mksession!  " . session_path
-	redraw
-	echo "Saved Session " . session_path
-endfunction
-
-function! GitBranchSessionLoad()
-	let git_dir = system("git rev-parse --show-toplevel")[:-2] . "/.git"
-	" ensure we're in a git session
-	if git_dir[0] != "/"
-		echoerr "Not in a git session"
-		return 1
-	endif
-	let branch = system("git branch | awk '$1==\"*\"{print$2}'")[:-2]
-	let session_path = git_dir . "/vimsessions/" . branch
-	if ! filereadable(session_path)
-		echoerr "no session at \"" . session_path . "\""
-		return
-	endif
-	execute "source " . session_path
-	redraw
-	echo "Loaded Session " . session_path
-endfunction
-
-function! ProjectSave(...)
-	if bufname("%") == ""
-		echoerr "Refusing to overwrite when current buffer is unnamed"
-		return
-	endif
-	if a:0 == 0
-		let name = input("Save Project name: ")
-	else
-		let name = a:1
-	endif
-	let git_top = system("git rev-parse --show-toplevel")[:-2]
-	call system("mkdir -p " . $HOME . "/.vim/sessions")
-	call system("ln -s '" . git_top . "' " . $HOME . "/.vim/sessions/" . name)
-	redraw
-	echo "Saved Project " . name
-endfunction
-
-command -nargs=1 -complete=customlist,ListProjects ProjectLoad :call ProjectLoad("<args>")
-function! ListProjects(A,L,P)
-	let sessions = []
-	for session in split(globpath($HOME . "/.vim/sessions",'*'),'\n')
-		let sessions += [fnamemodify(session, ":t")]
-	endfor
-	return sessions
-endfunction
-function! ProjectLoad(...)
-	if a:0 == 0
-		let name = input("Load Project name: ")
-	else
-		let name = a:1
-	endif
-	exec "cd $HOME/.vim/sessions/" . name
-	redraw
-	echo "Loaded Project " . name
-	call GitBranchSessionLoad()
-endfunction
