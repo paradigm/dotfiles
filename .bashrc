@@ -176,7 +176,7 @@ export SHELL="/bin/bash"
 
 # This is where custom shell files are stored
 SHELLDIR="$HOME/.bash"
-mkdir -p SHELLDIR
+mkdir -p $SHELLDIR
 
 # Set the default text editor.
 if which vim >/dev/null 2>&1

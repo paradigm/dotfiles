@@ -81,7 +81,7 @@ export SHELL="/bin/zsh"
 
 # This is where custom shell files are stored
 SHELLDIR="$HOME/.zsh"
-mkdir -p SHELLDIR
+mkdir -p $SHELLDIR
 
 # Set the default text editor.
 if which vim >/dev/null 2>&1
