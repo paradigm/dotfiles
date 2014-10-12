@@ -416,8 +416,8 @@ autocmd Filetype python
 			\| setlocal tags+=,~/.vim/tags/pythontags
 			\| setlocal foldtext=substitute(getline(v:foldstart),'\\t','\ \ \ \ ','g')
 			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call jedi#goto_definitions()<cr>
-			\| nnoremap <buffer> <c-w>} :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
 			\| nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
+			\| nnoremap <buffer> <space><c-p> :call PreviewLine("normal \\d")<cr>
 			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
 			\| let b:paratags_lang_tags = "~/.vim/tags/pythontags"
 			\| call ParaTagsLangAdd("/usr/lib/py* /usr/local/lib/py*")
@@ -440,8 +440,9 @@ autocmd Filetype asm setlocal tabstop=8
 autocmd Filetype c
 			\  nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
 			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call g:ClangGotoDeclaration()<cr>
-			\| nnoremap <buffer> <space>P :call g:ClangGotoDeclarationPreview()<cr>
 			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
+			\| nnoremap <buffer> <space>P :call g:ClangGotoDeclarationPreview()<cr>
+			\| nnoremap <buffer> <space><c-p> :call PreviewLine("call g:ClangGotoDeclaration()")<cr>
 			\| let b:paratags_lang_tags = "~/.vim/tags/ctags"
 			\| call ParaTagsLangAdd("/usr/include/")
 
@@ -455,8 +456,9 @@ autocmd Filetype c
 autocmd Filetype cpp
 			\  nnoremap <buffer> K :call PreviewShell("man " . expand("<cword>"))<cr>
 			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call g:ClangGotoDeclaration()<cr>
-			\| nnoremap <buffer> <space>P :call g:ClangGotoDeclarationPreview()<cr>
 			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
+			\| nnoremap <buffer> <space>P :call g:ClangGotoDeclarationPreview()<cr>
+			\| nnoremap <buffer> <space><c-p> :call PreviewLine("call g:ClangGotoDeclaration()")<cr>
 			\| let b:paratags_lang_tags = "~/.vim/tags/cpptags"
 			\| call ParaTagsLangAdd("/usr/include/c++/")
 
@@ -471,9 +473,9 @@ autocmd Filetype java
 		\| inoremap <buffer> <c-x><c-o> <c-x><c-u>
 		\| nnoremap <buffer> <space>o :silent execute "!xterm -e eclimd &"<cr>
 		\| nnoremap <buffer> <c-]> :FTStackPush<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>
-		\| nnoremap <buffer> <c-w>} :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
-		\| nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
 		\| nnoremap <buffer> <c-t> :FTStackPop<cr>
+		\| nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
+		\| nnoremap <buffer> <space><c-p> :call PreviewLine("JavaSearchContext")<cr>
 		\| nnoremap <buffer> K :JavaDocPreview<cr>
 
 " ------------------------------------------------------------------------------
@@ -961,6 +963,7 @@ endfunction
 " altered in the given Vim session has its tags updated automatically.
 nnoremap <c-]> :call ParaTagsBuffers()<cr><c-]>
 nnoremap <space>P :call ParaTagsBuffers()<cr><c-w>}
+nnoremap <space><c-p> :call ParaTagsBuffers()<cr>:call PreviewLine("normal <c-]>")<cr>
 function! ParaTagsBuffers()
 	redraw
 	echo "ParaTagsBuffers working..."
@@ -1944,6 +1947,20 @@ function! SelectSameLines(select_cmd)
 		let l:end_line += 1
 	endwhile
 	execute "normal " . start_line . "G" . a:select_cmd . end_line . "G"
+endfunction
+
+" ------------------------------------------------------------------------------
+" - previewline                                                                -
+" ------------------------------------------------------------------------------
+" Prints line found via a:cmd at bottom
+
+function! PreviewLine(cmd)
+	normal mP
+	execute a:cmd
+	let previewline=getline(".")
+	normal `P
+	redraw
+	echo previewline
 endfunction
 
 " ==============================================================================
