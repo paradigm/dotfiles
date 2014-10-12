@@ -346,7 +346,7 @@ command! -nargs=1 -complete=help H :help <args> |
 			\ execute "view ".helpfile
 
 " cd to directory containing current buffer
-command! CD :execute ":cd " . expand("%:p:h")
+command! CD :cd %:p:h
 
 
 " ==============================================================================
