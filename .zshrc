@@ -557,6 +557,7 @@ m() {
 
 # go to directory saved by m()
 f() {
+	[ -z "$1" ] && column -t $SHELLDIR/dirmarks && return
 	target="$(awk '$1 ~ "'"$1"'"{$1="";print substr($0,2);exit}' $SHELLDIR/dirmarks)"
 	[ "x$target" != "x" ] && cd "$target"
 	pwd
