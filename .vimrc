@@ -1298,7 +1298,7 @@ function! Dictionary(word)
 	let found = 0
 	if filereadable(g:dictionaryfile)
 		for line in readfile(g:dictionaryfile)
-			if match(line, "^" . a:word . " ") != -1
+			if match(line, "^" . a:word . "|") != -1
 				let defline = line
 				break
 			endif
