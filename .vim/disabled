@@ -1,0 +1,107 @@
+" Various scraps of vim script that were never finished but may be worth
+" finishing up later
+
+" ------------------------------------------------------------------------------
+" - project management                                                         -
+" ------------------------------------------------------------------------------
+" The vast majority of the time, my project is tied to a git repository, making
+" this unnecessary as I can query git instead.
+"
+" track settings per project
+" probably unnecessary with session management
+"function! MarkProjectRoot()
+"	" make initial/empty tags file
+"	call system('touch ~/.vim/projects/'.substitute(getcwd(),'/','+','g'))
+"	call GetProject()
+"endfunction
+"
+"" set current project (if any)
+"function! GetProject()
+"	let cwd = substitute(getcwd(),'/','+','g')
+"	for project in split(system('ls ~/.vim/projects/'))
+"		if stridx(cwd,project) == 0
+"			let g:project = project
+"			execute "set tags+=,~/.vim/projects/".g:project
+"			break
+"		endif
+"	endfor
+"endfunction
+"call GetProject()
+
+" ------------------------------------------------------------------------------
+" - git tags                                                                   -
+" ------------------------------------------------------------------------------
+
+"" add current tags from current git project, if any
+" looks like fugitive does this automatically
+"if system("git rev-parse --show-toplevel") != ""
+"	exec "set tags+=" . system("git rev-parse --show-toplevel")[:-2] . "/.git/tags"
+"endif
+
+" ------------------------------------------------------------------------------
+" - tag select alternative                                                     -
+" ------------------------------------------------------------------------------
+
+"" alternative to :tagselect
+"command! -nargs=* -complete=custom,ParaTagSelectCompl T :call ParaTagSelect("<args>")
+"function! ParaTagSelectCompl(ArgLead, Cmdline, CursorPos)
+"	" This is intended for SkyBison which currently does not allow the cursor
+"	" to be anywhere but the end of the line.
+"
+"	let terms = split(a:Cmdline)
+"
+"	if len(terms) == 1 || (len(terms) == 2 && a:Cmdline[-1:] != " ")
+"		let l:d={}
+"		execute "silent normal! :tag " . a:ArgLead . "\<c-a>\<c-\>eextend(l:d, {'cmdline':getcmdline()}).cmdline\n"
+"		if has_key(l:d, 'cmdline') && l:d['cmdline'] !~ ''
+"			return join(split(l:d['cmdline'])[1:],"\n")
+"		else
+"			return ""
+"		endif
+"	endif
+"	if len(terms) == 2 || (len(terms) == 3 && a:Cmdline[-1:] != " ")
+"		let results = []
+"		for tag in taglist(terms[1])
+"			if count(results, tag['filename']) == 0
+"				let results += [tag['filename']]
+"			endif
+"		endfor
+"		return join(results,"\n")
+"	endif
+"	return ""
+"endfunction
+"function! ParaTagSelect(Cmdline)
+"	let terms = split(a:Cmdline)
+"
+"	if len(terms) == 2
+"		execute "normal :e " . terms[1] . "\<cr>"
+"	endif
+"	execute "normal :tag " . terms[0] . "\<cr>"
+"endfunction
+
+" ------------------------------------------------------------------------------
+" - searchsigns                                                                -
+" ------------------------------------------------------------------------------
+" tying into / and ? is awkward
+"
+" emphasize lines with search results by populating the signs column
+"function! SearchSigns()
+"	let l:cursor = getpos(".")
+"	sign define search text=// texthl=Error
+"	sign unplace *
+"	execute "g/". @/ ."/execute 'sign place 1 line=' . line('.') . ' name=search buffer=' . bufnr('%')"
+"	call setpos(".", l:cursor)
+"endfunction
+"augroup signs
+"	autocmd CmdwinLeave * if g:lastcmdwin == "/" || g:lastcmdwin == "?" | call feedkeys(":call SearchSigns()","n") | endif
+"augroup END
+
+
+" ------------------------------------------------------------------------------
+" - close preview window on insertLeave                                        -
+" ------------------------------------------------------------------------------
+
+"autocmd InsertLeave * pclose
+"autocmd CmdwinEnter * autocmd! InsertLeave
+"autocmd CmdwinLeave * autocmd InsertLeave * pclose
+
