@@ -76,7 +76,7 @@ set wildmenu
 set wildmode=longest:full,full
 " Timeout for keycodes (such as arrow keys and function keys) is only 10ms.
 " Timeout for Vim keymaps is half a second.
-set timeout ttimeoutlen=10 timeoutlen=500
+"set timeout ttimeoutlen=10 timeoutlen=500
 " set what is saved by a :mksession
 set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize,globals,localoptions,tabpages
 " Add ~/.vim to the runtimepath in Windows so I can use the same ~/.vim across
@@ -416,9 +416,10 @@ autocmd Filetype python
 			\| setlocal tags+=,~/.vim/tags/pythontags
 			\| setlocal foldtext=substitute(getline(v:foldstart),'\\t','\ \ \ \ ','g')
 			\| nnoremap <buffer> <c-]> :FTStackPush<cr>:call jedi#goto_definitions()<cr>
+			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
+			\| nnoremap <buffer> gd :call jedi#goto_assignments()<cr>
 			\| nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
 			\| nnoremap <buffer> <space><c-p> :call PreviewLine("normal \\d")<cr>
-			\| nnoremap <buffer> <c-t> :FTStackPop<cr>
 			\| let b:paratags_lang_tags = "~/.vim/tags/pythontags"
 			\| call ParaTagsLangAdd("/usr/lib/py* /usr/local/lib/py*")
 
