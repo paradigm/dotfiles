@@ -28,21 +28,21 @@ function! parajump#run(direction)
 	" get starting line number
 	let line = line(".")
 
-	" check if the cursor is on whitespace or not
-	function! l:CharWhitespace(line)
-		return stridx(" \t", getline(a:line)[col(".")-1]) != -1
-	endfunction
-
 	" "move" once to start
 	let line += delta
 
 	" get starting whitespace/non-whitespace info.
-	let inittype = l:CharWhitespace(line)
+	let inittype = s:CharWhitespace(line)
 
-	while l:CharWhitespace(line) == inittype && line < line("$") && line > 1
+	while s:CharWhitespace(line) == inittype && line < line("$") && line > 1
 		let line += delta
 	endwhile
 
 	" purposefully using G here to make a jump break
 	return line . "G"
+endfunction
+
+" check if the cursor is on whitespace or not
+function! s:CharWhitespace(line)
+	return stridx(" \t", getline(a:line)[col(".")-1]) != -1
 endfunction

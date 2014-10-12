@@ -151,7 +151,7 @@ xnoremap <space>c :!bc -l<cr>
 xnoremap <space>C :!sage -q 2>/dev/null \| head -n1 \| cut -c15-<cr>
 xnoremap <space>L <esc>`<ilatex(<esc>`>a)<esc>gv:!sage -q 2>/dev/null \| head -n1 \| cut -c15-<cr>
 " copy to system clipboard
-vnoremap <space>y "+ygv"*y
+xnoremap <space>y "+ygv"*y
 " Toggle 'paste'
 " This particular mapping is nice because I can paste with
 " <insert><s-insert><-sinrt>
