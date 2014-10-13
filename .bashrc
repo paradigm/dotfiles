@@ -42,27 +42,39 @@ stty -ixon
 # ==============================================================================
 
 # go _d_own to the specified directory name
-# supports globbing
-if find --version | grep -q GNU
-then
-	d() {
-		target=$(find . -type d -name "$1" -print -quit 2>/dev/null)
-		if [ "x$target" != "x" ]
-		then
-			cd $target
-		fi
-		pwd
-	}
-else
-	d() {
-		target=$(find . -type d -name "$1" -print 2>/dev/null | head -n1)
-		if [ "x$target" != "x" ]
-		then
-			cd $target
-		fi
-		pwd
-	}
-fi
+#
+# This does a breadth-first search rather than the depth-first most
+# implementations of `find` use.  This is done for two reasons:
+#
+# 1. If there are multiple matches, the user probably wants the shallower
+# match.
+#
+# 2. It is likely to be faster than a straight find which would use a
+# depth-first search as no time is wasted going down deep branches that don't
+# contain the target directory since, as mentioned in (1), what the user wants
+# probably isn't supremely deep.  If it is deep, a straight call to find would
+# probably be faster due to lack of overhead.
+#
+# The main problem with this technique is the lack of a good way to know when
+# to give up the search.  In a straight find it would eventually exhaust the
+# full subtree, but find isn't reporting here if it tapped out.  A max depth
+# setting is being used, which is simple but has the potential to tap out just
+# before successfully finding an existing target.
+d() {
+	target="$(
+	depth=0
+	depthmax=10
+	while ! find -type d -mindepth $depth -maxdepth $depth -name "*$1*" -print -quit 2>/dev/null | grep '.' && [ "$depth" != "$depthmax" ]
+	do
+		((depth++))
+	done
+	)"
+	if [ "x$target" != "x" ]
+	then
+		cd $target
+	fi
+	pwd
+}
 
 # go _u_p to the specified directory OR number of levels if it is a number
 # can match directory boundary with /
