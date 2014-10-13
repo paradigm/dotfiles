@@ -106,17 +106,6 @@ function! def#dictionary(word)
 			return
 		endif
 
-		" parse page for definitions
-		function! l:fmt(inline, indent)
-				let line = a:inline
-				let line = substitute(line, '   *', ' ', 'g')
-				let line = substitute(line, '<[^>]\+>', '', 'g')
-				let line = substitute(line, '^[ \t\r\n]*', '', 'g')
-				if line =~ "^[ \t\r\n]*$"
-					return ""
-				endif
-				return "|" . a:indent . line
-		endfunction
 		let defline = a:word
 		let last_line = ""
 		let in_sublist = 0
@@ -127,26 +116,26 @@ function! def#dictionary(word)
 			endif
 			" pronunciation
 			if match(line, "spellpron") != -1
-				let defline .= l:fmt(line, "")
+				let defline .= s:fmt(line, "")
 			endif
 			" part of speech
 			if match(line, "dbox-pg") != -1
-				let defline .= l:fmt(line, "")
+				let defline .= s:fmt(line, "")
 			endif
 			" definition number
 			if match(line, "def-number") != -1
-				let defline .= l:fmt(line, "")
+				let defline .= s:fmt(line, "")
 			endif
 			" definition
 			if match(last_line, "def-content") != -1
-				let defline .= l:fmt(line, "  ")
+				let defline .= s:fmt(line, "  ")
 			endif
 			" sub-definition
 			if match(last_line, "def-sub-list") != -1
 				let in_sublist = 1
 			endif
 			if match(last_line, "<li>") != -1 && in_sublist
-				let defline .= l:fmt(line, "  - ")
+				let defline .= s:fmt(line, "  - ")
 			endif
 			if match(last_line, "</ol>") != -1
 				let in_sublist = 0
@@ -176,3 +165,14 @@ function! def#dictionary(word)
 	redraw!
 endfunction
 
+" parse page for definitions
+function! s:fmt(inline, indent)
+		let line = a:inline
+		let line = substitute(line, '   *', ' ', 'g')
+		let line = substitute(line, '<[^>]\+>', '', 'g')
+		let line = substitute(line, '^[ \t\r\n]*', '', 'g')
+		if line =~ "^[ \t\r\n]*$"
+			return ""
+		endif
+		return "|" . a:indent . line
+endfunction
