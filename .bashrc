@@ -41,119 +41,207 @@ stty -ixon
 # = functions                                                                  =
 # ==============================================================================
 
-# go _d_own to the specified directory name
-#
-# This does a breadth-first search rather than the depth-first most
-# implementations of `find` use.  This is done for two reasons:
-#
-# 1. If there are multiple matches, the user probably wants the shallower
-# match.
-#
-# 2. It is likely to be faster than a straight find which would use a
-# depth-first search as no time is wasted going down deep branches that don't
-# contain the target directory since, as mentioned in (1), what the user wants
-# probably isn't supremely deep.  If it is deep, a straight call to find would
-# probably be faster due to lack of overhead.
-#
-# The main problem with this technique is the lack of a good way to know when
-# to give up the search.  In a straight find it would eventually exhaust the
-# full subtree, but find isn't reporting here if it tapped out.  A max depth
-# setting is being used, which is simple but has the potential to tap out just
-# before successfully finding an existing target.
-d() {
-	target="$(
-	depth=0
-	depthmax=10
-	while ! find -type d -mindepth $depth -maxdepth $depth -name "*$1*" -print -quit 2>/dev/null | grep '.' && [ "$depth" != "$depthmax" ]
-	do
-		((depth++))
-	done
-	)"
-	if [ "x$target" != "x" ]
+# implement zsh's autopushd
+cd() {
+	if [ -z "$1" ]
 	then
-		cd $target
+		dir=$HOME
+	else
+		dir="$1"
 	fi
+	builtin pushd "${dir}">/dev/null
+}
+
+
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+# ~ cd family                                                                  ~
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+
+# This is a family of functions for improved navigation the filesystem,
+# superseding `cd` in specific situations.
+#
+# d(), u() and h() all take an argument which should be a substring of the
+# desired filepath.  To anchor the substring to the start or the end of the
+# target directory name, put a "/" on the desired anchor point.  Also supports
+# using "/" as part of the substring to specify a parent directory.
+#
+# d() searches _d_ownward for the specified directory.  It returns the match
+# closest to the pwd (i.e. does a depth-first search).
+#
+# u() searches _u_pward for the specified directory.  It returns the match
+# closest to the pwd (i.e. the deepest directory which matches).
+# Alternatively, it could take a number which indicates the number of
+# directories to go up.
+#
+# h() searches the directory stack for the specified directory.  It returns the
+# match closest to a previous pwd that is the most recent.  This is most useful
+# when paired with zsh's autopushd or equivalent.
+#
+# t() _t_ags the current pwd into a list of tagged directories.  The first
+# argument specifies the desired tag name.  If no argument is used, it defaults
+# to the basename.
+#
+# r() _r_estores the pwd to the most recent match from the tagged directories.
+# Can use "/" as anchors for consistency with d(), u() and h().  No argument
+# dumps the tagged directory list.
+#
+# Careful with special characters; globbing and regex are used under-the-hood.
+
+d() {
+	# no arg, don't do anything
+	[ -z "$1" ] && pwd && return
+
+	# get argument for `find`
+	# -> last directory with "*" set for globbing on non-anchored sides
+	findarg="$(echo "$1" | awk -F/ 'BEGIN{l="*";r="*"}$NF==""{NF--;r=""}{x=$NF}NF>1{l=""}END{print l""x""r}')"
+	# get argument for `grep`
+	# -> replace right anchor with "$"
+	greparg="$(echo "$1" | sed 's/\/$/$/')"
+	# starting and ending depth.  Gives up after maxdepth.
+	depth=1
+	maxdepth=10
+
+	# Find target directory.
+	#
+	# If there's no "/" other than trailing anchor and GNU find is available,
+	# use slightly faster version.
+	if ! echo "$greparg" | grep -q "/" && find --version | grep -q "GNU"
+	then
+		target="$(
+		while [ "$depth" != "$maxdepth" ] && ! find -mindepth $depth -maxdepth $depth -type d -name "$findarg" -print -quit 2>/dev/null | grep "."
+		do
+			((depth++))
+		done
+		)"
+	else
+		# slightly slower version due to non-trailing-anchor "/" or find without -quit
+		target="$(
+		while [ "$depth" != "$maxdepth" ] && ! find -mindepth $depth -maxdepth $depth -type d -name "$findarg" -print 2>/dev/null | grep "$greparg"
+		do
+			((depth++))
+		done | head -n1
+		)"
+	fi
+	depth=1
+	maxdepth=10 # max depth to search before giving up
+	[ "x$target" != "x" ] && cd "$target"
 	pwd
 }
 
-# go _u_p to the specified directory OR number of levels if it is a number
-# can match directory boundary with /
 u() {
 	if [ -z "$1" ]
 	then
+		# no argument, just act like `cd ..`
 		cd ..
 	elif [ "$1" = "/" ]
 	then
+		# This is fairly meaningless in normal context.  Treat as `cd /`
 		cd /
 	elif echo "$1" | grep -q '[0-9]\+'
 	then
+		# `cd ..` the specified number of directories
 		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'"$1"'{NF-='"$1"'}NF==1{print"/"}NF>1')"
 	else
-		cd "$(pwd | sed 's!\('$1'[^/]*/\).*$!\1!')"
+		# Go to matching parent directory
+		p="$(pwd)/"
+		if echo "$1" | grep -q "/$"
+		then
+			# Ends in a slash, anchor right.  Just cut out the fields we don't want.
+			cd "${p%"$1"*}$1"
+		else
+			# Does not end in a slash, we need to expand the last directory.
+			# Use parameter expansion to cut out the part we don't want, then
+			# count the number of fields that exist with the remaining part.
+			fields=$(echo ${p%"$1"*}$1 | awk -F/ '{print NF}')
+			# Have awk simply print the desired number of fields
+			cd $(pwd | awk -F/ 'BEGIN{IFS=OFS="/"}{NF='$fields'}1')
+		fi
 	fi
 	pwd
 }
 
-# go to directory from dir _h_istory
-# If no argument is given, prints cwd history.
-# This first looks for a match at the deepest level in the directory for every
-# item in the history, then works its way up the tree.
-# It cannot match across directory boundaries
 h() {
-	# if no argument is specified, list the history
 	if [ -z "$1" ]
 	then
-		dirs -lp
+	# if no argument is specified, list the history
+		dirs -l -p
 		return
 	fi
 	if [ "$1" = "/" ]
 	then
+		# This is fairly meaningless in normal context.  Treat as `cd /`
 		cd /
 		return
 	fi
-	target="$(dirs -lp | awk '
+
+	# iterate over lines in history
+	# append a "/" so the trailing anchor will match
+	target="$(dirs -l -p | sed 's/$/\//' | awk -v"pat=$1" '
 	BEGIN {
-		FS=OFS="/"
-	}
-	{
-		if(NF>nfmax)
-			nfmax=NF;
-		rs[NR] = $0
-	}
-	END{
-		for(i=0;i<nfmax;i++) {
-			for(j=1;j<=NR;j++) {
-				$0=rs[j]
-				if (NF>=i && $(NF-i) ~ "'"$1"'") {
-					NF-=i
-					print $0
-					i=nfmax+1
-					j=NR+1
-				}
-			}
+		OFS=FS="/"
+		# due to how awk fields work, at one point we do not want to consider
+		# trailing slash in pattern
+		if (pat ~ "/$") {
+			patx = substr(pat,1,length(pat)-1)
+		} else {
+			patx = pat
 		}
+	}
+	$0 ~ pat {
+		# strip away all the fields from the left that we can without breaking
+		# the pattern to ensure we have the right-most match.
+		line=$0
+		while ($0 ~ pat) {
+			pre_last=$0
+			# strip field from left
+			$0=substr($0,2)
+			$1=""
+		}
+		# strip away fields from the right to count how far from pwd the match
+		# is
+		$0=pre_last
+		rank=0
+		while ($0 ~ patx) {
+			NF--;
+			rank++;
+		}
+		# compare to current best
+		if (rank > bestrank) {
+			$0 = line
+			NF -= rank-1
+			bestrank = rank
+			bestline = $0
+		}
+	}
+	END {
+		print bestline
 	}
 	')"
 	[ "x$target" != "x" ] && cd "$target"
 	pwd
 }
 
-# save directory for later reference
-m() {
+t() {
 	if [ -z "$1" ]
 	then
-		mark="$(basename $(pwd))"
+		# if no argument is specified, use base name as tag
+		tag="$(basename $(pwd))"
 	else
-		mark="$1"
+		tag="$1"
 	fi
-	echo "$mark $(pwd) >> $SHELLDIR/dirmarks"
-	echo "$mark $(pwd)" >> "$SHELLDIR/dirmarks"
+	echo "$tag $(pwd) >> ~/.dirtags"
+	echo "$tag $(pwd)" >> ~/.dirtags
 }
 
-# go to directory saved by m()
-f() {
-	[ -z "$1" ] && column -t $SHELLDIR/dirmarks && return
-	target="$(awk '$1 ~ "'"$1"'"{$1="";print substr($0,2);exit}' $SHELLDIR/dirmarks)"
+r() {
+	if [ -z "$1" ]
+	then
+		# if no argument is specified, dump tags
+		column -t ~/.dirtags
+		return
+	fi
+	pat="$(echo "$1" | sed 's/\/$/$/' | sed 's/^\//^/')"
+	target="$(awk -v"pat=$pat" '$1 ~ pat{$1="";print substr($0,2);exit}' ~/.dirtags)"
 	[ "x$target" != "x" ] && cd "$target"
 	pwd
 }
