@@ -4,6 +4,10 @@
 "
 " vsplit a window the contents of the quickfix or location list scrollbound to
 " the current window.
+"
+" TODO: this moves window around, fix that.  Maybe use winline()?
+" TODO: maybe (ab)use diff so multiple qf lines can cleanly match up with main
+" window.
 
 " populate with quickfix list
 function! qfsplit#qf()
@@ -29,11 +33,8 @@ function! s:qfsplit(list)
 
 	" store current buffer number to reference
 	let bufnr = bufnr("%")
-	" set current window to scrollbind
-	setlocal scrollbind
-	" store cursor position to restore later
-	let pos = getpos(".")
-	let pos[0] = bufnr(".")
+	" store cursor line to restore later
+	let cursor_line = line(".")
 
 	" open new scratch split
 	vnew qfsplit
@@ -41,7 +42,6 @@ function! s:qfsplit(list)
 	setlocal bufhidden=delete
 	setlocal nobuflisted
 	" setup to scroll with main window
-	setlocal scrollbind
 	setlocal nowrap
 	" remember scratch new buffer number to reference
 	let g:qfsplitbuf = bufnr("%")
@@ -71,8 +71,18 @@ function! s:qfsplit(list)
 		call setline(lnum, "[" . c[lnum] . "] " . getline(lnum))
 	endfor
 
+	" set qfsplit window to scrollbind in sync with main window
+	keepjumps normal gg
+	setlocal scrollbind
+
 	" return to original window
 	wincmd p
+	" set window to scrollbind in sync with qfsplit window
+	keepjumps normal gg
+	setlocal scrollbind
 	" restore cursor position
-	call setpos(".", pos)
+	execute "keepjumps normal " . cursor_line . "G"
+	" Messed up the cursor position in window - try to clean it up a bit, even
+	" if it's not perfectly resuming previous setup
+	normal zz
 endfunction
