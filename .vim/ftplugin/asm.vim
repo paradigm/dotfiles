@@ -3,4 +3,4 @@
 " ==============================================================================
 
 " Set tabstop to 8 for assembly.
-autocmd Filetype asm setlocal tabstop=8
+setlocal tabstop=8

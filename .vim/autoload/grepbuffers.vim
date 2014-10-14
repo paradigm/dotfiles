@@ -17,5 +17,5 @@ function! grepbuffers#run(arg)
 		endif
 	endfor
 	execute "b " . initbufnr
-	call CCOnError()
+	call cconerror#run()
 endfunction

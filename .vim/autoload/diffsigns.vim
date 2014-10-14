@@ -19,6 +19,11 @@ function! diffsigns#run()
 	" run diff
 	silent execute "!diff -a --binary " . opt . v:fname_in . " " . v:fname_new . " > " . v:fname_out
 
+	" if there's no difference, we can just abort here
+	if readfile(v:fname_out) == []
+		return
+	endif
+
 	" pre-parse diff to find which buffer was "fname_in" and which buffer was "fname_new"
 	" 0 means we don't have any idea
 	" <0 means we know if there's only two diff windows, but if not we could still be wrong, keep look
@@ -96,11 +101,11 @@ function! diffsigns#run()
 
 	if new_buf < 0
 		" couldn't find it for sure, but we've probably got it
-		let new_buf *= -1
+		let new_buf = new_buf * -1
 	endif
 	if in_buf < 0
 		" couldn't find it for sure, but we've probably got it
-		let in_new *= -1
+		let in_new = in_buf * -1
 	endif
 	if new_buf == 0 || in_buf == 0
 		echohl ErrorMsg

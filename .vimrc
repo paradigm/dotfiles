@@ -164,7 +164,7 @@ set pastetoggle=<insert>
 " Note that 'scrolloff' probably breaks this.
 nnoremap <space>n L$nzt
 nnoremap <space>N H$Nzb
-" next/previous/first/last change
+" next/previous/first/last diff change
 "nnoremap ]c ]c " this is already default
 "nnoremap [c [c " this is already default
 nnoremap [C :call whilepos#change("[c",1,1,1,1)<cr>
@@ -179,13 +179,13 @@ nnoremap ]t :tnext<cr>
 nnoremap [t :tprevious<cr>
 nnoremap [T :tfirst<cr>
 nnoremap ]T :tlast<cr>
-" next/previous/first/last quickfix item
+" next/previous/first/last/prevbuf/nextbuf quickfix item
 nnoremap ]q :cnext<cr>
 nnoremap [q :cprevious<cr>
 nnoremap [Q :cfirst<cr>
 nnoremap ]Q :clast<cr>
-nnoremap [<c-q> :call whilepos#same("[q",1,0,0,0)<cr>
-nnoremap ]<c-q> :call whilepos#same("]q",1,0,0,0)<cr>
+nnoremap [<c-q> :call whilepos#same(":cprev\<lt>cr>",1,0,0,0)<cr>
+nnoremap ]<c-q> :call whilepos#same(":cnext\<lt>cr>",1,0,0,0)<cr>
 " next/previous/first/last location list item
 nnoremap ]l :lnext<cr>
 nnoremap [l :lprevious<cr>
@@ -196,6 +196,11 @@ nnoremap ]a :next<cr>
 nnoremap [a :previous<cr>
 nnoremap [A :first<cr>
 nnoremap ]A :last<cr>
+" next/previous file from jump history
+nnoremap [f :call whilepos#same("\<lt>c-o>",1,0,0,0)<cr>
+" <esc> is used to indicate the end of the whitespace separation after a
+" :normal in the function call
+nnoremap ]f :call whilepos#same("\<lt>esc>\<lt>c-i>",1,0,0,0)<cr>
 
 " ------------------------------------------------------------------------------
 " - cmdline-window_(mappings)                                                  -
@@ -291,6 +296,11 @@ xnoremap ic :<c-u>silent!normal!`[V`]v<CR>
 onoremap ic :normal vic<cr>
 xnoremap ac :<c-u>silent!normal!`[V`]<CR>
 onoremap ac :normal vac<cr>
+" Create a text object for lines which share character in col(".")
+xnoremap il :<c-u>silent! call selectsamelines#run("\<lt>c-v>")<cr>
+onoremap il :normal vil<cr>
+xnoremap al :<c-u>silent! call selectsamelines#run("V")<cr>
+onoremap al :normal val<cr>
 "" Create text object based on indentation level
 " Replaced with http://www.vim.org/scripts/script.php?script_id=3037
 
@@ -307,10 +317,7 @@ nnoremap <space>R        :Run preview<cr>
 nnoremap <space><c-r>    :Run xterm<cr>
 nnoremap <c-k>w          :call session#save()<cr>
 nnoremap <c-k>l          :call session#load()<cr>
-nnoremap <space>d        :GDiffRef<cr>
-nnoremap <space>v        :call selectsamelines#run("v")<cr>
-nnoremap <space>V        :call selectsamelines#run("V")<cr>
-nnoremap <space><c-v>    :call selectsamelines#run("\<lt>c-v>")<cr>
+nnoremap <space>D        :GDiffRef<cr>
 nnoremap <c-]>           :ParaTagsBuffers<cr><c-]>
 nnoremap <space>P        :ParaTagsBuffers<cr><c-w>}
 nnoremap <space><c-p>    :ParaTagsBuffers<cr>:call preview#line("normal <c-]>")<cr>
@@ -340,6 +347,8 @@ autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>
 autocmd FileType qf nnoremap <buffer> <cr> <cr>
 " (re)generate local tags then have SkyBison prompt for tags
 nnoremap <bs>      :<c-u>ParaTagsBuffers<cr>2:<c-u>call SkyBison("tag ")<cr>
+" SkyBison prompt to delete buffer
+nnoremap <space>d 2:<c-u>call SkyBison("bd ")<cr>
 " SkyBison prompt to edit a file
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
 " SkyBison prompt to edit a MarkFile
@@ -375,8 +384,8 @@ command! -nargs=1 -complete=help H :help <args> |
 command! CD :cd %:p:h
 
 " Commands to call autoload functions.
-" See ~/.vim/autload/ contents for details
-command! ParaTagBuffers :call paratags#buffers()
+" See ~/.vim/autoload/ contents for details
+command! ParaTagsBuffers :call paratags#buffers()
 command! FTStackPush :call ftstack#push()
 command! FTStackPop  :call ftstack#pop()
 
