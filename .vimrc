@@ -398,6 +398,8 @@ command! SwitchHeader :call switchheader#run()
 command! -nargs=1 MarkFile :call markfile#set("<args>")
 command! -nargs=1 -complete=customlist,markfile#complete F :call markfile#get("<args>")
 command! -nargs=* -complete=customlist,gitdefref#complete GDiffRef :call gitdefref#run("<args>")
+command! Qfsplit :call qfsplit#qf()
+command! Llsplit :call qfsplit#loc()
 
 " ==============================================================================
 " = autocmds                                                                   =
