@@ -438,6 +438,8 @@ autocmd BufRead,BufNewFile .pentadactylrc setfiletype vim
 autocmd BufNewFile,BufRead *.x68          setfiletype asm68k
 autocmd BufNewFile,BufRead *.md           setfiletype markdown
 autocmd BufNewFile,BufRead *.gv           setfiletype dot
+" Default to LaTeX, not Plain TeX/ConTeXt/etc
+let g:tex_flavor='latex'
 
 " ==============================================================================
 " = theme                                                                      =

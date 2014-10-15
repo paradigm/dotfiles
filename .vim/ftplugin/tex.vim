@@ -2,9 +2,6 @@
 " = tex ftplugin                                                               =
 " ==============================================================================
 
-" Default to LaTeX, not Plain TeX/ConTeXt/etc
-let g:tex_flavor='latex'
-
 " LuaTeX embeds Lua code into TeX documents.  The following code tells vim to
 " use Lua highlighting in the relevant sections within a TeX document.
 if exists("b:current_syntax") && b:current_syntax == "tex"
