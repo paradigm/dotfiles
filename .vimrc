@@ -208,12 +208,12 @@ nnoremap ]f :call whilepos#same("\<lt>esc>\<lt>c-i>",1,0,0,0)<cr>
 " ------------------------------------------------------------------------------
 
 " Swap default ':', '/' and '?' with cmdline-window equivalent.
-nnoremap : q:i
-xnoremap : q:i
-nnoremap / q/i
-xnoremap / q/i
-nnoremap ? q?i
-xnoremap ? q?i
+nnoremap : q:a
+xnoremap : q:a
+nnoremap / q/a
+xnoremap / q/a
+nnoremap ? q?a
+xnoremap ? q?a
 nnoremap q: :
 xnoremap q: :
 nnoremap q/ /
