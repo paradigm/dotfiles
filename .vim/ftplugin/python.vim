@@ -13,7 +13,10 @@ setlocal softtabstop=4
 setlocal foldtext=substitute(getline(v:foldstart),'\\t','\ \ \ \ ','g')
 
 " If jedi exists, use jedi
-if exists("jedi#goto_assignments()")
+"
+" jedi doesn't seem to use a g:load... variable, but it does define :Pyimport
+" in plugin so we can check for that.
+if exists(":Pyimport")
 	" jump to definition
 	nnoremap <buffer> <c-]> :FTStackPush<cr>:call jedi#goto_definitions()<cr>
 	" jump to assignment
