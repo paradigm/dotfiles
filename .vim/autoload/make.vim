@@ -43,7 +43,7 @@ function! make#run()
 		" ensure pop-up error explanation disabled
 		autocmd! eclim_show_error
 		call setqflist(getloclist(0))           " transfer loclist into qflist
-		call cconerror#run()
+		call cconerror#qf()
 		return
 	elseif &ft == "tex"
 		" Assumes lualatex.  Lots of massaging to do things like make some
@@ -73,7 +73,5 @@ function! make#run()
 	" clear bottom line of any output
 	redraw!
 	" check if there were any errors/results of make and, if so, jump to it
-	call cconerror#run()
+	call cconerror#qf()
 endfunction
-
-

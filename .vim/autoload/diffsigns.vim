@@ -1,14 +1,39 @@
 " ==============================================================================
 " = diffsigns                                                                  =
 " ==============================================================================
+"
+" populate sign column items with diff values
 
-function! diffsigns#run()
-	" setup signs
+if get(g:, "diffsigns_disablehighlight", 0)
+	highlight DiffAdd    NONE
+	highlight DiffChange NONE
+	highlight DiffDelete NONE
+	highlight DiffText   NONE
+endif
+
+" Detect if vim threw actual diff at us or a test.  If a test, handle it and
+" indicate it was a test.
+function! s:handle_test()
+	let buf_new = readfile(v:fname_new)
+	let buf_in = readfile(v:fname_in)
+	if (buf_new == ["line1"] && buf_in == ["line2"]) || (buf_new == ["line2"] && buf_in == ["line1"])
+		call writefile(["1c1"], v:fname_out)
+		return 1
+	endif
+	return 0
+endfunction
+
+" Setup sign variables and clear existing sign contents
+function! s:setup_sign_column()
 	sign define added   text=++ texthl=DiffAdd
 	sign define deleted text=-- texthl=DiffDelete
 	sign define changed text=!! texthl=DiffChange
 	sign unplace *
-	" setup diff
+endfunction
+
+" Do actual diff for vim to have parse-able output
+" returns whether or not two input files were identical
+function! s:do_diff()
 	let opt = ""
 	if &diffopt =~ "icase"
 		let opt = opt . "-i "
@@ -17,147 +42,112 @@ function! diffsigns#run()
 		let opt = opt . "-b "
 	endif
 	" run diff
-	silent execute "!diff -a --binary " . opt . v:fname_in . " " . v:fname_new . " > " . v:fname_out
+	call system("diff -a --binary " . opt . v:fname_in . " " . v:fname_new . " > " . v:fname_out)
+	return readfile(v:fname_out) == []
+endfunction
 
-	" if there's no difference, we can just abort here
-	if readfile(v:fname_out) == []
+" returns which buffer numbers associate with which diff inputs
+function! s:associate_buffers()
+	let fname_in = readfile(v:fname_in)
+	let fname_new = readfile(v:fname_new)
+	let buf_in = -1
+	let buf_new = -1
+	for win in range(1,winnr("$"))
+		let bufnr = winbufnr(win)
+		let buflist = getbufline(bufnr, 1, "$")
+		if buflist == fname_in
+			let buf_in = bufnr
+		endif
+		if buflist == fname_new
+			let buf_new = bufnr
+		endif
+	endfor
+	return [buf_in, buf_new]
+endfunction
+
+" iterates over diff output and places signs in specified buffers accordingly
+function! s:set_signs(buf_in, buf_new)
+	for line in readfile(v:fname_out)
+		" we only care about the lines that tell us which lines were changed, not the actual changes
+		if line !~ "^[0-9]"
+			continue
+		endif
+
+		" parse out diff line
+		let in_start   =  matchstr(split(line, "[acd]")[0], "^[^,]*")
+		let in_end     =  matchstr(split(line, "[acd]")[0], "[^,]*$")
+		let new_start  =  matchstr(split(line, "[acd]")[1], "^[^,]*")
+		let new_end    =  matchstr(split(line, "[acd]")[1], "[^,]*$")
+		let changetype = split(line, "[0-9,]")[0]
+
+		" determine what signs to place in what buffers based on changetype
+		if changetype == "a"
+			let signtype_new = "added"
+			let signtype_in = "deleted"
+		elseif changetype == "d"
+			let signtype_new = "deleted"
+			let signtype_in = "added"
+		elseif changetype == "c"
+			let signtype_new = "changed"
+			let signtype_in = "changed"
+		else
+			" this should never occur
+			echohl ErrorMsg
+			echo "DiffSigns: Error parsing diff output"
+			echohl None
+			return
+		endif
+
+		" loop over range placing signs
+		" vim does not let us place signs in the non-numbered filler lines
+		" that correspond to deleted lines
+		for lnum in range(new_start, new_end)
+			if signtype_new != "deleted"
+				execute "sign place 1 line=" . lnum . " name=" . signtype_new . " buffer=" . a:buf_new
+			endif
+		endfor
+		for lnum in range(in_start, in_end)
+			if signtype_in != "deleted"
+				execute "sign place 1 line=" . lnum . " name=" . signtype_in . " buffer=" . a:buf_in
+			endif
+		endfor
+	endfor
+endfunction
+
+" main function
+function! diffsigns#run()
+
+	" Vim throws test at us to make sure we work.  The test inputs do not
+	" associate with any buffer which breaks sign placement later.  Detect
+	" test and return before sign calculations.
+	if s:handle_test()
 		return
 	endif
 
-	" pre-parse diff to find which buffer was "fname_in" and which buffer was "fname_new"
-	" 0 means we don't have any idea
-	" <0 means we know if there's only two diff windows, but if not we could still be wrong, keep look
-	" >0 means we found it
-	let in_buf = 0
-	let new_buf = 0
-	for line in readfile(v:fname_out)
-		" we only care about the lines that tell us which lines were changed, not the actual changes
-		if line !~ "^[0-9]"
-			continue
-		endif
-		let in_side = split(line, "[acd]")[0] " A,B
-		let new_side = split(line, "[acd]")[1] " C,D"
-		let changetype = split(line, "[0-9,]")[0] "c"
-		if in_side =~ ","
-			let in_start = split(in_side, ",")[0]
-		else
-			let in_start = in_side
-		endif
-		if new_side =~ ","
-			let new_start = split(new_side, ",")[0]
-		else
-			let new_start = new_side
-		endif
-		if changetype == "a"
-			let new_line = readfile(v:fname_new)[new_start-1]
-			for win in range(1, winnr("$"))
-				if getwinvar(win, '&diff')
-					if getbufline(winbufnr(win),new_start)[0] == new_line
-						let new_buf = winbufnr(win)
-					else
-						if in_buf == 0
-							let in_buf = -winbufnr(win)
-						endif
-					endif
-				endif
-			endfor
-		elseif changetype == "d"
-			let in_line = readfile(v:fname_in)[in_start-1]
-			for win in range(1, winnr("$"))
-				if getwinvar(win, '&diff')
-					if getbufline(winbufnr(win),in_start)[0] == in_line
-						let in_buf = winbufnr(win)
-					else
-						if new_buf == 0
-							let new_buf = -winbufnr(win)
-						endif
-					endif
-				endif
-			endfor
-		elseif changetype == "c"
-			let new_line = readfile(v:fname_new)[new_start-1]
-			for win in range(1, winnr("$"))
-				if getwinvar(win, '&diff')
-					if getbufline(winbufnr(win),new_start)[0] == new_line
-						let new_buf = winbufnr(win)
-						break
-					endif
-				endif
-			endfor
-			let in_line = readfile(v:fname_in)[in_start-1]
-			for win in range(1, winnr("$"))
-				if getwinvar(win, '&diff')
-					if getbufline(winbufnr(win),in_start)[0] == in_line
-						let in_buf = winbufnr(win)
-						break
-					endif
-				endif
-			endfor
-		endif
-		if new_buf > 0 && in_buf > 0
-			break
-		endif
-	endfor
+	" set up sign column
+	call s:setup_sign_column()
 
-	if new_buf < 0
-		" couldn't find it for sure, but we've probably got it
-		let new_buf = new_buf * -1
+	" do actual diff so vim knows how to align things
+	let diff_identical =  s:do_diff()
+
+	" if the two files were identical, nothing more to do
+	if diff_identical
+		return
 	endif
-	if in_buf < 0
-		" couldn't find it for sure, but we've probably got it
-		let in_new = in_buf * -1
-	endif
-	if new_buf == 0 || in_buf == 0
+
+	" figure out which buffers correspond to v:fname_in and v:fname_new so we
+	" know where to place signs
+	let [buf_in, buf_new] = s:associate_buffers()
+
+	" just in case the above somehow fails, report it
+	if buf_in == -1 || buf_new == -1
 		echohl ErrorMsg
 		echo "DiffSigns: Could not find both diff windows"
 		echohl None
+		return
 	endif
 
-	for line in readfile(v:fname_out)
-		" we only care about the lines that tell us which lines were changed, not the actual changes
-		if line !~ "^[0-9]"
-			continue
-		endif
-		let in_side = split(line, "[acd]")[0]
-		let new_side = split(line, "[acd]")[1]
-		let changetype = split(line, "[0-9,]")[0]
-		if in_side =~ ","
-			let in_start = split(in_side, ",")[0]
-			let in_end = split(in_side, ",")[1]
-		else
-			let in_start = in_side
-			let in_end = in_side
-		endif
-		if new_side =~ ","
-			let new_start = split(new_side, ",")[0]
-			let new_end = split(new_side, ",")[1]
-		else
-			let new_start = new_side
-			let new_end = new_side
-		endif
-		if changetype == "a"
-			let new_signtype = "added"
-			let in_signtype = "deleted"
-		elseif changetype == "d"
-			let new_signtype = "deleted"
-			let in_signtype = "added"
-		elseif changetype == "c"
-			let new_signtype = "changed"
-			let in_signtype = "changed"
-		else
-			let new_signtype = "???"
-			let in_signtype = "???"
-		endif
-		for linenr in range(new_start, new_end)
-			if new_signtype != "deleted" && new_buf != ""
-				execute "sign place 1 line=" . linenr . " name=" . new_signtype . " buffer=" . new_buf
-			endif
-		endfor
-		for linenr in range(in_start, in_end)
-			if in_signtype != "deleted" && in_buf != ""
-				execute "sign place 1 line=" . linenr . " name=" . in_signtype . " buffer=" . in_buf
-			endif
-		endfor
-	endfor
+	" set signs
+	call s:set_signs(buf_in, buf_new)
 endfunction
 

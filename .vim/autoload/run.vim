@@ -78,5 +78,18 @@ endfunction
 
 " Completion for :Run
 function! run#complete(A,L,P)
-	return ["sh", "preview", "xterm"]
+	if a:A[-1:] != "*"
+		let globpattern = a:A . "*"
+	else
+		let globpattern = a:A
+	endif
+	let globpattern = substitute(globpattern, "*", ".*", "g")
+	let options = ["sh", "preview", "xterm"]
+	let results = []
+	for option in options
+		if match(option, globpattern) != -1
+			let results += [option]
+		endif
+	endfor
+	return results
 endfunction

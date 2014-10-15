@@ -26,6 +26,7 @@ function! gitdefref#complete(A,L,P)
 	endfor
 	return refs
 endfunction
+
 function! gitdefref#run(...)
 	if a:0 != 0 && a:1 != ""
 		let g:Diffref = a:1

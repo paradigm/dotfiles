@@ -9,13 +9,13 @@ function! grepbuffers#run(arg)
 	call setqflist([])
 	for b in range(1,bufnr("$"))
 		if buflisted(b)
-			execute "b " . b
-			normal gg
+			execute "keepjumps b " . b
+			keepjumps normal gg
 			while searchpos(a:arg, 'W') != [0,0]
 				call setqflist([{'bufnr': b, 'lnum': line("."), 'col': col("."), 'text': getline(".")}], 'a')
 			endwhile
 		endif
 	endfor
-	execute "b " . initbufnr
-	call cconerror#run()
+	execute "keepjumps b " . initbufnr
+	call cconerror#qf()
 endfunction

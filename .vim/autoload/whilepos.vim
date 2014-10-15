@@ -2,9 +2,11 @@
 " = whilepos                                                                   =
 " ==============================================================================
 
-" Repeats the provided command so long as the cursor changes in any of the
-" specified dimensions.
+" Repeats the provided command so long as function-specified condition holds
+" until argument-specified condition occurs
+" These are useful to find first or last instance of something
 
+" Keep running command so long as cursor moves in specified dimension.
 function! whilepos#change(cmd, bufnum, lnum, col, off)
 	let pos = [-1,-1,-1,-1]
 	while 1
@@ -33,11 +35,13 @@ function! whilepos#change(cmd, bufnum, lnum, col, off)
 	endwhile
 endfunction
 
+" Keep running command so long as cursor moves in some dimension other than
+" specified dimension.
 function! whilepos#same(cmd, bufnum, lnum, col, off)
 	let pos = getpos(".")
 	let pos[0] = bufnr("%")
 	while 1
-		execute "normal " . a:cmd
+		execute "normal! " . a:cmd
 		if pos[0] == bufnr("%") && pos[1:] == getpos(".")[1:]
 			break
 		endif

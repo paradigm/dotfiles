@@ -88,6 +88,7 @@ endif
 set tags=""
 " Use the diffsigns function to calculate diffs (which as a side-effect sets
 " sign column)
+let g:diffsigns_disablehighlight = 1
 set diffexpr=diffsigns#run()
 " Where to store the thesaurus.
 let g:thesaurusfile = $HOME . '/.vim/thesaurus'
@@ -351,7 +352,7 @@ nnoremap <bs>      :<c-u>ParaTagsBuffers<cr>2:<c-u>call SkyBison("tag ")<cr>
 nnoremap <space>d 2:<c-u>call SkyBison("bd ")<cr>
 " SkyBison prompt to edit a file
 nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
-" SkyBison prompt to edit a MarkFile
+" SkyBison prompt to edit a TagFile
 nnoremap <space>f 2:<c-u>call SkyBison("F ")<cr>
 " SkyBison prompt to load a session
 nnoremap <space>t 2:<c-u>call SkyBison("SessionLoad ")<cr>
@@ -404,8 +405,8 @@ command! -nargs=1 Dictionary :call def#dictionary("<args>")
 command! -nargs=1 SessionSave :call session#save("<args>")
 command! -nargs=1 -complete=customlist,session#list SessionLoad :call session#load("<args>")
 command! SwitchHeader :call switchheader#run()
-command! -nargs=1 MarkFile :call markfile#set("<args>")
-command! -nargs=1 -complete=customlist,markfile#complete F :call markfile#get("<args>")
+command! -nargs=1 TagFile :call tagfile#set("<args>")
+command! -nargs=1 -complete=customlist,tagfile#complete F :call tagfile#get("<args>")
 command! -nargs=* -complete=customlist,gitdefref#complete GDiffRef :call gitdefref#run("<args>")
 command! Qfsplit :call qfsplit#qf()
 command! Llsplit :call qfsplit#loc()
