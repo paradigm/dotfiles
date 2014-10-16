@@ -408,8 +408,8 @@ command! SwitchHeader :call switchheader#run()
 command! -nargs=1 TagFile :call tagfile#set("<args>")
 command! -nargs=1 -complete=customlist,tagfile#complete F :call tagfile#get("<args>")
 command! -nargs=* -complete=customlist,gitdefref#complete GDiffRef :call gitdefref#run("<args>")
-command! Qfsplit :call qfsplit#qf()
-command! Llsplit :call qfsplit#loc()
+command! Qfsplit :call qfsplit#qf_toggle()
+command! Llsplit :call qfsplit#lf_toggle()
 
 " ==============================================================================
 " = autocmds                                                                   =
