@@ -1115,39 +1115,163 @@ svall() {
 # ==============================================================================
 # = experiments                                                                =
 # ==============================================================================
+#
+# TODO:
+# - _insert_dynamic_named_directories is potentially fragile and doesn't
+# understand things like quoted sections.  Much room for improvement.
+# - the two expand* functions are somewhat similar, may be able to merge into
+# single function to remove repeated code.
+# - figure out where the syntax breaks things and see if I care
+#   - !word breaks history stuff?
+#   - !word breaks logical flip?  Can insert a space there safely to work around it
+#
+# other possible fuzzies:
+# - something something history.  Maybe parse `dirs -lp` ?  Except basically
+# the `cdr` that zsh already has.
+# - something something favorites.  Except functionally equivalent to the
+# static named directories, just with more overhead.
 
+# Finds via breadth-first search file or directory in pwd that matches the
+# provided
+#
+# first arg is file type as is interpreted by `find -type`
+#
+# second arg is pattern for which to search
+# - pattern is a substring of target file/filepath
+# - a leading or trailing slash can be used as an anchor
+#   - a starting slash indicates a file path separator and should make
+#   intuitive sense
+#   - cannot end a file/directory name on the filesystem with a slash, so the
+#   trailing one can't conflict with anything and is easier to type than,
+#   say, "$" on US-qwerty keyboards.  If you want to select any file in a
+#   directory, use "/*"
+# - "/" can be used mid-pattern to indicate a file path separator to, for
+# example, describe the parent directory of the target file.
+# - a "*" can match any number of non-"/" characters
+# - a "**" can match any number of any character
+#
 expand_fuzz() {
-	# no arg, don't do anything
-	[ -z "$1" ] && return
+	# ensure there's something for which to search
+	[ -z "$2" ] && return
 
 	# get argument for `find`
-	# -> last directory with "*" set for globbing on non-anchored sides
-	findarg="$(echo "$1" | awk -F/ 'BEGIN{l="*";r="*"}$NF==""{NF--;r=""}{x=$NF}NF>1{l=""}END{print l""x""r}')"
+	# find only cares about the very last field; grep will check the other fields.
+	# find uses globbing so non-anchored points should have a "*"
+	# "**" could match a slash so cut after that point
+	findarg="$(echo "$2" | sed 's,^.*\*\*,,g' | awk -F/ '
+	BEGIN {
+		l="*";r="*"
+	}
+	$NF=="" { # trailing slash, anchor right
+		NF--;r=""
+	}
+	{
+		x=$NF
+	}
+	NF>1 { # leading slash, anchor left
+		l=""
+	}
+	END {
+		print l""x""r
+	}
+	')"
+
 	# get argument for `grep`
-	# -> replace right anchor with "$"
-	greparg="$(echo "$1" | sed 's/\/$/$/')"
+	# leading slash anchor "just works" but need to set trailing slash
+	# need to expand "*" into "[^/]*" and "**" into ".*" for regex
+	greparg="$(echo "$2" | sed -e 's/\/$/$/' -e 's,\*\*,.*,g' -e 's,\(^\|[^.]\)\*,\1[^/]*,')"
+
 	# starting and ending depth.  Gives up after maxdepth.
 	depth=1
 	maxdepth=10
 
-	while [ "$depth" != "$maxdepth" ] && ! find -mindepth $depth -maxdepth $depth -name "$findarg" -print 2>/dev/null | grep "$greparg"
+	while [ "$depth" != "$maxdepth" ] && ! find -L -type $1 -mindepth $depth -maxdepth $depth -name "$findarg" -print 2>/dev/null | grep "$greparg"
 	do
 		((depth++))
 	done | head -n1
 }
 
-_insert_fuzz() {
-	NEW_BUFFER=''
-	for field in ${(s: :)${BUFFER}}
-	do
-		if [ $field[1,1] = "@" ]
-		then
-			NEW_BUFFER="$NEW_BUFFER $(expand_fuzz "$field[2,${#field}]")"
-		else
-			NEW_BUFFER="$NEW_BUFFER $field"
-		fi
-	done
-	BUFFER=$NEW_BUFFER
+# Finds via breadth-first search file or directory in the git repository that
+# matches the provided pattern.  This gives the full path independent of pwd.
+#
+# - pattern is a substring of target file/filepath
+# - a leading or trailing slash can be used as an anchor
+#   - a starting slash indicates a file path separator and should make
+#   intuitive sense
+#   - cannot end a file/directory name on the filesystem with a slash, so the
+#   trailing one can't conflict with anything and is easier to type than,
+#   say, "$" on US-qwerty keyboards.  If you want to select any file in a
+#   directory, use "/*"
+# - "/" can be used mid-pattern to indicate a file path separator to, for
+# example, describe the parent directory of the target file.
+# - a "*" can match any number of non-"/" characters
+# - a "**" can match any number of any character
+expand_git_fuzz() {
+	[ -z "$1" ] && return
+
+	# get argument for `grep`
+	# leading slash anchor "just works" but need to set trailing slash
+	# need to expand "*" into "[^/]*" and "**" into ".*" for regex
+	greparg="$(echo "$1" | sed -e 's/\/$/$/' -e 's,\*\*,.*,g' -e 's,\(^\|[^.]\)\*,\1[^/]*,')"
+
+	git_top=$(git rev-parse --show-toplevel)
+	(
+		cd $git_top
+		depth=1
+		maxdepth=10
+		while [ "$depth" != "$maxdepth" ] && ! git ls-files | cut -d/ -f1-"$depth" | grep "$greparg"
+		do
+			((depth++))
+		done | awk -v"git_top=$git_top" '/./{print git_top"/"$0;exit}'
+	)
+}
+
+# Expands ~[...] inputs
+#
+#     ~[d:...] -> subdirectory of cwd
+#     ~[f:...] -> file in cwd tree
+#     ~[v:...] -> file in vcs tree (only supports git)
+zsh_directory_name() {
+	local pattern=${2[3,${#2}]}
+	local type=${2[1]}
+	local result
+	if [ "$type" = "d" ] || [ "$type" = "f" ]
+	then
+		result=$(expand_fuzz $type $pattern)
+	elif [ "$type" = "v" ]
+	then
+		result=$(expand_git_fuzz $pattern)
+	else
+		return 1
+	fi
+	if [ "$result" != "" ]
+	then
+		reply=($result)
+		echo '~['$2'] -> '$result'' >&2
+		return 0
+	else
+		return 1
+	fi
+}
+
+# Makes substitutes in the BUFFER just before zsh parses it.  This allows for
+# some slightly shorter inputs at the cost of breaking zsh's input namespace.
+#
+# This parser is not smart enough to do things like withhold substitution in a
+# string.  It'd sure be nice.
+#
+# To make this disable/bypass-able, it must either be at the very front of the
+# or be prepended with a space.  Thus, things like `echo '@word'` won't trigger
+# the substitution because the "@" follows a quote, not a space.
+#
+#    " @word" -> "~[d:word]"
+#    " #word" -> "~[f:word]"
+#    " !word" -> "~[v:word]"
+_insert_dynamic_named_directories() {
+	BUFFER=$(echo $BUFFER | sed -e \
+		's,\(^\| \)@\([^ ]*\),\1~[d:\2],g' -e \
+		's,\(^\| \)#\([^ ]*\),\1~[f:\2],g' -e \
+		's,\(^\| \)!\([^ ]*\),\1~[v:\2],g' )
 	zle .accept-line
 }
-zle -N accept-line _insert_fuzz
+zle -N accept-line _insert_dynamic_named_directories
