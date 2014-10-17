@@ -1112,6 +1112,10 @@ svall() {
 	sv $cmd $SVDIR/*
 }
 
+# ==============================================================================
+# = experiments                                                                =
+# ==============================================================================
+
 expand_fuzz() {
 	# no arg, don't do anything
 	[ -z "$1" ] && return
@@ -1133,7 +1137,17 @@ expand_fuzz() {
 }
 
 _insert_fuzz() {
-	BUFFER="$(echo $BUFFER | sed 's/ @\([^ ]*\)/ $(expand_fuzz \1)/g')"
+	NEW_BUFFER=''
+	for field in ${(s: :)${BUFFER}}
+	do
+		if [ $field[1,1] = "@" ]
+		then
+			NEW_BUFFER="$NEW_BUFFER $(expand_fuzz "$field[2,${#field}]")"
+		else
+			NEW_BUFFER="$NEW_BUFFER $field"
+		fi
+	done
+	BUFFER=$NEW_BUFFER
 	zle .accept-line
 }
 zle -N accept-line _insert_fuzz
