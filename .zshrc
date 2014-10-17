@@ -458,30 +458,6 @@ zle -N history-beginning-search-backward-then-append
 # - non-zle_widget_functions                                                   -
 # ------------------------------------------------------------------------------
 
-# print a field from the output of the last command
-# useful for acting on the output of the last command, e.g.:
-# $ alias -g Z='$(field_from_last_command'
-# $ grep -RH "error"
-# ./README.md:ignore errors
-# ./exceptions.py:# error
-# $ vim Z 2 :)
-# -> now editing exceptions.py
-field_from_last_command(){
-	if [ "$#" -eq 0 ]
-	then
-		fc -l -1 | tr -s " " | cut -d" " -f3-
-	elif [ "$#" -eq 1 ]
-	then
-		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | sed -n "$1p"
-	elif [ "$#" -eq 2 ]
-	then
-		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk "NR==$1{print\$$2;exit}"
-	elif [ "$#" -eq 3 ]
-	then
-		eval $(fc -l -1 | tr -s " " | cut -d" " -f3-) | awk -F"$3" "NR==$1{print\$$2;exit}"
-	fi
-}
-
 # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 # ~ cd family                                                                  ~
 # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
@@ -1135,3 +1111,29 @@ svall() {
 	fi
 	sv $cmd $SVDIR/*
 }
+
+expand_fuzz() {
+	# no arg, don't do anything
+	[ -z "$1" ] && return
+
+	# get argument for `find`
+	# -> last directory with "*" set for globbing on non-anchored sides
+	findarg="$(echo "$1" | awk -F/ 'BEGIN{l="*";r="*"}$NF==""{NF--;r=""}{x=$NF}NF>1{l=""}END{print l""x""r}')"
+	# get argument for `grep`
+	# -> replace right anchor with "$"
+	greparg="$(echo "$1" | sed 's/\/$/$/')"
+	# starting and ending depth.  Gives up after maxdepth.
+	depth=1
+	maxdepth=10
+
+	while [ "$depth" != "$maxdepth" ] && ! find -mindepth $depth -maxdepth $depth -name "$findarg" -print 2>/dev/null | grep "$greparg"
+	do
+		((depth++))
+	done | head -n1
+}
+
+_insert_fuzz() {
+	BUFFER="$(echo $BUFFER | sed 's/ @\([^ ]*\)/ $(expand_fuzz \1)/g')"
+	zle .accept-line
+}
+zle -N accept-line _insert_fuzz
