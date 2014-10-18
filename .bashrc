@@ -271,13 +271,15 @@ bind '"":""'
 # - general_(environmental_variables)                                          -
 # ------------------------------------------------------------------------------
 
-# "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
-# should not be necessary, but it's not a bad idea to have just in case.
+# "/bin/bash" should be the value of $SHELL if this config is parsed.  This
+# line should not be necessary, but it's not a bad idea to have just in case.
 export SHELL="/bin/bash"
 
-# This is where custom shell files are stored
-SHELLDIR="$HOME/.bash"
-mkdir -p $SHELLDIR
+# use vim as pager
+if which vim >/dev/null 2>&1
+then
+	export PAGER="sh -c \"unset PAGER; col -b -x | vim -c 'set ft=man nomod nolist' -\""
+fi
 
 # Set the default text editor.
 if which vim >/dev/null 2>&1

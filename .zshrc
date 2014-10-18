@@ -79,9 +79,11 @@ setopt autopushd
 # should not be necessary, but it's not a bad idea to have just in case.
 export SHELL="/bin/zsh"
 
-# This is where custom shell files are stored
-SHELLDIR="$HOME/.zsh"
-mkdir -p $SHELLDIR
+# use vim as pager
+if which vim >/dev/null 2>&1
+then
+	export PAGER="sh -c \"unset PAGER; col -b -x | vim -c 'set ft=man nomod nolist' -\""
+fi
 
 # Set the default text editor.
 if which vim >/dev/null 2>&1
