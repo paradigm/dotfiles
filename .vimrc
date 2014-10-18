@@ -15,8 +15,6 @@
 " These are general settings that don't fit well into any of the categories
 " used below.  Order may matter for some of these.
 
-" Disable vi compatibility restrictions.  Yes, this is unnecessary.
-set nocompatible
 " When creating a new line, set indentation same as previous line.
 set autoindent
 " Allow i_backspace over indent, eol and start-of-insert

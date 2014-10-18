@@ -79,10 +79,11 @@ setopt autopushd
 # should not be necessary, but it's not a bad idea to have just in case.
 export SHELL="/bin/zsh"
 
-# use vim as pager
+# Set pagers
 if which vim >/dev/null 2>&1
 then
-	export PAGER="sh -c \"unset PAGER; col -b -x | vim -c 'set ft=man nomod nolist' -\""
+	export MANPAGER="sh -c \"unset MANPAGER; col -b -x | vim --cmd 'set modelines=0' -c 'set filetype=man nomod nolist foldlevel=999' -\""
+	export GIT_PAGER="vim --cmd 'set modelines=0' -c 'set filetype=git nomod nolist foldlevel=999' -"
 fi
 
 # Set the default text editor.
@@ -849,7 +850,7 @@ alias ga="git add"
 alias gc="git commit -v"
 alias gcd="git commit -a -v -m \"\$(date)\""
 alias gb="git branch"
-alias gl="git log --graph --color"
+alias gl="git log"
 alias gr="git reset --hard HEAD"
 alias gs="git status"
 alias gw="git show"
