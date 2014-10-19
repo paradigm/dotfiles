@@ -7,7 +7,6 @@
 
 " Open shell command output in the preview window
 function! preview#shell(cmd)
-	let tmp = tempname()
 	pedit! %
 	wincmd P
 	enew

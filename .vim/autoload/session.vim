@@ -51,7 +51,7 @@ function! session#save(...)
 	let g:session_name = name
 	augroup session
 		autocmd!
-		autocmd VimLeavePre * if bufname("%") != "" | call SessionSave(g:session_name) | endif
+		autocmd VimLeavePre * if bufname("%") != "" | call session#save(g:session_name) | endif
 	augroup END
 endfunction
 
@@ -100,7 +100,7 @@ function! session#load(...)
 	let g:session_name = name
 	augroup session
 		autocmd! session
-		autocmd VimLeavePre * if bufname("%") != "" | call SessionSave(g:session_name) | endif
+		autocmd VimLeavePre * if bufname("%") != "" | call session#save(g:session_name) | endif
 	augroup END
 
 	execute "source " . session_path
