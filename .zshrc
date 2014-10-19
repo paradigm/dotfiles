@@ -1272,9 +1272,9 @@ zsh_directory_name() {
 #    " !word" -> "~[v:word]"
 _insert_dynamic_named_directories() {
 	BUFFER=$(echo $BUFFER | sed -e \
-		's,\(^\| \)@\([^ ]*\),\1~[d:\2],g' -e \
-		's,\(^\| \)#\([^ ]*\),\1~[f:\2],g' -e \
-		's,\(^\| \)!\([^ ]*\),\1~[v:\2],g' )
+		's,\(^\| \)@\([a-zA-Z0-9/.*]\+\),\1~[d:\2],g' -e \
+		's,\(^\| \)#\([a-zA-Z0-9/.*]\+\),\1~[f:\2],g' -e \
+		's,\(^\| \)!\([a-zA-Z0-9/.*]\+\),\1~[v:\2],g' )
 	zle .accept-line
 }
 zle -N accept-line _insert_dynamic_named_directories
