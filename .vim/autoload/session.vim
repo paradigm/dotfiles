@@ -93,8 +93,9 @@ function! session#load(...)
 		exec "cd " . session_path
 		let branch = system("git branch | awk '$1==\"*\"{print$2}'")[:-2]
 		let session_path = "./.git/vimsessions/" . branch
-		execute "source " . session_path
 	endif
+
+	execute "source " . session_path
 
 	" auto-update session just before leaving vim
 	let g:session_name = name
@@ -103,7 +104,6 @@ function! session#load(...)
 		autocmd VimLeavePre * if bufname("%") != "" | call session#save(g:session_name) | endif
 	augroup END
 
-	execute "source " . session_path
 	redraw
 	if branch == ""
 		echo "Loaded Session \"" . name . "\""

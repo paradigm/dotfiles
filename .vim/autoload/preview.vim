@@ -9,8 +9,7 @@
 function! preview#shell(cmd)
 	" apparently pedit! can change the filetype, back it up so we can restore
 	" it.
-	let l:ft = &ft
-	pedit! %
+	noautocmd pedit! %
 	wincmd P
 	enew
 	setlocal buftype=nofile
@@ -19,7 +18,6 @@ function! preview#shell(cmd)
 	call append(1, split(system(a:cmd), "\n"))
 	1d
 	wincmd p
-	let &ft=l:ft
 endfunction
 
 " Open output of vim command in bottom line.
