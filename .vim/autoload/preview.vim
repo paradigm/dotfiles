@@ -7,6 +7,9 @@
 
 " Open shell command output in the preview window
 function! preview#shell(cmd)
+	" apparently pedit! can change the filetype, back it up so we can restore
+	" it.
+	let l:ft = &ft
 	pedit! %
 	wincmd P
 	enew
@@ -14,7 +17,9 @@ function! preview#shell(cmd)
 	setlocal bufhidden=delete
 	setlocal nobuflisted
 	call append(1, split(system(a:cmd), "\n"))
+	1d
 	wincmd p
+	let &ft=l:ft
 endfunction
 
 " Open output of vim command in bottom line.
