@@ -14,6 +14,14 @@
 " whitespace.
 
 function! parajump#run(direction)
+	return s:main(a:direction, 0)
+endfunction
+
+function! parajump#expr(direction)
+	return s:main(a:direction, 1)
+endfunction
+
+function! s:main(direction, expr)
 	if a:direction == 'j'
 		let delta = 1
 	elseif a:direction == 'k'
@@ -39,7 +47,12 @@ function! parajump#run(direction)
 	endwhile
 
 	" purposefully using G here to make a jump break
-	return line . "G"
+	if a:expr
+		return line . "G"
+	else
+		execute "normal " . line . "G"
+		return
+	endif
 endfunction
 
 " check if the cursor is on whitespace or not

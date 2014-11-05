@@ -75,6 +75,8 @@ set wildmode=longest:full,full
 " Timeout for keycodes (such as arrow keys and function keys) is only 10ms.
 " Timeout for Vim keymaps is half a second.
 set timeout ttimeoutlen=10 timeoutlen=500
+" remove comment headers when joining comment lines
+set fo+=j
 " set what is saved by a :mksession
 set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize,globals,localoptions,tabpages
 " Add ~/.vim to the runtimepath in Windows so I can use the same ~/.vim across
@@ -84,6 +86,9 @@ if has('win32') || has('win64')
 endif
 " Clear default tags.  Other code later will append tags as needed.
 set tags=""
+" store swap in ~/.vim/swap
+call system("mkdir -p ~/.vim/swap")
+set directory=~/.vim/swap
 " Use the diffsigns function to calculate diffs (which as a side-effect sets
 " sign column)
 let g:diffsigns_disablehighlight = 1
@@ -145,12 +150,6 @@ nnoremap <silent> gj j
 xnoremap <silent> gj j
 nnoremap <silent> gk k
 xnoremap <silent> gk k
-" filter selected area through calculator
-xnoremap <space>c :!bc -l<cr>
-xnoremap <space>C :!sage -q 2>/dev/null \| head -n1 \| cut -c15-<cr>
-xnoremap <space>L <esc>`<ilatex(<esc>`>a)<esc>gv:!sage -q 2>/dev/null \| head -n1 \| cut -c15-<cr>
-" copy to system clipboard
-xnoremap <space>y "+ygv"*y
 " Toggle 'paste'
 " This particular mapping is nice because I can paste with
 " <insert><s-insert><-sinrt>
@@ -314,22 +313,35 @@ nnoremap <space>m        :Make<cr>
 nnoremap <space>r        :Run sh<cr>
 nnoremap <space>R        :Run preview<cr>
 nnoremap <space><c-r>    :Run xterm<cr>
+
 nnoremap <c-k>w          :call session#save()<cr>
 nnoremap <c-k>l          :call session#load()<cr>
+
 nnoremap <space>D        :GDiffRef<cr>
+
 nnoremap <c-]>           :ParaTagsBuffers<cr><c-]>
 nnoremap <space>P        :ParaTagsBuffers<cr><c-w>}
 nnoremap <space><c-p>    :ParaTagsBuffers<cr>:call preview#line("normal <c-]>")<cr>
-nnoremap <expr> <space>j parajump#run('j')
-xnoremap <expr> <space>j parajump#run('j')
-nnoremap <expr> <space>k parajump#run('k')
-xnoremap <expr> <space>k parajump#run('k')
+
 inoremap <c-x><c-t>      <c-o>:call def#thesaurus(expand("<cword>"))<cr><c-x><c-t>
 nnoremap g<c-t>          :call def#previewthesaurus(expand("<cword>"))<cr>
 nnoremap g<c-d>          :call def#dictionary(expand("<cword>"))<cr>
+
 nnoremap <space>M        :call signmarks#run()<cr>
+
 xnoremap <silent> <c-n>  :call togglecomment#run()<cr>
 nnoremap <silent> <c-n>  :call togglecomment#run()<cr>
+
+nnoremap        <space>/ :call viewsearch#run()<cr>
+onoremap        <space>/ :call viewsearch#run()<cr>
+xnoremap <expr> <space>/       viewsearch#expr()
+
+nnoremap        <space>j :call parajump#run('j')<cr>
+onoremap        <space>j :call parajump#run('j')<cr>
+xnoremap <expr> <space>j       parajump#expr('j')
+nnoremap        <space>k :call parajump#run('k')<cr>
+onoremap        <space>k :call parajump#run('k')<cr>
+xnoremap <expr> <space>k       parajump#expr('k')
 
 
 " ------------------------------------------------------------------------------
@@ -406,6 +418,7 @@ command! SwitchHeader :call switchheader#run()
 command! -nargs=1 TagFile :call tagfile#set("<args>")
 command! -nargs=1 -complete=customlist,tagfile#complete F :call tagfile#get("<args>")
 command! -nargs=* -complete=customlist,gitdefref#complete GDiffRef :call gitdefref#run("<args>")
+command! -nargs=1 -complete=customlist,line#list Line :call line#run("<args>")
 command! Qfsplit :call qfsplit#qf_toggle()
 command! Llsplit :call qfsplit#lf_toggle()
 
@@ -475,7 +488,7 @@ filetype indent on
 " - SkyBison_(plugins)                                                         -
 " ------------------------------------------------------------------------------
 
-let g:skybison_fuzz = 2
+"let g:skybison_fuzz = 2
 
 " ------------------------------------------------------------------------------
 " - jedi_(plugins)                                                             -
@@ -516,3 +529,60 @@ let g:languagetool_jar='/opt/languagetool/languagetool-commandline.jar'
 let g:EclimJavaValidate = 0
 " With JavaSearch/JavaSearchContextalways jump to definition in current window
 let g:EclimJavaSearchSingleResult = 'edit'
+
+
+" cannot put this in ftplugin because it won't trigger early enough
+let g:vimsyn_folding = 'af'
+
+
+function! MapOpFunc(key, func)
+	execute "nnoremap <silent> " . a:key . " :set opfunc=" . a:func . "<cr>g@"
+	execute "nnoremap <silent> " . a:key . a:key " :set opfunc=" . a:func . "<cr>g@g@"
+	execute "xnoremap <silent> " . a:key . " :<c-u>call "  . a:func . "('visual')<cr>"
+endfunction
+
+call MapOpFunc("<space>y", "SystemYank")
+function! SystemYank(type)
+	if a:type == 'visual'
+		normal gv"+ygv"*y
+	elseif a:type == 'line'
+		normal! '["+y']'["*y']
+	else
+		normal! `["+y`]`["*y`]
+	endif
+endfunction
+
+call MapOpFunc("<space>c", "FilterBc")
+function! FilterBc(type)
+	call Filter(a:type, 'bc -l')
+endfunction
+call MapOpFunc("<space>C", "FilterSage")
+function! FilterSage(type)
+	call Filter(a:type, 'sage -q 2>/dev/null | head -n1 | cut -c7-')
+endfunction
+function! Filter(type, filter)
+	let starreg = @*
+	if a:type == 'visual'
+		" yank into "*
+		execute 'normal! gv'
+		" substitute
+		execute "normal! gvs" . system("echo '" . substitute(@*,"'","'\"'\"'",'g') . "'|" . a:filter) . "\<bs>\<esc>"
+	elseif a:type == 'line'
+		execute "'[,']!" . a:filter
+	else
+		" backup `< and `>
+		let left = getpos("'<")
+		let right = getpos("'>")
+		" yank into "*
+		normal! `[v`]"*y
+		" substitute
+		execute "normal! `[v`]c" . system("echo '" . substitute(@*,"'","'\"'\"'",'g') . "'|" . a:filter) . "\<bs>\<esc>"
+		" restore `< and `>
+		call setpos("'<", left)
+		call setpos("'>", right)
+	endif
+	let @* = starreg
+endfunction
+
+command Scratch new|setlocal buftype=nofile bufhidden=delete noswapfile
+nnoremap <space>S :Scratch<cr>

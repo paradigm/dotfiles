@@ -30,7 +30,7 @@ function! session#save(...)
 	if git_top[0] == "/"
 		" make symlink to git project
 		call system("mkdir -p " . $HOME . "/.vim/sessions")
-		call system("ln -s '" . git_top . "' " . $HOME . "/.vim/sessions/" . name)
+		call system("ln -fns '" . git_top . "' " . $HOME . "/.vim/sessions/" . name)
 		" make session file at .git/vimsessions/branch-name
 		let branch = system("git branch | awk '$1==\"*\"{print$2}'")[:-2]
 		let session_path = git_top . "/.git/vimsessions/" . branch
