@@ -43,3 +43,6 @@
 [submodule ".vim/bundle/clang_complete-src"]
 	path = .vim/bundle/clang_complete-src
 	url = https://github.com/Rip-Rip/clang_complete.git
+[submodule ".vim/bundle/vim-zsh-completion"]
+	path = .vim/bundle/vim-zsh-completion
+	url = https://github.com/Valodim/vim-zsh-completion.git
