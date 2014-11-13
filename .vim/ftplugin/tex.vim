@@ -17,7 +17,6 @@ endif
 
 " Various mappings
 nnoremap <buffer> <space>o :silent execute "!mupdf " . expand("%:r").".pdf &"<cr>
-inoremap <buffer> <c-j> <ESC>:call LatexJump()<cr>
 inoremap <buffer> ;; <ESC>o\item<space>
 inoremap <buffer> ;' <ESC>o\item[]\hfill<cr><TAB><++><ESC>k0f[a
 inoremap <buffer> (( \left(\right)<++><ESC>10hi
@@ -59,27 +58,15 @@ onoremap iv :normal viv<cr>
 xnoremap av :<c-u>call LatexEnv(0)<CR>
 onoremap av :normal vav<cr>
 
-" set where to store language-specific tags
-let b:paratags_lang_tags = "~/.vim/tags/latextags"
-" set where to look for library
-call paratags#langadd("/usr/share/textmf-texlive/tex/latex/")
-call paratags#langadd("/usr/share/texmf/tex/latex/")
-call paratags#langadd("~/texmf/tex/latex/")
-call paratags#langadd("~/.texmf/tex/latex/")
+setlocal path+=/usr/share/textmf-texlive/tex/latex
+setlocal path+=/usr/share/textmf-texlive/tex/latex/
+setlocal path+=/usr/share/texmf/tex/latex/
+setlocal path+=~/texmf/tex/latex/
+setlocal path+=~/.texmf/tex/latex/
 
 " Tabularize Automatically
 " Disabled as more troublesome than helpful
 "inoremap & &<Esc>:let columnnum=<c-r>=strlen(substitute(getline('.')[0:col('.')],'[^&]','','g'))<cr><cr>:Tabularize /&<cr>:normal 0<cr>:normal <c-r>=columnnum<cr>f&<cr>a
-
-" Jumps to next <++>.  Conceptually based on vim-latexsuite's equivalent.
-function! LatexJump()
-	if search('<++>') == 0
-		normal! l
-		startinsert
-	else
-		execute "normal! v3l\<c-g>"
-	endif
-endfunction
 
 " Used to create a text object for LaTeX environments.  Searchpair() seems to
 " have problems with backslashes, so that part was dropped from the search.
@@ -97,3 +84,11 @@ function! LatexEnv(inner)
 		normal k
 	endif
 endfunction
+
+" Assumes lualatex.  Lots of massaging to do things like make some
+" multi-line errors squashed to one line for errorformat.
+setlocal makeprg=lualatex\ \-file\-line\-error\ \-interaction=nonstopmode\ %\\\|\ awk\ '/^\\(.*.tex$/{sub(/^./,\"\",$0);X=$0}\ /^!/{sub(/^./,\"\",$0);print\ X\":1:\"$0}\ /tex:[0-9]+:\ /{A=$0;MORE=2}\ (MORE==2\ &&\ /^l.[0-9]/){sub(/^l.[0-9]+[\ \\t]+/,\"\",$0);B=$0;MORE=1}\ (MORE==1\ &&\ /^[\ ]+/){sub(/^[\ \\t]+/,\"\",$0);print\ A\":\ \"B\"·\"$0;MORE=0}'
+setlocal errorformat=%f:%l:\ %m
+
+let b:runcmd = "pkill -HUP mupdf"
+let b:runquiet = 1

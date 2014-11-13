@@ -31,40 +31,30 @@ function! paratags#buffers()
 	echo "paratags#buffers Done"
 endfunction
 
-" Generates tags for the libraries in a given language.  Note that some
-" languages have huge libraries and this could take a while
-function! paratags#langgen()
-	echo "paratags#langgen working..."
-	if exists("b:paratags_lang_tags") && exists("b:paratags_lang_sources")
-		call system("mkdir -p ~/.vim/tags/")
-		call system("ctags -R -f " . b:paratags_lang_tags . " " . join(b:paratags_lang_sources))
+" Generate tags for a given language's libraries, per 'path'.
+function! paratags#path()
+	let paths = filter(split(&path, '\\\@<!,'), 'v:val != "" && v:val[0] != "."')
+	if len(paths) == 0
+		redraw
+		echo "paratags#path no valid 'path' items"
+		return
 	endif
 	redraw
-	echo "paratags#langgen done"
-endfunction
-
-" Adds a source for paratags#langen()
-function! paratags#langadd(source)
-	if !exists("b:paratags_lang_sources")
-		let b:paratags_lang_sources = []
-	endif
-	if index(b:paratags_lang_sources, a:source)
-		let b:paratags_lang_sources += [a:source]
-	endif
+	echo "paratags#path populating " . &ft . " from: " . join(paths)
+	call system("mkdir -p ~/.vim/tags/")
+	call system("ctags -R -f ~/.vim/tags/" . &ft . " " . join(paths))
+	redraw
+	echo "paratags#path done"
 endfunction
 
 " Enables the language library tags
-function! paratags#langenable()
-	if exists("b:paratags_lang_tags")
-		execute "set tags +=" . b:paratags_lang_tags
-	endif
+function! paratags#path_enable()
+	execute "setlocal tags+=~/.vim/tags/" . &ft
 endfunction
 
 " Disables the language library tags
-function! paratags#langdisable()
-	if exists("b:paratags_lang_tags")
-		execute "set tags -=" . b:paratags_lang_tags
-	endif
+function! paratags#path_disable()
+	execute "setlocal tags-=~/.vim/tags/" . &ft
 endfunction
 
 " maps vim's filetype to corresponding ctag's filetype

@@ -2,9 +2,30 @@
 " = c ftplugin                                                                 =
 " ==============================================================================
 
-" Open man page for word under cursor in preview window.  Can prefix a count
-" to do which mount number, e.g.: 2K will open "man 2 <cword>"
-nnoremap <buffer> K :<c-u>call preview#shell("man " . (v:count > 0 ? v:count : "") . " " . expand("<cword>"))<cr>
+" vim's cpp ftplugin sources this file.  However, I prefer to keep the two
+" completely independent and duplicate what I want across both.
+if &filetype == "cpp"
+	finish
+endif
+
+" This is a list of directories to be searched for #include macros.
+setlocal path+=/usr/include/
+execute "setlocal path+=/lib/modules/" . system("printf \"%s\" $(uname -r)") . "/build/include"
+setlocal path+=,
+setlocal path+=./include/
+setlocal path+=../include/
+
+" Set compiler, compile interpreter and linter.
+setlocal makeprg=gcc\ -Wall\ -Wextra\ %
+setlocal errorformat&vim
+let b:lintprg = ""
+let b:lintcmd = ""
+
+" Set executable to associate with source
+let b:runpath = "./a.out"
+
+" Have 'K' open the man page in a preview window
+nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
 
 " If clang exists, use clang
 if exists('g:clang_complete_loaded')
@@ -18,10 +39,36 @@ if exists('g:clang_complete_loaded')
 	nnoremap <buffer> <space>P     :call g:ClangGotoDeclarationPreview()<cr>
 	" preview declaration line
 	nnoremap <buffer> <space><c-p> :call preview#line("call g:ClangGotoDeclaration()")<cr>
-else
-	" no language-specific plugin, fall back to ctags
-	" set where to store language-specific tags
-	let b:paratags_lang_tags = "~/.vim/tags/ctags"
-	" set where to look for library
-	call ParaTagsLangAdd("/usr/include/")
+	" Use clang to lint
+	let b:lintcmd = "cd %:p:h | call ClangUpdateQuickFix() | cd -"
+	let b:linterrorformat = &l:errorformat
 endif
+
+call snippet#map(";main","
+\int main(int argc, char *argv[])
+\\<cr>{
+\\<cr>(void)argc;
+\\<cr>(void)argv;
+\\<cr>
+\\<cr><++>
+\\<cr>
+\\<cr>\<c-d>return 0;
+\\<cr>}")
+
+call snippet#map(";for","
+\for (<++>) {
+\\<cr><++>
+\\<cr>}")
+
+call snippet#map(";while","
+\while (<++>) {
+\\<cr><++>
+\\<cr>}")
+
+call snippet#map(";do","
+\do {
+\\<cr><++>
+\\<cr>} while (<++>)")
+
+call snippet#map(";printf","
+\printf(\"<++>\", <++>);<++>")

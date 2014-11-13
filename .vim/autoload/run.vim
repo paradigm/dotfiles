@@ -2,54 +2,40 @@
 " = run                                                                        =
 " ==============================================================================
 
-" Try to make an educated guess on what to run given the current filetype and
-" context.  Also helps set executable if needed.
-
 function! run#run(type)
-	" Move the directory containing the current buffer.  This is helpful in
-	" case multiple buffers are open which have different associated
-	" ./a.out or equivalent
-	cd %:p:h
-	" Determine what to run
-	let l:quiet = 0
-	if exists("g:Runcmd")
+	if exists("g:Runpath")
+		let l:runpath = g:Runpath
+		let l:runcmd = g:Runpath
+		let l:runquiet = get(g:, "Runquiet", 0)
+	elseif exists("g:Runcmd")
+		let l:runpath = ""
 		let l:runcmd = g:Runcmd
-	elseif &ft == "c"
-		let l:runpath = "./a.out"
-		let l:runcmd = l:runpath
-	elseif &ft == "cpp"
-		let l:runpath = "./a.out"
-		let l:runcmd = l:runpath
-	elseif &ft == "java"
-		" assumes eclim
-		autocmd! eclim_java
-		autocmd! eclim_show_error
-		let l:project = eclim#project#util#GetCurrentProjectName()
-		let l:runcmd = "eclim -editor vim -command java -p " . l:project
-	elseif &ft == "python"
-		let l:runpath = expand("%:p")
-		let l:runcmd = l:runpath
-	elseif &ft == "sh"
-		let l:runpath = expand("%:p")
-		let l:runcmd = l:runpath
-	elseif &ft == "tex"
-		" reload pdf reader
-		let l:runcmd = "pkill -HUP mupdf"
-		let l:quiet = 1
-	elseif &ft == "dot"
-		" reload image viewer
-		let l:runcmd = "xdotool search --name sxiv key r"
-		let l:quiet = 1
+		let l:runquiet = get(g:, "Runquiet", 0)
+	elseif exists("b:runpath")
+		let l:runpath = b:runpath
+		let l:runcmd = b:runpath
+		let l:runquiet = get(b:, "runquiet", 0)
+		cd %:p:h
+	elseif exists("b:runcmd")
+		let l:runpath = ""
+		let l:runcmd = b:runcmd
+		let l:runquiet = get(b:, "runquiet", 0)
+		cd %:p:h
+	else
+		echohl ErrorMsg
+		echo "Run: nothing to run set"
+		echohl None
+		return
 	endif
 
-	if exists("l:runpath") && !filereadable(l:runpath)
+	if l:runpath != "" && !filereadable(l:runpath)
 		echohl ErrorMsg
 		echo "Run: Could not find file at \"" . l:runpath . "\""
 		echohl None
 		return
 	endif
 
-	if exists("l:runpath") && !executable(l:runpath)
+	if l:runpath != "" && !executable(l:runpath)
 		redraw!
 		echo "Set " . runpath . " as executable? (y/n) "
 		if nr2char(getchar()) == "y"
@@ -59,11 +45,11 @@ function! run#run(type)
 		endif
 	endif
 
-	if a:type == "sh" && !l:quiet
+	if a:type == "sh" && !l:runquiet
 		silent! :!clear
 		redraw!
 		execute "!" . l:runcmd
-	elseif a:type == "sh" && l:quiet
+	elseif a:type == "sh" && l:runquiet
 		call system(l:runcmd . "&")
 	elseif a:type == "preview"
 		call preview#shell(l:runcmd)
@@ -78,16 +64,11 @@ endfunction
 
 " Completion for :Run
 function! run#complete(A,L,P)
-	if a:A[-1:] != "*"
-		let globpattern = a:A . "*"
-	else
-		let globpattern = a:A
-	endif
-	let globpattern = substitute(globpattern, "*", ".*", "g")
+	let regex = glob2regex#conv(a:A)
 	let options = ["sh", "preview", "xterm"]
 	let results = []
 	for option in options
-		if match(option, globpattern) != -1
+		if option =~ regex
 			let results += [option]
 		endif
 	endfor

@@ -2,6 +2,11 @@
 " = vim ftplugin                                                               =
 " ==============================================================================
 
+" have [i and friends follow :source
+setlocal include=^\\s*\\<source\\>
+
+setlocal path+=~/.vimrc,~/.vim
+
 " open help page for word under cursor in preview window
 nnoremap <buffer> K :execute ":help " . expand("<cword>") . " \| pedit % \| q"<cr>
 
@@ -10,9 +15,3 @@ nnoremap <buffer> K :execute ":help " . expand("<cword>") . " \| pedit % \| q"<c
 " completion, as well as the custom ctrl-space.
 inoremap <buffer> <c-x><c-o> <c-x><c-v>
 inoremap <buffer> <c-@> <c-x><c-v>
-
-" set where to store language-specific tags
-let b:paratags_lang_tags = "~/.vim/tags/vimtags"
-" set where to look for library
-call paratags#langadd("~/.vimrc")
-call paratags#langadd("~/.vim/")

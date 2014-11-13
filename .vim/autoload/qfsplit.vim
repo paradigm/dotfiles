@@ -75,8 +75,11 @@ function! s:split_open()
 	setlocal buftype=nofile
 	setlocal bufhidden=delete
 	setlocal nobuflisted
-	setlocal nonu
-	setlocal nornu
+	setlocal nonumber
+	if exists('&relativenumber')
+		setlocal norelativenumber
+	endif
+	silent! f quickfix
 endfunction
 
 function! s:split_close()

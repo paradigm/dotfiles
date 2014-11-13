@@ -19,4 +19,3 @@ function! signmarks#run()
 		endif
 	endfor
 endfunction
-

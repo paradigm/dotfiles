@@ -11,18 +11,25 @@ function! ftstack#push()
 	if !exists("g:ftstack")
 		let g:ftstack = []
 	endif
-	let g:ftstack += [[expand("%"), line("."), virtcol(".")]]
+	" add to jumplist
+	execute "keeppatterns normal! /\\%" . line(".") . "l\\%" . col(".") . "c\<cr>"
+	let g:ftstack += [[expand("%"), bufnr("%"), getcurpos()]]
 endfunction
 
 " Pop the stack
 function! ftstack#pop()
 	if !exists("g:ftstack") || len(g:ftstack) == 0
 		redraw
-		echo "Tag Stack Empty"
+		echohl ErrorMsg
+		echo "E73: tag stack empty"
+		echohl None
 		return
 	endif
-	execute "e " . g:ftstack[-1][0]
-	execute "normal " . g:ftstack[-1][1] . "G"
-	execute "normal " . g:ftstack[-1][2] . "|"
+	if g:ftstack[-1][0] != ""
+		execute "e " . g:ftstack[-1][0]
+	else
+		execute "b " . g:ftstack[-1][1]
+	endif
+	call setpos(".", g:ftstack[-1][2])
 	let g:ftstack = g:ftstack[:-2]
 endfunction

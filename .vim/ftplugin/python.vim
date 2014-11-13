@@ -8,9 +8,20 @@ setlocal tabstop=4
 setlocal shiftwidth=4
 setlocal softtabstop=4
 
+execute "setlocal path+=" . substitute(glob("/usr/lib/py*") . " " . glob("/usr/local/lib/py*"), "\> *\<", ",","")
+
+let b:runpath = expand("%:p")
+
 " python syntax-based folding yanked from
 " http://vim.wikia.com/wiki/Syntax_folding_of_Python_files
 setlocal foldtext=substitute(getline(v:foldstart),'\\t','\ \ \ \ ','g')
+
+let b:lintprg = 'sh -c "pep8 %; pylint -r n -f parseable --include-ids=y % \\| ' .
+			\ "awk -F: '{print \\$1" .
+			\ '\":\"\$2\":1:\"\$3\$4\$5\$6\$7\$8\$9' .
+			\ "}'" .
+			\ '"'
+let b:linterrorformat='%f:%l:%c:\ %m'
 
 " If jedi exists, use jedi
 "
@@ -27,10 +38,4 @@ if exists(":Pyimport")
 	nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
 	" preview declaration line
 	nnoremap <buffer> <space><c-p> :call preview#line("normal \\d")<cr>
-else
-	" language-specific plugin, fall back to ctags
-	" set where to store language-specific tags
-	let b:paratags_lang_tags = "~/.vim/tags/pythontags"
-	" set where to look for library
-	call paratags#langadd("/usr/lib/py* /usr/local/lib/py*")
 endif

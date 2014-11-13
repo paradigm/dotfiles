@@ -116,7 +116,6 @@ endfunction
 
 " main function
 function! diffsigns#run()
-
 	" Vim throws test at us to make sure we work.  The test inputs do not
 	" associate with any buffer which breaks sign placement later.  Detect
 	" test and return before sign calculations.
@@ -150,4 +149,3 @@ function! diffsigns#run()
 	" set signs
 	call s:set_signs(buf_in, buf_new)
 endfunction
-

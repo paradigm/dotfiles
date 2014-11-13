@@ -8,12 +8,27 @@
 " understand what will happen if you attempt to utilize content from this file,
 " either in part or in full.
 
-" ==============================================================================
-" = general_settings                                                           =
-" ==============================================================================
-"
-" These are general settings that don't fit well into any of the categories
-" used below.  Order may matter for some of these.
+" Enable syntax highlighting.
+syntax on
+" set theme
+if &t_Co == 256 && filereadable($HOME . "/.themes/current/terminal/256-theme")
+	colorscheme currentterm
+endif
+" If available, have pathogen load plugins form ~/.vim/bundle.
+if filereadable($HOME . "/.vim/autoload/pathogen.vim")
+	" disable plugins that have missing prerequisites
+	let g:pathogen_disabled = []
+	if !isdirectory("/usr/include/clang")
+		let g:pathogen_disabled += ['clang_complete']
+	endif
+	call pathogen#runtime_append_all_bundles()
+	call pathogen#helptags()
+endif
+" Enable filetype-specific plugins.
+filetype plugin on
+" Utilize filetype-specific automatic indentation.
+filetype indent on
+
 
 " When creating a new line, set indentation same as previous line.
 set autoindent
@@ -44,15 +59,9 @@ endif
 set ruler
 " Default color scheme should assume dark background.
 set background=dark
-" Tabs are four characters wide.  Note that this is primarily useful for those
-" who prefer tabs for indentation rather than spaces which act like tabs.  If
-" you prefer indenting with spaces, look into 'softtabstop'.
-set tabstop=4
-" (Auto)indents are four characters wide.
-set shiftwidth=4
 " If run in a terminal, set the terminal title.
 set title
-" Enable wordwrap.
+" Enable wordwrap
 set textwidth=0 wrap linebreak
 " Enable unicode characters.  This is needed for the 'listchars' below.
 set encoding=utf-8
@@ -60,8 +69,6 @@ set encoding=utf-8
 set spell
 " Disable capitalization check in spellcheck.
 set spellcapcheck=""
-" Enable syntax highlighting.
-syntax on
 " Do not show introduction message when starting Vim.
 set shortmess+=I
 " Display special characters for certain whitespace situations.
@@ -85,44 +92,31 @@ if has('win32') || has('win64')
 	set runtimepath+=~/.vim
 endif
 " Clear default tags.  Other code later will append tags as needed.
-set tags=""
+set tags=
+" Clear default path.  Other code later will append path items as needed.
+set path=
 " store swap in ~/.vim/swap
 call system("mkdir -p ~/.vim/swap")
 set directory=~/.vim/swap
 " Use the diffsigns function to calculate diffs (which as a side-effect sets
 " sign column)
-let g:diffsigns_disablehighlight = 1
 set diffexpr=diffsigns#run()
-" Where to store the thesaurus.
-let g:thesaurusfile = $HOME . '/.vim/thesaurus'
-execute "set thesaurus+=" . g:thesaurusfile
-" Where to store the dictionary.
-let g:dictionaryfile = $HOME . '/.vim/dictionary'
-" vim's 'dictionary' doesn't support paradigm's dictionary format, so don't
-" set 'dictionary' here.
-" leaving this blank means i_ctrl-x_ctrl-k falls back to spellcheck dictionary
-"execute "set dictionary+=" . g:dictionaryfile
+" Set thesaurus file location
+execute "set thesaurus=" . $HOME . '/.vim/thesaurus'
+" Set dictionary file location
+" Note that the last field is populated by autoload/def.vim with potential
+" non-words.  Ensure "spell" is placed before the def dictionary so it has a
+" higher priority.
+execute "set dictionary=spell," . $HOME . '/.vim/dictionary'
+" If in a git repo, use any tags it may have
+if system("git rev-parse --show-toplevel")[0] == '/'
+	execute "set tags+=" . system("git rev-parse --show-toplevel")[:-2] . "/.git/tags"
+endif
 
-" Disabled general settings which may be worthwhile to retain in case they are
-" desired at a later time.
-"
-" Automatically save/load settings for buffer when entering/leaving them.
-" This was disabled as it proved more troublesome than helpful.  Instead,
-" session management code below handles this when desired.
-"au BufWinLeave * silent! mkview!  " automatically save view on exit
-"au BufWinEnter * silent! loadview " automatically load view on load
-
-" ==============================================================================
-" = mappings                                                                   =
-" ==============================================================================
-
-" ------------------------------------------------------------------------------
-" - general_(mappings)                                                         -
-" ------------------------------------------------------------------------------
 
 " Disable <f1>'s default help functionality.  Usually when I hit this key I
 " missed an attempt at the <esc> key.
- noremap <f1> <esc>
+noremap <f1> <esc>
 lnoremap <f1> <esc>
 " Clear search highlighting, sign column, messages at bottom, and redraw
 nnoremap <silent> <c-l> :nohlsearch<cr>:sign unplace *<cr><c-l>
@@ -151,13 +145,10 @@ xnoremap <silent> gj j
 nnoremap <silent> gk k
 xnoremap <silent> gk k
 " Toggle 'paste'
-" This particular mapping is nice because I can paste with
+" This particular mapping is nice due to the ability to paste via
 " <insert><s-insert><-sinrt>
 set pastetoggle=<insert>
 
-" ------------------------------------------------------------------------------
-" - next_previous_(mappings)                                                   -
-" ------------------------------------------------------------------------------
 " Find next/previous search item which is not visible in the window.
 " Note that 'scrolloff' probably breaks this.
 nnoremap <space>n L$nzt
@@ -200,10 +191,6 @@ nnoremap [f :call whilepos#same("\<lt>c-o>",1,0,0,0)<cr>
 " :normal in the function call
 nnoremap ]f :call whilepos#same("\<lt>esc>\<lt>c-i>",1,0,0,0)<cr>
 
-" ------------------------------------------------------------------------------
-" - cmdline-window_(mappings)                                                  -
-" ------------------------------------------------------------------------------
-
 " Swap default ':', '/' and '?' with cmdline-window equivalent.
 nnoremap : q:a
 xnoremap : q:a
@@ -217,26 +204,21 @@ nnoremap q/ /
 xnoremap q/ /
 nnoremap q? ?
 xnoremap q? ?
-" Have <esc> leave cmdline-window
-autocmd CmdwinEnter * nnoremap <buffer> <esc> :q\|echo ""<cr>
 
-" ------------------------------------------------------------------------------
-" - diff_(mappings)                                                            -
-" ------------------------------------------------------------------------------
-
+" Turn on diffing for current window
 nnoremap <c-p>t :diffthis<cr>
+" Recalculate diffs
 nnoremap <c-p>u :diffupdate<cr><c-l>
+" Disable diffs
 nnoremap <c-p>x :diffoff<cr>:sign unplace *<cr>
+" Yank changes from other diff window
 nnoremap <c-p>y do<cr>
+" Paste changes into other diff window
 nnoremap <c-p>p dp<cr>
 
-" ------------------------------------------------------------------------------
-" - visual-mode_searching_(mappings)                                           -
-" ------------------------------------------------------------------------------
-"
 " Many of these were either shamelessly stolen from or inspired by
 " SearchParty.  See: https://github.com/dahu/SearchParty.  Thanks, bairui.
-
+"
 " Having v_* and v_# search for visually selected area.
 xnoremap * "*y<Esc>/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><cr>
 xnoremap # "*y<Esc>?<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><cr>
@@ -247,30 +229,28 @@ xnoremap / "*y<Esc>q/i<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g"
 " Prepare substitution based on visually-selected area.
 xnoremap ? "*y<Esc>q:i%s/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr>/
 
-" ------------------------------------------------------------------------------
-" - insert-mode_completion_(mappings)                                          -
-" ------------------------------------------------------------------------------
-
-" Allow ctrl-f/ctrl-b to page through pop-up menu.
-inoremap <expr> <c-f> pumvisible() ? "\<pagedown>" : "\<c-o>:ParaTagsBuffers\<cr>\<c-o>1\<c-w>}"
-" if done without pum, try to open tag
-inoremap <expr> <c-b> pumvisible() ? "\<pageup>" : "\<c-o>:pclose\<cr>"
+" In pop-up-menu, page down
+" In insert mode, do buffer-only completion
+inoremap <expr> <c-f> pumvisible() ?
+			\ "\<pagedown>" :
+			\ "\<c-o>:\<c-u>call custcomplete#run('.')\<cr>\<c-n>"
+" In pop-up-menu, page down
+" In insert mode, do buffer-only completion
+inoremap <expr> <c-b> pumvisible() ?
+			\ "\<pageup>" :
+			\ "\<c-o>:\<c-u>call custcomplete#run('.')\<cr>\<c-p>"
 " Have i_ctrl-<space> act like i_ctrl-x_ctrl-o. Note that ctrl-@ is triggered by
 " ctrl-<space> in many terminals.
 inoremap <c-@> <c-x><c-o>
 " Have i_ctrl-l act like i_ctrl-x_ctrl-l.
 inoremap <c-l> <c-x><c-l>
-
-" ------------------------------------------------------------------------------
-" - preview_window_(mappings)                                                  -
-" ------------------------------------------------------------------------------
+" Jumps to next <++>.
+inoremap <expr> <c-j> snippet#jump()
+" Goes to next <++>
+snoremap <expr> <c-j> snippet#next()
 
 " close the preview window
 nnoremap <space>p :pclose\|cclose\|lclose<cr>
-
-" ------------------------------------------------------------------------------
-" - custom_text_objects_(mappings)                                             -
-" ------------------------------------------------------------------------------
 
 "" Create new text objects for pairs of identical characters
 "for char in ['$',',','.','/','-','=']
@@ -280,6 +260,7 @@ nnoremap <space>p :pclose\|cclose\|lclose<cr>
 "	exec 'onoremap a' . char . ' :normal va' . char . '<CR>'
 "endfor
 " Create a text object for folding regions
+" With syntax folding on, this very often does "the right thing"
 xnoremap if :<c-u>silent!normal![zjV]zk<CR>
 onoremap if :normal Vif<cr>
 xnoremap af :<c-u>silent!normal![zV]z<CR>
@@ -302,198 +283,182 @@ onoremap al :normal val<cr>
 "" Create text object based on indentation level
 " Replaced with http://www.vim.org/scripts/script.php?script_id=3037
 
-" ------------------------------------------------------------------------------
-" - autoload_(mappings)                                                        -
-" ------------------------------------------------------------------------------
-"
-" These all call functions defined in ~/.vim/autoload or a command which does
-" so.  See the respective autoload file for details.
-
+" Compile
 nnoremap <space>m        :Make<cr>
+" Do a check without compiling
+nnoremap <space>l        :Lint<cr>
+" Run
 nnoremap <space>r        :Run sh<cr>
+" Run and put output in a preview window (assumes non-interactive)
 nnoremap <space>R        :Run preview<cr>
+" Run in an xterm
 nnoremap <space><c-r>    :Run xterm<cr>
 
+" Load session
 nnoremap <c-k>w          :call session#save()<cr>
+" Save session
 nnoremap <c-k>l          :call session#load()<cr>
 
+" Fugitive reference against stored reference point
 nnoremap <space>D        :GDiffRef<cr>
 
+" All of these will refresh the tags for the open buffers.
+"
+" Jump to tag, guessing if there are multiple matches
 nnoremap <c-]>           :ParaTagsBuffers<cr><c-]>
+" Jump to tag, listing options if there are multiple matches
+nnoremap g<c-]>           :ParaTagsBuffers<cr>g<c-]>
+" Show tag match in preview window
 nnoremap <space>P        :ParaTagsBuffers<cr><c-w>}
-nnoremap <space><c-p>    :ParaTagsBuffers<cr>:call preview#line("normal <c-]>")<cr>
+" Show matching tag line
+nnoremap <space><c-p>    :call preview#line("normal! \<lt>c-]>")<cr>
 
-inoremap <c-x><c-t>      <c-o>:call def#thesaurus(expand("<cword>"))<cr><c-x><c-t>
-nnoremap g<c-t>          :call def#previewthesaurus(expand("<cword>"))<cr>
-nnoremap g<c-d>          :call def#dictionary(expand("<cword>"))<cr>
+" All of these will perform look-ups as necessary
+"
+" Complete synonyms
+inoremap <c-x><c-t>      <c-o>:call def#populate_thesaurus(expand("<cword>"))<cr><c-x><c-t>
+" Preview synonyms
+nnoremap g<c-t>          :call def#preview_synonyms(expand("<cword>"))<cr>
+" Preview definitions
+nnoremap g<c-d>          :call def#preview_definition(expand("<cword>"))<cr>
 
+" Show marks in sign column
 nnoremap <space>M        :call signmarks#run()<cr>
 
+" Toggle comments
 xnoremap <silent> <c-n>  :call togglecomment#run()<cr>
 nnoremap <silent> <c-n>  :call togglecomment#run()<cr>
 
+" Jump to on-screen character
 nnoremap        <space>/ :call viewsearch#run()<cr>
 onoremap        <space>/ :call viewsearch#run()<cr>
 xnoremap <expr> <space>/       viewsearch#expr()
 
-nnoremap        <space>j :call parajump#run('j')<cr>
-onoremap        <space>j :call parajump#run('j')<cr>
-xnoremap <expr> <space>j       parajump#expr('j')
-nnoremap        <space>k :call parajump#run('k')<cr>
-onoremap        <space>k :call parajump#run('k')<cr>
-xnoremap <expr> <space>k       parajump#expr('k')
+" Vertical jump across contiguous whitespace or non-whitespace.
+nnoremap        <space>j :call parajump#run(1)<cr>
+onoremap        <space>j :call parajump#run(1)<cr>
+xnoremap <expr> <space>j       parajump#expr(1)
+nnoremap        <space>k :call parajump#run(-1)<cr>
+onoremap        <space>k :call parajump#run(-1)<cr>
+xnoremap <expr> <space>k       parajump#expr(-1)
 
-
-" ------------------------------------------------------------------------------
-" - plugins_(mappings)                                                         -
-" ------------------------------------------------------------------------------
-
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ SkyBison_(mappings)                                                        ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" SkyBison prompt for buffers
-nnoremap <cr>     2:<c-u>call SkyBison("b ")<cr>
-" the above map breaks some special vim windows, so undo the mapping there
-autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>
-autocmd FileType qf nnoremap <buffer> <cr> <cr>
-" (re)generate local tags then have SkyBison prompt for tags
-nnoremap <bs>      :<c-u>ParaTagsBuffers<cr>2:<c-u>call SkyBison("tag ")<cr>
-" SkyBison prompt to delete buffer
-nnoremap <space>d 2:<c-u>call SkyBison("bd ")<cr>
-" SkyBison prompt to edit a file
-nnoremap <space>e  :<c-u>call SkyBison("e ")<cr>
-" SkyBison prompt to edit a TagFile
-nnoremap <space>f 2:<c-u>call SkyBison("F ")<cr>
-" SkyBison prompt to load a session
-nnoremap <space>t 2:<c-u>call SkyBison("SessionLoad ")<cr>
 " General SkyBison prompt
-nnoremap <space>;  :<c-u>call SkyBison("")<cr>
+nnoremap <space>; :<c-u>call skybison#run()<cr>
+" SkyBison prompt for buffers
+nnoremap <cr>     :<c-u>call skybison#run("b ", 2)<cr>
+" (re)generate local tags then have SkyBison prompt for tags
+nnoremap <bs>      :<c-u>ParaTagsBuffers<cr>2:<c-u>call skybison#run("tag ")<cr>
+" SkyBison prompt to delete buffer
+nnoremap <space>d :<c-u>call skybison#run("bd ")<cr>
+" SkyBison prompt to edit a file
+nnoremap <space>e  :<c-u>call skybison#run("e ")<cr>
+" SkyBison prompt to edit a TagFile
+nnoremap <space>f :<c-u>call skybison#run("F ", 2)<cr>
+" SkyBison prompt to load a session
+nnoremap <space>t :<c-u>call skybison#run("SessionLoad ", 2)<cr>
+" SkyBison prompt to jump to a line
+nnoremap <space>? :<c-u>call skybison#run("Line ", 2)<cr>
 " Switch from normal cmdline to SkyBison
-cnoremap <c-l>     <c-r>=SkyBison("")<cr><cr>
+"cnoremap <c-l>     <c-r>=skybison#run("")<cr><cr>
+cnoremap <c-l>     <c-\>eskybison#cmdline_switch()<cr><cr>
 
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-" ~ LanguageTool_(mappings)                                                    ~
-" ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-nnoremap <space>lt :LanguageToolCheck<cr>
-nnoremap <space>lc :LanguageToolClear<cr>
+" Run grammar check on buffer
+nnoremap <space>L :LanguageToolCheck<cr>
 
-" ==============================================================================
-" = commands                                                                   =
-" ==============================================================================
-
-" ------------------------------------------------------------------------------
-" - general_(commands)                                                         -
-" ------------------------------------------------------------------------------
+" Open a scratch window
+nnoremap <space>S :Scratch<cr>
 
 " open :help for argument in same window
-command! -nargs=1 -complete=help H :help <args> |
-			\ let helpfile = expand("%") |
-			\ close |
-			\ execute "view ".helpfile
-
+command! -nargs=1 -complete=help H :help <args> |only
 " cd to directory containing current buffer
 command! CD :cd %:p:h
-
-" Commands to call autoload functions.
-" See ~/.vim/autoload/ contents for details
-command! ParaTagsBuffers :call paratags#buffers()
+" Refresh tags for open buffers
+command! ParaTagsBuffers     :call paratags#buffers()
+" Refresh tags in non-relative entries in 'path'
+command! ParaTagsPath        :call paratags#path()
+" Add 'path' tags to 'tags'
+command! ParaTagsEnable  :call paratags#path_enable()
+" Remove 'path' tags from 'tags'
+command! ParaTagsDisable :call paratags#path_disable()
+" Simulate a push onto the tag stack
 command! FTStackPush :call ftstack#push()
+" Simulate a pop from the tag stack
 command! FTStackPop  :call ftstack#pop()
-
-" ------------------------------------------------------------------------------
-" - autoload_(commands)                                                        -
-" ------------------------------------------------------------------------------
-"
-" These all call functions defined in ~/.vim/autoload.  See the respective
-" autoload file for details.
-
-command! Make :call make#run()
-command! -nargs=* -complete=customlist,run#complete Run :call run#run("<args>")
-command! -nargs=* G :call grepbuffers#run("<args>")
-command! -nargs=1 Thesaurus :call def#previewthesaurus("<args>")
-command! -nargs=1 Dictionary :call def#dictionary("<args>")
-command! -nargs=1 SessionSave :call session#save("<args>")
-command! -nargs=1 -complete=customlist,session#list SessionLoad :call session#load("<args>")
+" Compile
+command! Make :call make#make()
+" Do a check without compiling
+command! Lint :call make#lint()
+" Run
+command! -nargs=* -complete=customlist,run#complete Run :call run#run('<args>')
+" Grep through open buffers
+command! -nargs=* G :call grepbuffers#run(<f-args>)
+" Preview synonyms
+command! -nargs=1 Thesaurus :call def#preview_synonyms(<f-args>)
+" Preview definitions
+command! -nargs=1 Dictionary :call def#preview_definition(<f-args>)
+" Save session
+command! -nargs=1 SessionSave :call session#save(<f-args>)
+" Load session
+command! -nargs=1 -complete=customlist,session#list SessionLoad :call session#load(<f-args>)
+" Switch between header file and c/cpp file
 command! SwitchHeader :call switchheader#run()
-command! -nargs=1 TagFile :call tagfile#set("<args>")
-command! -nargs=1 -complete=customlist,tagfile#complete F :call tagfile#get("<args>")
-command! -nargs=* -complete=customlist,gitdefref#complete GDiffRef :call gitdefref#run("<args>")
-command! -nargs=1 -complete=customlist,line#list Line :call line#run("<args>")
+" Save reference to file
+command! -nargs=1 TagFile :call tagfile#set(<f-args>)
+" Load TagFile'd file
+command! -nargs=1 -complete=customlist,tagfile#complete F :call tagfile#get(<f-args>)
+" Fugitive reference against stored reference point
+command! -nargs=* -complete=customlist,gitdifref#complete GDiffRef :call gitdifref#run(<f-args>)
+" Jump to line
+command! -nargs=1 -complete=customlist,line#list Line :call line#run(<f-args>)
+" Show quickfix contents next to corresponding lines
 command! Qfsplit :call qfsplit#qf_toggle()
+" Show location list contents next to corresponding lines
 command! Llsplit :call qfsplit#lf_toggle()
-
-" ==============================================================================
-" = autocmds                                                                   =
-" ==============================================================================
-
-" ------------------------------------------------------------------------------
-" - general_(autocmds)                                                         -
-" ------------------------------------------------------------------------------
+" Command to see the element name for character under cursor.  Very helpful
+" run to see element name under color
+command! SyntaxGroup echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+" Open a scratch window
+command! Scratch new|setlocal buftype=nofile bufhidden=delete noswapfile
+" Jump to <+jumppoint+>
+command! SnippetJump :call snippet#jump()
+" Accepts default snippet content
+command! SnippetNext :call snippet#next()
 
 " populate signs column after quickfix is populated 
 autocmd QuickFixCmdPost * call quickfixsigns#run()
-
 " If a filetype doesn't have it's own omnicompletion, but it does have syntax
 " highlighting, use that for omnicompletion
-
 autocmd Filetype *
 			\  if &omnifunc == ""
 			\|   setlocal omnifunc=syntaxcomplete#Complete
 			\| endif
-
-" ------------------------------------------------------------------------------
-" - fix_filetype_(autocmds)                                                    -
-" ------------------------------------------------------------------------------
-
+" Set filetype
 autocmd BufRead,BufNewFile .vimperatorrc  setfiletype vim
 autocmd BufRead,BufNewFile .pentadactylrc setfiletype vim
 autocmd BufNewFile,BufRead *.x68          setfiletype asm68k
 autocmd BufNewFile,BufRead *.md           setfiletype markdown
 autocmd BufNewFile,BufRead *.gv           setfiletype dot
+" A normal-mode <cr> mapping breaks some special vim windows, so undo the mapping there
+autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>
+autocmd FileType qf nnoremap <buffer> <cr> <cr>
+autocmd FileType git nnoremap <buffer> <cr> <cr>
+" Have <esc> leave cmdline-window
+autocmd CmdwinEnter * nnoremap <buffer> <esc> :q<cr>
+" Settings for skybison window
+autocmd Filetype skybison inoremap <buffer> <silent> <c-c> <esc>:call skybison#quit()<cr>
+autocmd Filetype skybison nnoremap <buffer> <silent> <c-c> :call skybison#quit()<cr>
+autocmd Filetype skybison nnoremap <buffer> <silent> <esc> :call skybison#quit()<cr>
+
+
+" Disable syntax highlighting for diffs - using autoload/diffsigns instead
+let g:diffsigns_disablehighlight = 1
+" Fold vim functions and augroups.  Cannot put this in ftplugin because it
+" won't trigger early enough
+let g:vimsyn_folding = 'af'
 " Default to LaTeX, not Plain TeX/ConTeXt/etc
 let g:tex_flavor='latex'
-
-" ==============================================================================
-" = theme                                                                      =
-" ==============================================================================
-
-" Command to see the element name for character under cursor.  Very helpful
-" run to see element name under color
-command! SyntaxGroup echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-
-if &t_Co == 256 && filereadable($HOME . "/.themes/current/terminal/256-theme")
-	colorscheme currentterm
-endif
-
-" ==============================================================================
-" = plugin_settings                                                            =
-" ==============================================================================
-
-" If available, have pathogen load plugins form ~/.vim/bundle.
-if filereadable($HOME . "/.vim/autoload/pathogen.vim")
-	" disable plugins that have missing prerequisites
-	let g:pathogen_disabled = []
-	if !isdirectory("/usr/include/clang")
-		let g:pathogen_disabled += ['clang_complete']
-	endif
-	call pathogen#runtime_append_all_bundles()
-	call pathogen#helptags()
-endif
-" Enable filetype-specific plugins.
-filetype plugin on
-" Utilize filetype-specific automatic indentation.
-filetype indent on
-
-" ------------------------------------------------------------------------------
-" - SkyBison_(plugins)                                                         -
-" ------------------------------------------------------------------------------
-
+" Enable fuzzing in skybison
 "let g:skybison_fuzz = 2
-
-" ------------------------------------------------------------------------------
-" - jedi_(plugins)                                                             -
-" ------------------------------------------------------------------------------
-" jedi has some uses, but the defaults are terribly intrusive
 
 let g:jedi#use_tabs_not_buffers = 0
 let g:jedi#popup_on_dot = 0
@@ -502,27 +467,14 @@ let g:jedi#completions_command = "<leader>zzz"
 let g:jedi#auto_vim_configuration = 0
 let g:jedi#show_call_signatures = 0
 
-" ------------------------------------------------------------------------------
-" - clang_complete_(plugins)                                                   -
-" ------------------------------------------------------------------------------
-
 " do not automatically pop up completion after a ->, ., or ::
 let g:clang_complete_auto = 0
-
 " do not have the clang plugin set mappings, as it makes some disagreeable
 " choices.  Do it directly in the .vimrc file.
 let g:clang_make_default_keymappings = 0
 
-" ------------------------------------------------------------------------------
-" - LanguageTool_(plugins)                                                     -
-" ------------------------------------------------------------------------------
-
 " Indicate where the LanguageTool jar is located
 let g:languagetool_jar='/opt/languagetool/languagetool-commandline.jar'
-
-" ------------------------------------------------------------------------------
-" - eclim_(plugins)                                                            -
-" ------------------------------------------------------------------------------
 
 " disable automatic linting on write
 "call manually with: call eclim#lang#UpdateSrcFile('java',1)
@@ -530,59 +482,9 @@ let g:EclimJavaValidate = 0
 " With JavaSearch/JavaSearchContextalways jump to definition in current window
 let g:EclimJavaSearchSingleResult = 'edit'
 
-
-" cannot put this in ftplugin because it won't trigger early enough
-let g:vimsyn_folding = 'af'
-
-
-function! MapOpFunc(key, func)
-	execute "nnoremap <silent> " . a:key . " :set opfunc=" . a:func . "<cr>g@"
-	execute "nnoremap <silent> " . a:key . a:key " :set opfunc=" . a:func . "<cr>g@g@"
-	execute "xnoremap <silent> " . a:key . " :<c-u>call "  . a:func . "('visual')<cr>"
-endfunction
-
-call MapOpFunc("<space>y", "SystemYank")
-function! SystemYank(type)
-	if a:type == 'visual'
-		normal gv"+ygv"*y
-	elseif a:type == 'line'
-		normal! '["+y']'["*y']
-	else
-		normal! `["+y`]`["*y`]
-	endif
-endfunction
-
-call MapOpFunc("<space>c", "FilterBc")
-function! FilterBc(type)
-	call Filter(a:type, 'bc -l')
-endfunction
-call MapOpFunc("<space>C", "FilterSage")
-function! FilterSage(type)
-	call Filter(a:type, 'sage -q 2>/dev/null | head -n1 | cut -c7-')
-endfunction
-function! Filter(type, filter)
-	let starreg = @*
-	if a:type == 'visual'
-		" yank into "*
-		execute 'normal! gv'
-		" substitute
-		execute "normal! gvs" . system("echo '" . substitute(@*,"'","'\"'\"'",'g') . "'|" . a:filter) . "\<bs>\<esc>"
-	elseif a:type == 'line'
-		execute "'[,']!" . a:filter
-	else
-		" backup `< and `>
-		let left = getpos("'<")
-		let right = getpos("'>")
-		" yank into "*
-		normal! `[v`]"*y
-		" substitute
-		execute "normal! `[v`]c" . system("echo '" . substitute(@*,"'","'\"'\"'",'g') . "'|" . a:filter) . "\<bs>\<esc>"
-		" restore `< and `>
-		call setpos("'<", left)
-		call setpos("'>", right)
-	endif
-	let @* = starreg
-endfunction
-
-command Scratch new|setlocal buftype=nofile bufhidden=delete noswapfile
-nnoremap <space>S :Scratch<cr>
+" Yank to system clipboard
+call mapop#load("<space>y", "mapop#system_yank")
+" filter through bc
+call mapop#load("<space>c", "mapop#filter_bc")
+" filter through sage
+call mapop#load("<space>C", "mapop#filter_sage")

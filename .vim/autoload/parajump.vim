@@ -2,12 +2,9 @@
 " = parajump                                                                   =
 " ==============================================================================
 "
-" Takes in a direction, 'j' or 'k', and returns a command to move the cursor a
-" certain distance.  Call via an <expr> map.
-"
-" If the next move in that direction moves the cursor over whitespace, continue
-" moving in the specified direction until the cursor is no longer on
-" whitespace.
+" If the next move in that direction (1 for down, -1 for up) moves the cursor
+" over whitespace, continue moving in the specified direction until the cursor
+" is no longer on whitespace.
 "
 " If the next move in that direction moves the cursor over non-whitespace,
 " continue moving in the specified direction until the cursor moves over
@@ -22,28 +19,17 @@ function! parajump#expr(direction)
 endfunction
 
 function! s:main(direction, expr)
-	if a:direction == 'j'
-		let delta = 1
-	elseif a:direction == 'k'
-		let delta = -1
-	else
-		echohl ErrorMsg
-		echo "ParaJump: Illegal direction specified"
-		echohl None
-		return -1
-	endif
-
 	" get starting line number
 	let line = line(".")
 
 	" "move" once to start
-	let line += delta
+	let line += a:direction
 
 	" get starting whitespace/non-whitespace info.
 	let inittype = s:CharWhitespace(line)
 
 	while s:CharWhitespace(line) == inittype && line < line("$") && line > 1
-		let line += delta
+		let line += a:direction
 	endwhile
 
 	" purposefully using G here to make a jump break

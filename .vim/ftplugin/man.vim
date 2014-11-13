@@ -4,9 +4,12 @@
 
 " man sets the content width to the window width.  The number column ends up
 " making everything offset a bit.
-set nonu nornu
+setlocal nonumber
+if exists('&relativenumber')
+	set norelativenumber
+endif
 
 " if this vim has 'showbreak', use it
 if exists('&breakindent')
-	set breakindent
+	setlocal breakindent
 endif
