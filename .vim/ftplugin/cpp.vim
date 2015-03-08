@@ -48,6 +48,11 @@ call snippet#map(";main","
 \\<cr>\<c-d>return 0;
 \\<cr>}")
 
+call snippet#map(";if","
+\if (<++>) {
+\\<cr><++>
+\\<cr>}")
+
 call snippet#map(";for","
 \for (<++>) {
 \\<cr><++>
@@ -63,5 +68,12 @@ call snippet#map(";do","
 \\<cr><++>
 \\<cr>} while (<++>)")
 
+call snippet#map(";func","
+\<++>(<++>)
+\\<cr>{
+\\<cr><++>
+\\<cr>}")
+
 call snippet#map(";printf","
 \printf(\"<++>\", <++>);<++>")
+

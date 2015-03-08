@@ -1,48 +1,45 @@
-[submodule ".vim/bundle/skybison"]
-	path = .vim/bundle/skybison
+[submodule ".vim/remote_bundle/skybison"]
+	path = .vim/remote_bundle/skybison
 	url = git@github.com:paradigm/SkyBison.git
-[submodule ".vim/bundle/languagetool"]
-	path = .vim/bundle/languagetool
+[submodule ".vim/remote_bundle/languagetool"]
+	path = .vim/remote_bundle/languagetool
 	url = git://github.com/vim-scripts/LanguageTool.git
-[submodule ".vim/bundle/easymotion"]
-	path = .vim/bundle/easymotion
-	url = git://github.com/Lokaltog/vim-easymotion.git
-[submodule ".vim/bundle/indentobject"]
-	path = .vim/bundle/indentobject
-	url = git://github.com/vim-scripts/vim-indent-object.git
-[submodule ".vim/bundle/latexbox"]
-	path = .vim/bundle/latexbox
+[submodule ".vim/remote_bundle/latexbox"]
+	path = .vim/remote_bundle/latexbox
 	url = git://github.com/LaTeX-Box-Team/LaTeX-Box.git
-[submodule ".vim/bundle/tabular"]
-	path = .vim/bundle/tabular
+[submodule ".vim/remote_bundle/tabular"]
+	path = .vim/remote_bundle/tabular
 	url = git://github.com/godlygeek/tabular.git
-[submodule ".vim/bundle/multicursor"]
-	path = .vim/bundle/multicursor
+[submodule ".vim/remote_bundle/multicursor"]
+	path = .vim/remote_bundle/multicursor
 	url = git@github.com:paradigm/vim-multicursor.git
-[submodule ".vim/bundle/textobjectify"]
-	path = .vim/bundle/textobjectify
+[submodule ".vim/remote_bundle/textobjectify"]
+	path = .vim/remote_bundle/textobjectify
 	url = git@github.com:paradigm/TextObjectify.git
-[submodule ".vim/bundle/jedi-vim"]
-	path = .vim/bundle/jedi-vim
+[submodule ".vim/remote_bundle/jedi-vim"]
+	path = .vim/remote_bundle/jedi-vim
 	url = git://github.com/davidhalter/jedi-vim.git
-[submodule ".vim/bundle/vim-fugitive"]
-	path = .vim/bundle/vim-fugitive
+[submodule ".vim/remote_bundle/vim-fugitive"]
+	path = .vim/remote_bundle/vim-fugitive
 	url = git://github.com/tpope/vim-fugitive.git
-[submodule ".vim/bundle/SimpylFold"]
-	path = .vim/bundle/SimpylFold
+[submodule ".vim/remote_bundle/SimpylFold"]
+	path = .vim/remote_bundle/SimpylFold
 	url = https://github.com/tmhedberg/SimpylFold
-[submodule ".vim/bundle/AnsiEsc.vim"]
-	path = .vim/bundle/AnsiEsc.vim
+[submodule ".vim/remote_bundle/AnsiEsc.vim"]
+	path = .vim/remote_bundle/AnsiEsc.vim
 	url = https://github.com/vim-scripts/AnsiEsc.vim.git
-[submodule ".vim/bundle/visincr"]
-	path = .vim/bundle/visincr
+[submodule ".vim/remote_bundle/visincr"]
+	path = .vim/remote_bundle/visincr
 	url = https://github.com/vim-scripts/VisIncr.git
-[submodule ".vim/bundle/wmgraphviz.vim"]
-	path = .vim/bundle/wmgraphviz.vim
+[submodule ".vim/remote_bundle/wmgraphviz.vim"]
+	path = .vim/remote_bundle/wmgraphviz.vim
 	url = https://github.com/wannesm/wmgraphviz.vim.git
-[submodule ".vim/bundle/clang_complete-src"]
-	path = .vim/bundle/clang_complete-src
+[submodule ".vim/remote_bundle/clang_complete-src"]
+	path = .vim/remote_bundle/clang_complete-src
 	url = https://github.com/Rip-Rip/clang_complete.git
-[submodule ".vim/bundle/vim-zsh-completion"]
-	path = .vim/bundle/vim-zsh-completion
+[submodule ".vim/remote_bundle/vim-zsh-completion"]
+	path = .vim/remote_bundle/vim-zsh-completion
 	url = https://github.com/Valodim/vim-zsh-completion.git
+[submodule ".vim/remote_bundle/rainbow"]
+	path = .vim/remote_bundle/rainbow
+	url = https://github.com/luochen1990/rainbow

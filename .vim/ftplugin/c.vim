@@ -15,6 +15,9 @@ setlocal path+=,
 setlocal path+=./include/
 setlocal path+=../include/
 
+" Have 'K' open the man page in a preview window
+nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
+
 " Set compiler, compile interpreter and linter.
 setlocal makeprg=gcc\ -Wall\ -Wextra\ %
 setlocal errorformat&vim
@@ -23,9 +26,6 @@ let b:lintcmd = ""
 
 " Set executable to associate with source
 let b:runpath = "./a.out"
-
-" Have 'K' open the man page in a preview window
-nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
 
 " If clang exists, use clang
 if exists('g:clang_complete_loaded')
@@ -55,6 +55,11 @@ call snippet#map(";main","
 \\<cr>\<c-d>return 0;
 \\<cr>}")
 
+call snippet#map(";if","
+\if (<++>) {
+\\<cr><++>
+\\<cr>}")
+
 call snippet#map(";for","
 \for (<++>) {
 \\<cr><++>
@@ -70,5 +75,12 @@ call snippet#map(";do","
 \\<cr><++>
 \\<cr>} while (<++>)")
 
+call snippet#map(";func","
+\<++>(<++>)
+\\<cr>{
+\\<cr><++>
+\\<cr>}")
+
 call snippet#map(";printf","
 \printf(\"<++>\", <++>);<++>")
+
