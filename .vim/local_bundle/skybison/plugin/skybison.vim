@@ -3,6 +3,7 @@
 
 " Switch from normal cmdline to SkyBison
 cnoremap <c-l>     <c-\>eskybison#cmdline_switch()<cr><cr>
+autocmd CmdwinEnter * let b:cmdline_window_running = 1
 
 " Settings for skybison window
 autocmd Filetype skybison inoremap <buffer> <silent> <c-c> <esc>:call skybison#quit()<cr>

@@ -1,3 +1,7 @@
+" disable netrw
+let g:loaded_netrwPlugin = 1
+let g:loaded_netrw = 1
+
 " jedi does a lot of things automatically by default; disable them.
 let g:jedi#use_tabs_not_buffers = 0
 let g:jedi#popup_on_dot = 0

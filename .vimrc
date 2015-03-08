@@ -47,6 +47,7 @@ set rtp+=~/.vim/local_bundle/quickfixsigns
 set rtp+=~/.vim/local_bundle/getheaders
 set rtp+=~/.vim/local_bundle/plugin_settings
 set rtp+=~/.vim/local_bundle/scratch
+set rtp+=~/.vim/local_bundle/handle_directory
 
 set rtp+=~/.vim/remote_bundle/AnsiEsc.vim
 set rtp+=~/.vim/remote_bundle/clang_complete
@@ -64,6 +65,3 @@ set rtp+=~/.vim/remote_bundle/wmgraphviz.vim
 "set rtp+=~/.vim/remote_bundle/multicursor
 "set rtp+=~/.vim/remote_bundle/skybison
 "set rtp+=~/.vim/remote_bundle/textobjectify
-
-"easymotion
-"indentobject

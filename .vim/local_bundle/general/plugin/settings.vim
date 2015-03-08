@@ -62,10 +62,8 @@ set formatoptions+=j
 " Save almost everything when executing a :mksession
 set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize,globals,localoptions,tabpages
 " store swap in ~/.vim/swap
-if has('unix')
-	call system("mkdir -p ~/.vim/swap")
-elseif has('win32') || has('win64')
-	" TODO
+if !isdirectory($HOME . "/.vim/swap")
+	call mkdir($HOME . "/.vim/swap", "p", 0700)
 endif
 set directory=~/.vim/swap
 " Clear default path

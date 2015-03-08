@@ -22,6 +22,26 @@ scriptencoding utf-8
 "
 " nnoremap <leader>: :call skybison()<cr>
 function! skybison#run(...)
+	" skybison cannot run from the cmdline window, as
+	" window-splitting/moving commands are verboten there.
+	if exists("b:cmdline_window_running") && b:cmdline_window_running
+		redraw
+		echohl ErrorMsg
+		echo "SkyBison: cannot be run from cmdline-window"
+		echohl Normal
+		return
+	endif
+	" skybison should not be run recursively, abort if it is already
+	" running
+	if exists("s:running") && s:running
+		redraw
+		echohl ErrorMsg
+		echo "SkyBison: cannot run recursively"
+		echohl Normal
+		return
+	endif
+	let s:running = 1
+
 	" if first argument exists, use that as initial cmdline
 	if a:0 > 0
 		let s:init_cmdline = a:1
@@ -295,7 +315,7 @@ function! s:quit(...)
 	" disable autocmds
 	autocmd! SkyBison
 	" in case this was triggered from insert mode, stop insert
-	stopinsert
+	noautocmd stopinsert
 	
 	let &lazyredraw = s:init_lazyredraw
 	let &laststatus = s:init_laststatus
@@ -310,7 +330,7 @@ function! s:quit(...)
 		"
 		" We only want to close one window here - the other skybison
 		" window will be closed by the queued up close-a-window.
-		q
+		noautocmd q
 		" We can't switch to the original window now or it will be
 		" closed by the queued up close-a-window.  Instead, feedkeys()
 		" it. We'll also have to feedkeys() the command line.
@@ -320,15 +340,17 @@ function! s:quit(...)
 		else
 			call feedkeys(s:init_winnr . "\<c-w>w:" . s:winsizecmd . "\<cr>" , "n")
 		endif
+		let s:running = 0
 	else
 		" The user closed skybison "normally" and we can do the
-		" shutdown proceedure in a straight-forward manner.
+		" shutdown procedure in a straight-forward manner.
 		"
 		" Close both skybison windows
-		q
-		q
+		noautocmd q
+		noautocmd q
 		execute s:winsizecmd
 		execute s:init_winnr . "wincmd w"
+		let s:running = 0
 		if a:0 > 0
 			redraw
 			call histadd(':', a:1)
