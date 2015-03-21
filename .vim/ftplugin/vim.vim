@@ -15,3 +15,8 @@ nnoremap <buffer> K :execute ":help " . expand("<cword>") . " \| pedit % \| q"<c
 " completion, as well as the custom ctrl-space.
 inoremap <buffer> <c-x><c-o> <c-x><c-v>
 inoremap <buffer> <c-@> <c-x><c-v>
+
+" Remove the "=" character from consideration for a file path when using
+" things such as `gf`.  This is useful to follow file paths provided to Vim
+" variables and settings.
+set isfname -==
