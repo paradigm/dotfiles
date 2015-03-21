@@ -15,4 +15,7 @@ if maparg(":", "x") ==# ""
 elseif maparg(":", "x") =~ "^q:[aiAI]$"
 	xnoremap <expr> : "q:a" . wiserange#prepend_cmdline()
 	xnoremap <expr> ! "q:a" . wiserange#prepend_cmdline() . "!"
+elseif maparg(":", "x") =~ "^:<C-F>[aiAI]"
+	xnoremap <expr> : ":<c-f>a" . wiserange#prepend_cmdline()
+	xnoremap <expr> ! ":<c-f>a" . wiserange#prepend_cmdline() . "!"
 endif
