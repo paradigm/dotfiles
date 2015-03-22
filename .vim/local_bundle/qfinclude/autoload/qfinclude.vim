@@ -6,7 +6,7 @@ function! qfinclude#qf(patt)
 	set nolist
 	try
 		redir => out
-		execute "silent ilist /" . a:patt . "/"
+		execute "silent ilist " . a:patt
 		redir END
 	catch /E389/
 		echohl ErrorMsg
