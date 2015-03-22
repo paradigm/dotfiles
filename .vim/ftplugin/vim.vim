@@ -2,8 +2,19 @@
 " = vim ftplugin                                                               =
 " ==============================================================================
 
-" have [i and friends follow :source
-setlocal include=^\\s*\\<source\\>
+" have [i and friends follow :source and relevant rtp entries
+setlocal include=^\\s*\\(set\\s\\+\\(rtp\\\|runtimepath\\)+=\\\|source\\)
+setlocal includeexpr=IncludeExprVim()
+function! IncludeExprVim()
+	if !isdirectory(expand(v:fname))
+		return v:fname
+	else
+		let expanded_source_file = tempname()
+		let source_lines = map(split(globpath(v:fname . "/plugin/," . v:fname . "/autoload/", "*.vim"), '\n'), '"source " . v:val')
+		call writefile(source_lines, expanded_source_file)
+		return expanded_source_file
+	endif
+endfunction
 
 setlocal path+=~/.vimrc,~/.vim
 
