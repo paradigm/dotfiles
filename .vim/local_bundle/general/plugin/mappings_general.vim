@@ -8,6 +8,8 @@ nnoremap <silent> <c-l> :nohlsearch<cr>:sign unplace *<cr><c-l>
 nnoremap <space>w :w<cr>
 " Faster mapping for closing window / quitting
 nnoremap <space>q :q<cr>
+" Close buffer and remove from buffer list
+nnoremap <space>Q :bd<cr>
 " Re-source the .vimrc
 nnoremap <space>s :so $MYVIMRC<cr>
 " Faster mapping for spelling correction
