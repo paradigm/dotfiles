@@ -48,21 +48,11 @@ endfunction
 " figure out whether whitespace will be under the cursor if it is moved to the
 " given line
 function! s:CharWhitespace(line, col)
-	" make scratch buffer to apply retab to
-	new|setlocal buftype=nofile bufhidden=delete noswapfile expandtab
-	call setline(1, a:line)
-	retab
+	let line = retabline#run(a:line)
 
-	" get the length of the retab'd line and the char under the cursor
-	let len = strlen(getline(1))
-	let char = getline(1)[a:col-1]
-
-	" close scratch window
-	noautocmd q
-
-	if len < a:col
+	if strlen(line) < a:col
 		return 0
 	else
-		return char == " "
+		return line[a:col-1] == " "
 	endif
 endfunction

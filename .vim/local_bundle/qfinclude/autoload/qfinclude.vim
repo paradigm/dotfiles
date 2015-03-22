@@ -2,6 +2,8 @@
 
 function! qfinclude#qf(patt)
 	let out = ""
+	let init_list = &list
+	set nolist
 	try
 		redir => out
 		execute "silent ilist /" . a:patt . "/"
@@ -11,17 +13,20 @@ function! qfinclude#qf(patt)
 		echo "E389: Couldn't find pattern"
 		echohl Normal
 		call setqflist([])
+		let &list = init_list
 		return
 	endtry
+	let &list = init_list
 
 	let qf = []
 	for line in split(out, '\n')
-		if filereadable(expand(line))
+		if line !~ '^\s*\d\+:\s\+\d\+ '
 			let filename = expand(line)
 		else
-			let lnum = split(line)[1]
 			let text = substitute(line, '^\s*\d\+:\s\+\d\+ ', '', '')
-			let qf += [{"filename": filename, "lnum": lnum, "text": text}]
+			let lnum = split(line)[1]
+			let col = stridx(text, a:patt)+1
+			let qf += [{"lnum":lnum, "filename": filename, "col": col, "vcol": 1, "text": text}]
 		endif
 	endfor
 	call setqflist(qf)
