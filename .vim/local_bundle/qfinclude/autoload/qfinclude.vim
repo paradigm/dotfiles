@@ -25,8 +25,17 @@ function! qfinclude#qf(patt)
 		else
 			let text = substitute(line, '^\s*\d\+:\s\+\d\+ ', '', '')
 			let lnum = split(line)[1]
-			let col = stridx(text, a:patt)+1
-			let qf += [{"lnum":lnum, "filename": filename, "col": col, "vcol": 1, "text": text}]
+			let start = 0
+			while stridx(text, a:patt, start) != -1
+				let col = stridx(text, a:patt, start)+1
+				let start = col+1
+				let qf += [{"lnum":lnum, "filename": filename, "col": col, "vcol": 1, "text": text}]
+			endwhile
+			" stridx() missed it but ilist saw it, give up on
+			" col()
+			if start == 0
+				let qf += [{"lnum":lnum, "filename": filename, "text": text}]
+			endif
 		endif
 	endfor
 	call setqflist(qf)
