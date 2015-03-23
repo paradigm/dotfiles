@@ -1,1 +1,1 @@
-command -nargs=+ YankRedir call yankredir#run(<f-args>)
+command -nargs=+ YankRedir call yankredir#run(<q-args>)
