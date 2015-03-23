@@ -50,6 +50,7 @@ set rtp+=~/.vim/local_bundle/scratch
 set rtp+=~/.vim/local_bundle/handle_directory
 set rtp+=~/.vim/local_bundle/visual_include_search
 set rtp+=~/.vim/local_bundle/qfinclude
+set rtp+=~/.vim/local_bundle/yankredir
 
 set rtp+=~/.vim/remote_bundle/AnsiEsc.vim
 set rtp+=~/.vim/remote_bundle/clang_complete
