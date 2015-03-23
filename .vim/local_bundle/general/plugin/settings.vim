@@ -66,6 +66,12 @@ if !isdirectory($HOME . "/.vim/swap")
 	call mkdir($HOME . "/.vim/swap", "p", 0700)
 endif
 set directory=~/.vim/swap
+" store persistent undo in ~/.vim/undo
+set undofile
+if !isdirectory($HOME . "/.vim/undo")
+	call mkdir($HOME . "/.vim/undo", "p", 0700)
+endif
+set undodir=~/.vim/undo
 " Clear default path
 set path=
 " Clear default tags
