@@ -22,15 +22,15 @@ nnoremap ]q :cnext<cr>
 nnoremap [q :cprevious<cr>
 nnoremap [Q :cfirst<cr>
 nnoremap ]Q :clast<cr>
-nnoremap [<c-q> :call whilepos#same(":cprev\<lt>cr>",1,0,0,0)<cr>
-nnoremap ]<c-q> :call whilepos#same(":cnext\<lt>cr>",1,0,0,0)<cr>
+nnoremap [<c-q> :call whilepos#same(":silent cprev\<lt>cr>",1,0,0,0)<cr>
+nnoremap ]<c-q> :call whilepos#same(":silent cnext\<lt>cr>",1,0,0,0)<cr>
 " next/previous/first/last location list item
 nnoremap ]l :lnext<cr>
 nnoremap [l :lprevious<cr>
 nnoremap [L :lfirst<cr>
 nnoremap ]L :llast<cr>
-nnoremap [<c-l> :call whilepos#same(":lprev\<lt>cr>",1,0,0,0)<cr>
-nnoremap ]<c-l> :call whilepos#same(":lnext\<lt>cr>",1,0,0,0)<cr>
+nnoremap [<c-l> :call whilepos#same(":silent lprev\<lt>cr>",1,0,0,0)<cr>
+nnoremap ]<c-l> :call whilepos#same(":silent lnext\<lt>cr>",1,0,0,0)<cr>
 " next/previous/first/last argument list item
 nnoremap ]a :next<cr>
 nnoremap [a :previous<cr>

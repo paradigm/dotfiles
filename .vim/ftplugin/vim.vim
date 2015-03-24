@@ -16,7 +16,13 @@ function! IncludeExprVim()
 	endif
 endfunction
 
-setlocal path+=~/.vimrc,~/.vim
+setlocal path=
+for rtp in split(&rtp, ',')
+	execute 'setlocal path+=' . rtp . '/plugin'
+	execute 'setlocal path+=' . rtp . '/autoload'
+endfor
+
+setlocal define=\\v^\\s*fu%[nction!]\\s+\\zs\\ze\\i+\\(
 
 " open help page for word under cursor in preview window
 nnoremap <buffer> K :execute ":help " . expand("<cword>") . " \| pedit % \| q"<cr>
@@ -32,3 +38,7 @@ inoremap <buffer> <c-@> <c-x><c-v>
 " Vim variables and settings.
 set isfname -==
 set isfname -=,
+
+" Include "#" and ":" in identifiers, as its used in some vim function names
+set isident +=#
+set isident +=:
