@@ -2,6 +2,6 @@
 	name = paradigm
 	email = paradigm@bedrocklinux.org
 [init]
-	templatedir = /home/paradigm//.git_template
+	templatedir = ~/.git_template
 [alias]
 	ctags = !.git/hooks/ctags
