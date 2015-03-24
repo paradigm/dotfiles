@@ -2,6 +2,8 @@
 " = man ftplugin                                                               =
 " ==============================================================================
 
+setlocal define=\\v^\\zs\\ze[A-Z-\ ]+$
+
 " man sets the content width to the window width.  The number column ends up
 " making everything offset a bit.
 setlocal nonumber

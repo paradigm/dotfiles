@@ -8,6 +8,10 @@ let g:sh_fold_enabled=4
 " have [i and friends follow . and source
 setlocal include=^\\s*\\<\\(source\\\|[.]\\)\\>
 
+" Due to newline matching, does not work with built-in 'define' functionality;
+" requires specialized versions.
+setlocal define=\\v(^\|;)\\s*(\\zs\\ze\\i+\\s*\\(\\s*\\)\|(function\\_s*\\zs\\ze\\i+))\\_s*\\{
+
 nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
 
 let b:runpath = expand("%:p")

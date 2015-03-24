@@ -35,9 +35,9 @@ function! preview#line(cmd)
 	let win = winsaveview()
 	let pos = getcurpos()
 	let buf = bufnr("%")
-	execute "keepjumps silent! " .a:cmd
+	execute "keepjumps silent! " . a:cmd
 	if pos == getcurpos() && buf == bufnr("%")
-		echohl ErrorMsg | 
+		echohl ErrorMsg |
 		echo "E387: Match is on current line"
 		echohl Normal
 		return
@@ -48,4 +48,30 @@ function! preview#line(cmd)
 	keepjumps call setpos(".", pos)
 	call winrestview(win)
 	echo previewline
+endfunction
+
+" Open output of vim command in bottom line.
+function! preview#cmd(cmd)
+	let win = winsaveview()
+	let pos = getcurpos()
+	let buf = bufnr("%")
+	execute "keepjumps silent! " . a:cmd
+	if pos == getcurpos() && buf == bufnr("%")
+		echohl ErrorMsg |
+		echo "E387: Match is on current line"
+		echohl Normal
+		return
+		"let previewline="Error: Could not find line"
+	endif
+	let previewpos = getcurpos()
+	let previewbuf = bufnr("%")
+
+	execute "keepjumps silent! buf " . buf
+	keepjumps call setpos(".", pos)
+	call winrestview(win)
+
+	execute "pedit! " . bufname(previewbuf)
+	wincmd P
+	call setpos(".", previewpos)
+	wincmd w
 endfunction

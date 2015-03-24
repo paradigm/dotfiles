@@ -16,6 +16,7 @@ nnoremap <space>; :<c-u>call skybison#run()<cr>
 nnoremap <cr>     :<c-u>call skybison#run("b ", 2)<cr>
 " (re)generate local tags then have SkyBison prompt for tags
 nnoremap <bs>      :<c-u>ParaTagsBuffers<cr>2:<c-u>call skybison#run("tag ")<cr>
+nnoremap <c-\>     :call skybison#run("Djump ")<cr>
 " SkyBison prompt to delete buffer
 nnoremap <space>d :<c-u>call skybison#run("bd ")<cr>
 " SkyBison prompt to edit a file

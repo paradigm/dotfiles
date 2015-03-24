@@ -8,6 +8,8 @@ setlocal tabstop=4
 setlocal shiftwidth=4
 setlocal softtabstop=4
 
+setlocal define=\\v^\\s*def\ \\zs\\ze
+
 execute "setlocal path+=" . substitute(glob("/usr/lib/py*") . " " . glob("/usr/local/lib/py*"), "\> *\<", ",","")
 
 let b:runpath = expand("%:p")

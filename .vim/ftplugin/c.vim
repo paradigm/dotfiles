@@ -1,31 +1,45 @@
 " ==============================================================================
-" = c ftplugin                                                                 =
+" = c/cpp ftplugin                                                             =
 " ==============================================================================
 
-" vim's cpp ftplugin sources this file.  However, I prefer to keep the two
-" completely independent and duplicate what I want across both.
-if &filetype == "cpp"
-	finish
-endif
+" Vim's cpp ftplugin sources this file, it's effectively C and C++.
 
 " This is a list of directories to be searched for #include macros.
+"
+" usual UNIX include files
 setlocal path+=/usr/include/
+" kernel headers
 execute "setlocal path+=/lib/modules/" . system("printf \"%s\" $(uname -r)") . "/build/include"
+" present working directory
 setlocal path+=,
+" near by directories
 setlocal path+=./include/
 setlocal path+=../include/
 
-" Have 'K' open the man page in a preview window
-nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
+" regex to match function declarations and definitions
+"
+" Due to newline matching, does not work with built-in 'define' functionality;
+" requires specialized versions.
+setlocal define=\\v(^\|;)\\s*(\\w+\\_s+)+\\zs\\ze\\w+\\_s*\\(\\_[^)]*\\)(\\_[^;]*\\{\|;)
 
-" Set compiler, compile interpreter and linter.
-setlocal makeprg=gcc\ -Wall\ -Wextra\ %
+" Regex to match #include macros.
+setlocal include&vim
+
+" Set compiler/linter
+if &filetype == "c"
+	setlocal makeprg=gcc\ -Wall\ -Wextra\ %
+elseif &filetype == "cpp"
+	setlocal makeprg=g++\ -Wall\ -Wextra\ %
+endif
 setlocal errorformat&vim
 let b:lintprg = ""
 let b:lintcmd = ""
 
 " Set executable to associate with source
 let b:runpath = "./a.out"
+
+" Have 'K' open the man page in a preview window
+nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
 
 " If clang exists, use clang
 if exists('g:clang_complete_loaded')
@@ -83,4 +97,3 @@ call snippet#map(";func","
 
 call snippet#map(";printf","
 \printf(\"<++>\", <++>);<++>")
-

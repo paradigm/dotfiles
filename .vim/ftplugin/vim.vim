@@ -22,7 +22,7 @@ for rtp in split(&rtp, ',')
 	execute 'setlocal path+=' . rtp . '/autoload'
 endfor
 
-setlocal define=\\v^\\s*fu%[nction!]\\s+\\zs\\ze\\i+\\(
+setlocal define=\\v^\\s*fu%[nction]!?\\s+\\zs\\ze\\i+\\(
 
 " open help page for word under cursor in preview window
 nnoremap <buffer> K :execute ":help " . expand("<cword>") . " \| pedit % \| q"<cr>

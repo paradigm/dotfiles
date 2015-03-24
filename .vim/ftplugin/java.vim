@@ -4,6 +4,11 @@
 
 " TODO: test for eclim
 
+" Due to newline matching, does not work with built-in 'define' functionality;
+" requires specialized versions.
+setlocal define=\\v(^\|;)\\s*(\\w+\\_s+)+\\zs\\ze\\w+\\_s*\\(\\_[^)]*\\)(\\_[^;]*\\{\|;)
+
+
 let l:project = eclim#project#util#GetCurrentProjectName()
 let b:runcmd = "eclim -editor vim -command java -p " . l:project
 
