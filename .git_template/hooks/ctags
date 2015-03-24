@@ -9,7 +9,7 @@ set -e
 trap "rm -f .git/tags.$$" EXIT
 
 # generate tags in a temporary file
-ctags --tag-relative -Rf.git/tags.$$ --exclude=.git
+ctags --tag-relative -f.git/tags.$$ $(for f in $(git ls-files); do [ -e "$f" ] && [ ! -d "$f" ] && echo "$f"; done | xargs)
 
 # move the new tags over the previous tags (atomic-ish?)
 mv .git/tags.$$ .git/tags
