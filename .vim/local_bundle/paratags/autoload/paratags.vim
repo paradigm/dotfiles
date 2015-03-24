@@ -40,7 +40,7 @@ function! paratags#path()
 		return
 	endif
 	redraw
-	echo "paratags#path populating " . &ft . " from: " . join(paths)
+	echo "paratags#path populating " . &ft . "..."
 	call system("mkdir -p ~/.vim/tags/")
 	call system("ctags -R -f ~/.vim/tags/" . &ft . " " . join(paths))
 	redraw
