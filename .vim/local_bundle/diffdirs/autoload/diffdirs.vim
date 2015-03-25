@@ -16,7 +16,6 @@ function! diffdirs#run(...)
 		normal! ggo
 		diffthis
 		nnoremap <buffer> <c-]> :call diffdirs#difffile(expand("<cWORD>"))<cr>
-		nnoremap <buffer> <c-]> :call diffdirs#difffile(expand("<cWORD>"))<cr>
 	endfor
 	wincmd b | q
 	wincmd t
