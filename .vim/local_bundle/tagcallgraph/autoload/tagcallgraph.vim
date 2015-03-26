@@ -168,12 +168,14 @@ function! s:generate_tag_list()
 
 	" determine filetype
 	if bufexists(s:tags[0]['filename'])
-		tabnew|setlocal buftype=nofile bufhidden=delete noswapfile
-		execute "b " . bufnr(s:tags[0]['filename'])
-		let filetype = &filetype
-		q!
+		let filetype = getbufvar(s:tags[0]['filename'], &filetype)
 	else
-		tabnew s:tags[0]['filename']
+		augroup TagCallGraph
+			autocmd!
+			autocmd SwapExists * let v:swapchoice = 'o'
+		augroup END
+		execute "tabnew " . s:tags[0]['filename']
+		autocmd! TagCallGraph
 		let filetype = &filetype
 		bd!
 	endif
@@ -192,7 +194,7 @@ function! s:generate_tag_list()
 
 		" copy file containing buffer into scratch location
 		silent %d
-		call append(1, bufexists(filename) ? getbufline(filename, 1, "$") : readfile(filename))
+		call append(1, buflisted(filename) ? getbufline(filename, 1, "$") : readfile(expand(filename)))
 		silent 1d
 
 		" run cmd to jump to tag
