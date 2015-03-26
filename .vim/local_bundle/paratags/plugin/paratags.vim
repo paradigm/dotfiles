@@ -23,3 +23,6 @@ nnoremap <c-q>i :ParaTagsSetGroup include<cr>
 nnoremap <c-q>g :ParaTagsSetGroup git<cr>
 nnoremap <c-q>l :ParaTagsSetGroup library<cr>
 nnoremap <c-q>r :ParaTagsManualRefresh<cr>
+nnoremap <c-q>m :ParaTagsManualRefresh<cr>
+nnoremap <c-q>g :redraw<cr>:echo "ParaTag Group: " . g:paratags_group<cr>
+nnoremap <c-q>a :redraw<cr>:echo "ParaTag AutoRefresh: " . string(g:paratags_autorefresh)<cr>

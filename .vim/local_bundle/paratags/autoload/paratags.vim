@@ -84,18 +84,11 @@ function! paratags#manualrefresh()
 			endif
 		endfor
 	elseif g:paratags_group == 'include'
-echo b:tagfile_include | call getchar()
-		if filereadable(b:tagfile_include)
-			call writefile([], b:tagfile_include)
-		endif
 		let files = parainclude#include_files()
-		call system("ctags -f " . b:tagfile_include . " " . join(files))
+		call system("ctags -f " . b:tagfile_include . " --language-force=" . s:GetCtagsFiletype(&filetype) . " " . join(files))
 	elseif g:paratags_group == 'git'
 		call system("git ctags)
 	elseif g:paratags_group == 'library'
-		if filereadable(b:tagfile_library)
-			call writefile([], b:tagfile_library)
-		endif
 		let paths = filter(split(&path, '\\\@<!,'), 'v:val != "" && v:val[0] != "."')
 		if len(paths) == 0
 			echoerr "ParaTags: no valid entries in 'path'"
