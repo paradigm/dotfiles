@@ -34,15 +34,15 @@ function! s:setup_syntax()
 	syntax match Comment /^# Calle[er] graph$/
 endfunction
 
-function! tagcallgraph#caller()
-	call s:run('caller')
+function! tagcallgraph#caller(...)
+	call s:run('caller', a:000)
 endfunction
 
-function! tagcallgraph#callee()
-	call s:run('callee')
+function! tagcallgraph#callee(...)
+	call s:run('callee', a:000)
 endfunction
 
-function! s:run(type)
+function! s:run(type, generate_functions)
 	call s:generate_tag_list()
 	let tags=&tags
 	if a:type == 'caller'
@@ -73,6 +73,9 @@ function! s:run(type)
 	let &l:tags=tags
 
 	for tag in s:tags
+		if len(a:generate_functions) != 0 && index(a:generate_functions, tag['name']) == -1
+			continue
+		endif
 		if a:type == 'caller'
 			call s:append_callees(tag, [])
 			call setline(1, '# Caller graph')
@@ -85,7 +88,6 @@ function! s:run(type)
 	set nospell
 	setlocal shiftwidth=2
 	setlocal foldmethod=indent
-	keepalt wincmd w
 endfunction
 
 function! s:go_to_end_of_function(filetype)
@@ -149,9 +151,6 @@ function! s:append_callers(tag, used)
 endfunction
 
 function! s:generate_tag_list()
-	" backup filetype
-	let filetype = &filetype
-
 	" get a list of all tags
 	let s:tags = taglist('^')
 	if s:tags == []
@@ -166,6 +165,18 @@ function! s:generate_tag_list()
 	endif
 	" pull out a list of function names for quick access
 	let function_names = map(copy(s:tags), 'v:val["name"]')
+
+	" determine filetype
+	if bufexists(s:tags[0]['filename'])
+		tabnew|setlocal buftype=nofile bufhidden=delete noswapfile
+		execute "b " . bufnr(s:tags[0]['filename'])
+		let filetype = &filetype
+		q!
+	else
+		tabnew s:tags[0]['filename']
+		let filetype = &filetype
+		bd!
+	endif
 
 	" scratch location
 	tabnew|setlocal buftype=nofile bufhidden=delete noswapfile
