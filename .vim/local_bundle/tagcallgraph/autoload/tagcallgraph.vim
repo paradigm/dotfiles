@@ -30,7 +30,7 @@ function! s:setup_syntax()
 
 	syntax match TagCallGraphRecursion /(recursion)/
 	syntax match Comment /([^)]*)$/
-	syntax match ErrorMsg /^.. TAG FILE IS EMPTY ..$/
+	syntax match ErrorMsg /^.. TAG FILE .*$/
 	syntax match Comment /^# Calle[er] graph$/
 endfunction
 
@@ -70,6 +70,7 @@ function! s:run(type)
 			silent! %d
 		endif
 	endif
+	let &l:tags=tags
 
 	for tag in s:tags
 		if a:type == 'caller'
@@ -80,10 +81,10 @@ function! s:run(type)
 			call setline(1, '# Callee graph')
 		endif
 	endfor
-	let max = 0
-	g/^/ if len(getline(".")) > max | let max = len(getline(".")) | endif
-	execute "vertical resize " . max+10
 	call s:setup_syntax()
+	set nospell
+	setlocal shiftwidth=2
+	setlocal foldmethod=indent
 	keepalt wincmd w
 endfunction
 
@@ -154,13 +155,13 @@ function! s:generate_tag_list()
 	" get a list of all tags
 	let s:tags = taglist('^')
 	if s:tags == []
-		let s:tags = [{'name': '** TAG FILE IS EMPTY **', 'calls': []}]
+		let s:tags = [{'name': '** TAG FILE IS EMPTY **', 'calls': [], 'filename': ''}]
 		return
 	endif
 	" filter list down to just functions
 	call filter(s:tags, 'v:val["kind"] == "f"')
 	if s:tags == []
-		let s:tags = [{'name': '** TAG FILE HAS NO FUNCTIONS **', 'calls': []}]
+		let s:tags = [{'name': '** TAG FILE HAS NO FUNCTIONS **', 'calls': [], 'filename': ''}]
 		return
 	endif
 	" pull out a list of function names for quick access
