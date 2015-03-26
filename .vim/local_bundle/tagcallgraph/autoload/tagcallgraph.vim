@@ -45,8 +45,32 @@ endfunction
 function! s:run(type)
 	call s:generate_tag_list()
 	let tags=&tags
-	keepalt vsplit | enew | setlocal buftype=nofile noswapfile
-	let &l:tags=tags
+	if a:type == 'caller'
+		if !exists("s:callerbufnr") || !bufexists(s:callerbufnr)
+			vsplit | enew | setlocal buftype=nofile nobuflisted noswapfile
+			let s:callerbufnr = bufnr("%")
+		elseif bufwinnr(s:callerbufnr) == -1
+			vsplit
+			execute "b " . s:callerbufnr
+			silent! %d
+		else
+			execute bufwinnr(s:callerbufnr) . "wincmd w"
+			silent! %d
+		endif
+	else
+		if !exists("s:calleebufnr") || !bufexists(s:calleebufnr)
+			vsplit | enew | setlocal buftype=nofile nobuflisted noswapfile
+			let s:calleebufnr = bufnr("%")
+		elseif bufwinnr(s:calleebufnr) == -1
+			vsplit
+			execute "b " . s:calleebufnr
+			silent! %d
+		else
+			execute bufwinnr(s:calleebufnr) . "wincmd w"
+			silent! %d
+		endif
+	endif
+
 	for tag in s:tags
 		if a:type == 'caller'
 			call s:append_callees(tag, [])
