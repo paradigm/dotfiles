@@ -13,10 +13,10 @@ nnoremap [b :bprevious<cr>
 nnoremap [B :bfirst<cr>
 nnoremap ]B :blast<cr>
 " next/previous/first/last tag
-nnoremap ]t :tnext<cr>
-nnoremap [t :tprevious<cr>
-nnoremap [T :tfirst<cr>
-nnoremap ]T :tlast<cr>
+nnoremap ]t :ParaTagsAutoRefresh<cr>:tnext<cr>
+nnoremap [t :ParaTagsAutoRefresh<cr>:tprevious<cr>
+nnoremap [T :ParaTagsAutoRefresh<cr>:tfirst<cr>
+nnoremap ]T :ParaTagsAutoRefresh<cr>:tlast<cr>
 " next/previous/first/last/prevbuf/nextbuf quickfix item
 nnoremap ]q :cnext<cr>
 nnoremap [q :cprevious<cr>

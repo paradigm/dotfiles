@@ -1,60 +1,111 @@
 " ==============================================================================
 " = paratags                                                                   =
 " ==============================================================================
-"
-" Code to generate and manage tags
 
-" Store tags in a temporary file
-let s:buffertagfile = tempname()
-execute "setlocal tags+=" . s:buffertagfile
-
-" Generates tags for open buffers.  This is fast enough to do before every
-" call to use a tag.  The effect is the same as having any file altered in the
-" given Vim session have its tags updated automatically provided the user does
-" not :bd the buffer.
-function! paratags#buffers()
-	redraw
-	echo "paratags#buffers working..."
-	if filereadable(s:buffertagfile)
-		call delete(s:buffertagfile)
-	endif
-	for l:buffer_number in range(1,bufnr("$"))
-		if buflisted(l:buffer_number)
-			let l:buffername = bufname(l:buffer_number)
-			if l:buffername[0] != "/"
-				let l:buffername = getcwd()."/".l:buffername
-			endif
-			call system("ctags -a -f ".s:buffertagfile." --language-force=".s:GetCtagsFiletype(getbufvar(l:buffer_number,"&filetype"))." ".l:buffername)
+function! paratags#completegroups(A,L,P)
+	let regex = glob2regex#conv(a:A)
+	let results = []
+	for group in ['buffers', 'include', 'git', 'library']
+		if group =~ regex
+			let results += [group]
 		endif
 	endfor
-	redraw
-	echo "paratags#buffers Done"
+	return results
 endfunction
 
-" Generate tags for a given language's libraries, per 'path'.
-function! paratags#path()
-	let paths = filter(split(&path, '\\\@<!,'), 'v:val != "" && v:val[0] != "."')
-	if len(paths) == 0
+function! paratags#setgroup(group)
+	let g:paratags_group = a:group
+	if g:paratags_group == 'buffers'
+		if !exists("g:tagfile_buffers")
+			let g:tagfile_buffers=tempname()
+		endif
+		setlocal tags=
+		execute "set tags=" . g:tagfile_buffers
+	elseif g:paratags_group == 'include'
+		if !exists("b:tagfile_include")
+			let b:tagfile_include=tempname()
+		endif
+		set tags=
+		execute "setlocal tags=" . b:tagfile_include
+	elseif g:paratags_group == 'git'
+		if system('git rev-parse --show-toplevel')[0] != '/'
+			echoerr "ParaTags: Not in a git repository"
+			return
+		endif
+		let git_top = system('git rev-parse --show-toplevel')
+		if !exists("g:tagfile_git")
+			let g:tagfile_git = system('git rev-parse --show-toplevel')[:-2] . '/.git/tags'
+		endif
+		setlocal tags=
+		execute "set tags=" . g:tagfile_git
+		if !filereadable(g:tagfile_git)
+			echoerr "ParaTags: No git tag file"
+			return
+		endif
+	elseif g:paratags_group == 'library'
+		if &filetype == ''
+			echoerr "ParaTags: No filetype set"
+			return
+		endif
+		if !isdirectory("~/.vim/tags/")
+			call system("mkdir -p ~/.vim/tags/")
+		endif
+		if !exists("b:tagfile_library")
+			let b:tagfile_library="~/.vim/tags/" . &filetype
+		endif
+		set tags=
+		execute "setlocal tags=" . b:tagfile_library
+	endif
+endfunction
+
+function! paratags#autorefresh()
+	if g:paratags_autorefresh[g:paratags_group]
+		call paratags#manualrefresh()
+	endif
+endfunction
+
+function! paratags#manualrefresh()
+	" set buffer-local 'tag'
+	call paratags#setgroup(g:paratags_group)
+	redraw
+	echo "ParaTags refreshing " . g:paratags_group . "..."
+
+	if g:paratags_group == 'buffers'
+		if filereadable(g:tagfile_buffers)
+			call writefile([], g:tagfile_buffers)
+		endif
+		for bufnr in range(1,bufnr("$"))
+			if buflisted(bufnr)
+				let bufname = bufname(bufnr)
+				if bufname[0] != "/"
+					let bufname = getcwd()."/".bufname
+				endif
+				call system("ctags -a -f " . g:tagfile_buffers . " --language-force=" . s:GetCtagsFiletype(getbufvar(bufnr, "&filetype")) . " " . bufname)
+			endif
+		endfor
+	elseif g:paratags_group == 'include'
+echo b:tagfile_include | call getchar()
+		if filereadable(b:tagfile_include)
+			call writefile([], b:tagfile_include)
+		endif
+		let files = parainclude#include_files()
+		call system("ctags -f " . b:tagfile_include . " " . join(files))
+	elseif g:paratags_group == 'git'
+		call system("git ctags)
+	elseif g:paratags_group == 'library'
+		if filereadable(b:tagfile_library)
+			call writefile([], b:tagfile_library)
+		endif
+		let paths = filter(split(&path, '\\\@<!,'), 'v:val != "" && v:val[0] != "."')
+		if len(paths) == 0
+			echoerr "ParaTags: no valid entries in 'path'"
+			return
+		endif
+		call system("ctags -R -f ~/.vim/tags/" . &filetype . " " . join(paths))
 		redraw
-		echo "paratags#path no valid 'path' items"
-		return
 	endif
 	redraw
-	echo "paratags#path populating " . &ft . "..."
-	call system("mkdir -p ~/.vim/tags/")
-	call system("ctags -R -f ~/.vim/tags/" . &ft . " " . join(paths))
-	redraw
-	echo "paratags#path done"
-endfunction
-
-" Enables the language library tags
-function! paratags#path_enable()
-	execute "setlocal tags+=~/.vim/tags/" . &ft
-endfunction
-
-" Disables the language library tags
-function! paratags#path_disable()
-	execute "setlocal tags-=~/.vim/tags/" . &ft
+	echo "ParaTags done"
 endfunction
 
 " maps vim's filetype to corresponding ctag's filetype

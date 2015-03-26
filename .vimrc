@@ -61,11 +61,11 @@ set rtp+=~/.vim/remote_bundle/latexbox
 set rtp+=~/.vim/remote_bundle/rainbow
 set rtp+=~/.vim/remote_bundle/SimpylFold
 set rtp+=~/.vim/remote_bundle/tabular
-set rtp+=~/.vim/remote_bundle/vim-fugitive
 set rtp+=~/.vim/remote_bundle/vim-zsh-completion
 set rtp+=~/.vim/remote_bundle/visincr
 set rtp+=~/.vim/remote_bundle/wmgraphviz.vim
 
+" set rtp+=~/.vim/remote_bundle/vim-fugitive
 "set rtp+=~/.vim/remote_bundle/multicursor
 "set rtp+=~/.vim/remote_bundle/skybison
 "set rtp+=~/.vim/remote_bundle/textobjectify

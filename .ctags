@@ -1,3 +1,5 @@
+--c-kinds=+px
+
 --langdef=latex
 --langmap=latex:.tex,latex:.sty
 --regex-latex=/\\label\{([^}]*)\}/\1/l,label/
