@@ -206,7 +206,7 @@ function! s:generate_tag_list()
 		let s:tags[i]['calls'] = []
 		for function_name in function_names
 			call cursor(1,1,0)
-			if search(function_name . '\s\*(', 'Wc') != 0
+			if search('\<' . function_name . '\s\*(', 'Wc') != 0
 				let s:tags[i]['calls'] += [function_name]
 			endif
 		endfor
