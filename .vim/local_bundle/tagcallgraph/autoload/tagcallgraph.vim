@@ -71,6 +71,7 @@ function! s:run(type, generate_functions)
 		endif
 	endif
 	let &l:tags=tags
+	setlocal filetype=tagcallgraph
 
 	for tag in s:tags
 		if len(a:generate_functions) != 0 && index(a:generate_functions, tag['name']) == -1

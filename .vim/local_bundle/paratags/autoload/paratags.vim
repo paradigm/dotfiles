@@ -59,6 +59,9 @@ function! paratags#setgroup(group)
 endfunction
 
 function! paratags#autorefresh()
+	if &filetype == "tagcallgraph"
+		return
+	endif
 	if g:paratags_autorefresh[g:paratags_group]
 		call paratags#manualrefresh()
 	endif
