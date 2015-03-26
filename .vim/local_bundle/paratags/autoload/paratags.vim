@@ -6,7 +6,7 @@
 
 " Store tags in a temporary file
 let s:buffertagfile = tempname()
-execute "set tags+=" . s:buffertagfile
+execute "setlocal tags+=" . s:buffertagfile
 
 " Generates tags for open buffers.  This is fast enough to do before every
 " call to use a tag.  The effect is the same as having any file altered in the

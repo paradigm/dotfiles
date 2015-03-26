@@ -51,6 +51,7 @@ set rtp+=~/.vim/local_bundle/handle_directory
 set rtp+=~/.vim/local_bundle/yankredir
 set rtp+=~/.vim/local_bundle/parainclude
 set rtp+=~/.vim/local_bundle/diffdirs
+set rtp+=~/.vim/local_bundle/tagcallgraph
 
 set rtp+=~/.vim/remote_bundle/AnsiEsc.vim
 set rtp+=~/.vim/remote_bundle/clang_complete
