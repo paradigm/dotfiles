@@ -1,3 +1,351 @@
+function! tagcallgraph#caller(...)
+	call s:main('caller', a:000)
+endfunction
+
+function! tagcallgraph#callee(...)
+	call s:main('callee', a:000)
+endfunction
+
+function! s:main(type, function_mask)
+	" Using script-scoped to avoid constant passing.
+	let s:tree = []
+	let errormsg = s:get_functions()
+	if errormsg == ""
+		let filetype = s:get_filetype()
+		call s:get_children(filetype)
+		let s:pre_prune_tree = copy(s:tree)
+		call s:prune(a:type)
+	endif
+	call s:render_window(a:type, errormsg, a:function_mask)
+	redraw
+	echo "TagCallGraph done"
+endfunction
+
+function! s:node_order(node1, node2)
+	if a:node1['name'] > a:node2['name']
+		return 1
+	elseif a:node1['name'] < a:node2['name']
+		return -1
+	elseif a:node1['kind'] > a:node2['kind']
+		return 1
+	elseif a:node1['kind'] < a:node2['kind']
+		return -1
+	elseif a:node1['filename'] > a:node2['filename']
+		return 1
+	elseif a:node1['filename'] < a:node2['filename']
+		return -1
+	else
+		return 0
+	endif
+endfunction
+
+function! s:get_functions()
+	redraw
+	echo "TagCallGraph generation function list..."
+	let s:tree = taglist('^')
+	if s:tree == []
+		return "** TAG FILE IS EMPTY **"
+	endif
+	" filter down to function - definitions and prototypes
+	call filter(s:tree, 'v:val["kind"] == "f" || v:val["kind"] == "p"')
+	if s:tree == []
+		return "** TAG FILE HAS NO FUNCTIONS **"
+	endif
+	" Remove duplicates:
+	" - If there is a function definition and prototype, drop prototype.
+	" - If there is multiple prototypes in one file, drop all but one.
+	call sort(s:tree, "s:node_order")
+	let i = 0
+	while i < len(s:tree)-1
+		if s:tree[i]['name'] == s:tree[i+1]['name']
+			if s:tree[i]['kind'] == 'f' && s:tree[i+1]['kind'] == 'p'
+				unlet s:tree[i+1]
+				let i-=1
+			elseif s:tree[i]['kind'] == 'p' && s:tree[i+1]['kind'] == 'f'
+				unlet s:tree[i]
+				let i-=1
+			elseif s:tree[i]['kind'] == 'p' && s:tree[i+1]['kind'] == 'p' && s:tree[i]['filename'] == s:tree[i+1]['filename']
+				unlet s:tree[i+1]
+				let i-=1
+			endif
+		endif
+		let i+=1
+	endwhile
+	return ""
+endfunction
+
+function! s:get_filetype()
+	redraw
+	echo "TagCallGraph determining filetype..."
+	if s:tree == []
+		return ""
+	endif
+
+	if bufloaded(s:tree[0]['filename'])
+		return getbufvar(s:tree[0]['filename'], "&filetype")
+	endif
+
+	augroup TagCallGraph
+		autocmd!
+		autocmd SwapExists * let v:swapchoice = 'o'
+	augroup END
+	execute "tabnew " . s:tree[0]['filename']
+	autocmd! TagCallGraph
+	let filetype = &filetype
+	bd!
+	return filetype
+endfunction
+
+function! s:go_to_definition_start(name, filetype, filename)
+	if a:filetype == 'vim'
+		if search('\v\s*fu%[nction]!?[^|]*<' . a:name . '\s*\zs\(', 'Wc') == 0
+			return 0
+		endif
+	elseif a:filetype =~ '\vc|cpp|java|sh|bash|zsh|awk'
+		if search('\v<' . a:name . '\(\zs', 'W') == 0
+			return 0
+		endif
+	endif
+	return 1
+endfunction
+
+function! s:go_to_definition_end(name, filetype, filename)
+	if a:filetype == 'vim'
+		if search('\v^\s*endfo@!%[unction]\zs', 'W') == 0
+			return 0
+		endif
+	elseif a:filetype =~ '\vc|cpp|java|sh|bash|zsh|awk'
+		if search('\v\zs\{', 'W') == 0
+			return 0
+		endif
+		normal! %
+		if getline(".")[col(".")-1] != '}'
+			return 0
+		endif
+	endif
+	return 1
+endfunction
+
+function! s:get_children(filetype)
+	redraw
+	echo "TagCallGraph generating call list..."
+	tabnew|setlocal buftype=nofile bufhidden=delete noswapfile nonumber norelativenumber
+
+	for i in range(0, len(s:tree)-1)
+		let s:tree[i]['calls'] = []
+		let s:tree[i]['lnum'] = -1
+
+		if s:tree[i]['kind'] == 'p'
+			continue
+		endif
+
+		silent %d
+		call append(1, readfile(expand(s:tree[i]['filename'])))
+		silent 1d
+
+		" Jump to line containing function definition start.
+		"
+		" Tag cmd uses vi, not vim, default search
+		if s:tree[i]['cmd'][0] == '/'
+			execute 'keeppatterns /\M' . escape(s:tree[i]['cmd'][1:], '~[]')
+		else
+			execute 'keeppatterns ' . s:tree[i]['cmd']
+		endif
+
+		let s:tree[i]['lnum'] = line(".")
+
+		" get exact function start and end
+		if !s:go_to_definition_start(s:tree[i]['name'], a:filetype, s:tree[i]['filename'])
+			let s:tree[i]['kind'] = 'p'
+			continue
+		endif
+		let start = getcurpos()
+		if !s:go_to_definition_end(s:tree[i]['name'], a:filetype, s:tree[i]['filename'])
+			let s:tree[i]['kind'] = 'p'
+			continue
+		endif
+		let end = getcurpos()
+
+		" strip out everything that is not in the function definition
+		if end[1] != line("$")
+			execute 'silent! ' . end[1] . '+1,$ d "_'
+		endif
+		call setline(end[1], getline(end[1])[:end[2]-1])
+		if start[1] != 1
+			execute 'silent! 1,' . start[1] . '-1 d "_'
+		endif
+		if start[2] != 1
+			call setline(1, getline(1)[start[2]-1:])
+		endif
+
+		" find function calls
+		"
+		" TODO: This assumes function call is just the name followed
+		" by a (, which is not always true, e.g. comments.
+		for node in s:tree
+			if node['kind'] == 'p'
+				continue
+			endif
+			call cursor(1,1,0)
+			if search('\v<' . node['name'] . '\s*\(', 'Wc') != 0
+				let s:tree[i]['calls'] += [node]
+				" if there are multiple possible function
+				" calls, do not report filename as we don't
+				" know which
+				if len(filter(copy(s:tree), 'v:val["name"] == node["name"]')) > 1
+					let s:tree[i]['calls'][-1]['filenamel'] = ''
+				endif
+			endif
+		endfor
+	endfor
+
+	bd!
+endfunction
+
+function! s:equate_nodes(node1, node2)
+	return a:node1['name'] == a:node2['name'] && a:node1['filename'] == a:node2['filename']
+endfunction
+
+function! s:prune(type)
+	redraw
+	echo "TagCallGraph pruning tree..."
+	let non_root_nodes = []
+	if a:type == 'caller'
+		for node in s:tree
+			for child in node['calls']
+				if index(non_root_nodes, child) != 0
+					let non_root_nodes += [child]
+				endif
+			endfor
+		endfor
+	else
+		for parent in s:tree
+			if parent['calls'] != []
+				if index(non_root_nodes, parent) != 0
+					let non_root_nodes += [parent]
+				endif
+			endif
+		endfor
+	endif
+	for non_root_node in non_root_nodes
+		let i = 0
+		while i < len(s:tree)-1
+			if s:equate_nodes(s:tree[i], non_root_node)
+				unlet s:tree[i]
+			endif
+			let i+=1
+		endwhile
+	endfor
+endfunction
+
+function! s:detect_recursion(node, used)
+	for used_node in a:used
+		if s:equate_nodes(used_node, a:node)
+			return 1
+		endif
+	endfor
+	return 0
+endfunction
+
+function! s:render_node(node, used)
+	let output = ""
+	for level in a:used
+		let output .= '  '
+	endfor
+	let output .= a:node['name']
+	if s:detect_recursion(a:node, a:used)
+		let output .= ' (recursion)'
+	endif
+	if a:node['kind'] == 'p'
+		let output .= ' (declaration)'
+	endif
+	if a:node['filename'] != ''
+		let output .= ' (' . fnamemodify(a:node['filename'], ':t')
+		if a:node['lnum'] != -1
+			let output .= ':' . a:node['lnum']
+		endif
+		let output .= ')'
+	else
+		let output .= ' (multiple possible files)'
+	endif
+	call append('$', output)
+endfunction
+
+function! s:render_child(node, type, used)
+	let used = copy(a:used)
+	let used += [a:node]
+
+	if a:type == 'caller'
+		" recurse down to children
+		for child in a:node['calls']
+			call s:render_node(child, used)
+			if !s:detect_recursion(child, used)
+				call s:render_child(child, a:type, used)
+			endif
+		endfor
+	else
+		" recurse up to parents
+		for parent in s:pre_prune_tree
+			for parent_child in parent['calls']
+				if s:equate_nodes(parent_child, a:node)
+					call s:render_node(parent, used)
+					if !s:detect_recursion(parent, used)
+						call s:render_child(parent, a:type, used)
+					endif
+				endif
+			endfor
+		endfor
+	endif
+endfunction
+
+function! s:render_window(type, errormsg, function_mask)
+	redraw
+	echo "TagCallGraph graphing and rendering..."
+	" prepare window
+	let tags=&tags
+	if a:type == 'caller'
+		let bufnrstr = 's:callerbufnr'
+		if exists(bufnrstr)
+			let bufnr = s:callerbufnr
+		endif
+	else
+		let bufnrstr = 's:calleebufnr'
+		if exists(bufnrstr)
+			let bufnr = s:calleebufnr
+		endif
+	endif
+	if !exists(bufnrstr) || !bufexists(bufnr)
+		vsplit | enew | setlocal buftype=nofile nobuflisted noswapfile
+		execute 'let ' . bufnrstr . ' = bufnr("%")'
+	elseif bufwinnr(bufnr) == -1
+		vsplit | enew | setlocal buftype=nofile bufhidden=delete nobuflisted noswapfile
+		execute "b " . bufnr
+		silent! %d
+	else
+		execute bufwinnr(bufnr) . "wincmd w"
+		silent! %d
+	endif
+	let &l:tags=tags
+	setlocal filetype=tagcallgraph
+
+	if a:type == 'caller'
+		call setline(1, '# Caller graph')
+	else
+		call setline(1, '# Callee graph')
+	endif
+	if a:errormsg == ""
+		for node in s:tree
+			if a:function_mask == [] || index(a:function_mask, node['name']) != -1
+				call s:render_node(node, [])
+				call s:render_child(node, a:type, [node])
+			endif
+		endfor
+	else
+		call append('$', a:errormsg)
+	endif
+	call s:setup_syntax()
+endfunction
+
 function! s:setup_syntax()
 	highlight TagCallGraphLevel1 ctermfg=Gray ctermbg=Black
 	highlight TagCallGraphLevel2 ctermfg=Cyan ctermbg=Black
@@ -12,7 +360,8 @@ function! s:setup_syntax()
 	highlight TagCallGraphLevel11 ctermfg=DarkYellow ctermbg=Black
 	highlight TagCallGraphLevel12 ctermfg=DarkMagenta ctermbg=Black
 	highlight TagCallGraphLevel13 ctermfg=White ctermbg=Black
-	highlight TagCallGraphRecursion ctermfg=Red ctermbg=Black
+	highlight TagCallGraphRecursion ctermfg=Black ctermbg=Red
+	highlight TagCallGraphDeclaration ctermfg=Red ctermbg=Black
 
 	syntax match TagCallGraphLevel1  /^[^ ][^(]*/
 	syntax match TagCallGraphLevel2  /^ \{2}[^(]*/
@@ -29,203 +378,10 @@ function! s:setup_syntax()
 	syntax match TagCallGraphLevel13 /^ \{24}[^(]*/
 
 	syntax match TagCallGraphRecursion /(recursion)/
+	syntax match TagCallGraphDeclaration /(declaration)/
 	syntax match Comment /([^)]*)$/
 	syntax match ErrorMsg /^.. TAG FILE .*$/
 	syntax match Comment /^# Calle[er] graph$/
-endfunction
 
-function! tagcallgraph#caller(...)
-	call s:run('caller', a:000)
-endfunction
-
-function! tagcallgraph#callee(...)
-	call s:run('callee', a:000)
-endfunction
-
-function! s:run(type, generate_functions)
-	call s:generate_tag_list()
-	let tags=&tags
-	if a:type == 'caller'
-		if !exists("s:callerbufnr") || !bufexists(s:callerbufnr)
-			vsplit | enew | setlocal buftype=nofile nobuflisted noswapfile
-			let s:callerbufnr = bufnr("%")
-		elseif bufwinnr(s:callerbufnr) == -1
-			vsplit
-			execute "b " . s:callerbufnr
-			silent! %d
-		else
-			execute bufwinnr(s:callerbufnr) . "wincmd w"
-			silent! %d
-		endif
-	else
-		if !exists("s:calleebufnr") || !bufexists(s:calleebufnr)
-			vsplit | enew | setlocal buftype=nofile nobuflisted noswapfile
-			let s:calleebufnr = bufnr("%")
-		elseif bufwinnr(s:calleebufnr) == -1
-			vsplit
-			execute "b " . s:calleebufnr
-			silent! %d
-		else
-			execute bufwinnr(s:calleebufnr) . "wincmd w"
-			silent! %d
-		endif
-	endif
-	let &l:tags=tags
-	setlocal filetype=tagcallgraph
-
-	for tag in s:tags
-		if len(a:generate_functions) != 0 && index(a:generate_functions, tag['name']) == -1
-			continue
-		endif
-		if a:type == 'caller'
-			call s:append_callees(tag, [])
-			call setline(1, '# Caller graph')
-		else
-			call s:append_callers(tag, [])
-			call setline(1, '# Callee graph')
-		endif
-	endfor
-	call s:setup_syntax()
-	set nospell
-	setlocal shiftwidth=2
-	setlocal foldmethod=indent
-endfunction
-
-function! s:go_to_end_of_function(filetype)
-	if a:filetype == 'vim'
-		call search('^\_s\*endfun\%[ction]','W')
-		return
-	elseif a:filetype =~ '\vc|cpp|java|sh|bash|zsh|awk'
-		call search('{','W')
-		normal! %
-		return
-	endif
-endfunction
-
-function! s:append_callees(tag, used)
-	" get indentation level from number of items we've hit
-	let indent = ''
-	for level in a:used
-		let indent .= '  '
-	endfor
-	" check if calling something we've hit to avoid infinite recursion
-	if index(a:used, a:tag["name"]) != -1
-		call append('$', indent . a:tag["name"] . " (recursion) (" . fnamemodify(a:tag["filename"], ":t") . ")")
-		return
-	endif
-	" append specified function
-	call append('$', indent . a:tag["name"] . " (" . fnamemodify(a:tag["filename"], ":t") . ")")
-
-	" recurse down to children
-	let used = a:used + [a:tag["name"]]
-	for child in a:tag['calls']
-		for tag in s:tags
-			if tag['name'] == child
-				call s:append_callees(tag, used)
-				break
-			endif
-		endfor
-	endfor
-endfunction
-
-function! s:append_callers(tag, used)
-	" get indentation level from number of items we've hit
-	let indent = ''
-	for level in a:used
-		let indent .= '  '
-	endfor
-	" check if calling something we've hit to avoid infinite recursion
-	if index(a:used, a:tag["name"]) != -1
-		call append('$', indent . a:tag["name"] . " (recursion) (" . fnamemodify(a:tag["filename"], ":t") . ")")
-		return
-	endif
-	" append specified function
-	call append('$', indent . a:tag["name"] . " (" . fnamemodify(a:tag["filename"], ":t") . ")")
-
-	" recurse up to parents
-	let used = a:used + [a:tag["name"]]
-	for tag in s:tags
-		if index(tag['calls'], a:tag['name']) > -1
-			call s:append_callers(tag, used)
-		endif
-	endfor
-endfunction
-
-function! s:generate_tag_list()
-	" get a list of all tags
-	let s:tags = taglist('^')
-	if s:tags == []
-		let s:tags = [{'name': '** TAG FILE IS EMPTY **', 'calls': [], 'filename': ''}]
-		return
-	endif
-	" filter list down to just functions
-	call filter(s:tags, 'v:val["kind"] == "f"')
-	if s:tags == []
-		let s:tags = [{'name': '** TAG FILE HAS NO FUNCTIONS **', 'calls': [], 'filename': ''}]
-		return
-	endif
-	" pull out a list of function names for quick access
-	let function_names = map(copy(s:tags), 'v:val["name"]')
-
-	" determine filetype
-	if bufexists(s:tags[0]['filename'])
-		let filetype = getbufvar(s:tags[0]['filename'], &filetype)
-	else
-		augroup TagCallGraph
-			autocmd!
-			autocmd SwapExists * let v:swapchoice = 'o'
-		augroup END
-		execute "tabnew " . s:tags[0]['filename']
-		autocmd! TagCallGraph
-		let filetype = &filetype
-		bd!
-	endif
-
-	" scratch location
-	tabnew|setlocal buftype=nofile bufhidden=delete noswapfile
-
-	" will need for tag["cmd"]'s to work
-	setlocal nomagic
-
-	" iterate over tags to find all the functions they call
-	for i in range(0,len(s:tags)-1)
-		let filename = s:tags[i]['filename']
-		let cmd = s:tags[i]['cmd']
-		let name = s:tags[i]['name']
-
-		" copy file containing buffer into scratch location
-		silent %d
-		call append(1, buflisted(filename) ? getbufline(filename, 1, "$") : readfile(expand(filename)))
-		silent 1d
-
-		" run cmd to jump to tag
-		execute "keeppatterns " . cmd
-
-		" remove everything not needed
-		" TODO: this assumes function start and end on lines that do
-		" not call other functinos
-		if line('.') != 1
-			silent 1,.-1d
-		endif
-		call search(name, 'Wc')
-		call s:go_to_end_of_function(filetype)
-		if line('.') != line('$')
-			silent .,$d
-		endif
-		silent 1d
-
-		" search region for calls to a function
-		" TODO: assumes function call is tag['name'] followed by a
-		" "(".  Is this always true?
-		let s:tags[i]['calls'] = []
-		for function_name in function_names
-			call cursor(1,1,0)
-			if search('\<' . function_name . '\s\*(', 'Wc') != 0
-				let s:tags[i]['calls'] += [function_name]
-			endif
-		endfor
-	endfor
-
-	" remove scratch buffer
-	bd
+	set foldmethod=indent
 endfunction
