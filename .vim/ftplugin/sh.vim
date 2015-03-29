@@ -16,6 +16,8 @@ nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
 
 let b:runpath = expand("%:p")
 
+setlocal path+=,
+
 " Syntax highlight embedded awk.  Taken from syntax.txt, which took it from
 " Aaron Hope's aspperl.vim
 if exists("b:current_syntax")
