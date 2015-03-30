@@ -10,7 +10,9 @@ setlocal softtabstop=4
 
 setlocal define=\\v^\\s*def\ \\zs\\ze
 
-execute "setlocal path+=" . substitute(glob("/usr/lib/py*") . " " . glob("/usr/local/lib/py*"), "\> *\<", ",","")
+call glob("/usr/lib/py*", 0, 1)
+call glob("/usr/local/lib/py*", 0, 1)
+execute "setlocal path+=" . join(glob("/usr/lib/py*", 0, 1) + glob("/usr/local/lib/py*", 0, 1), ",")
 
 let b:runpath = expand("%:p")
 
