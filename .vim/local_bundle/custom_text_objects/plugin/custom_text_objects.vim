@@ -4,7 +4,7 @@ let pairs .= '~!@#$%^&*-=_+'
 let pairs .= '\|;:,./?'
 let pairs .= '$,./-='
 for char in split(pairs,'\zs')
-	if char == '|' || char == '\'
+	if char == '|'
 		let char = '\' . char
 	endif
 	exec 'xnoremap i' . char . ' :<c-u>silent!normal!T' . char . 'vt' . char . '<cr>'
