@@ -12,7 +12,7 @@ setlocal include=^\\s*\\<\\(source\\\|[.]\\)\\>
 " requires specialized versions.
 setlocal define=\\v(^\|;)\\s*(\\zs\\ze\\i+\\s*\\(\\s*\\)\|(function\\_s*\\zs\\ze\\i+))\\_s*\\{
 
-nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
+nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"), '')<cr>
 
 let b:runpath = expand("%:p")
 

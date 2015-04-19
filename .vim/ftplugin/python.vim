@@ -33,13 +33,13 @@ let b:linterrorformat='%f:%l:%c:\ %m'
 " in plugin so we can check for that.
 if exists(":Pyimport")
 	" jump to definition
-	nnoremap <buffer> <c-]> :FTStackPush<cr>:call jedi#goto_definitions()<cr>
+	nnoremap <buffer> <c-]> :call support#push_stack()<cr>:call jedi#goto_definitions()<cr>
 	" jump to assignment
 	nnoremap <buffer> gd :call jedi#goto_assignments()<cr>
 	" pop tag stack
-	nnoremap <buffer> <c-t> :FTStackPop<cr>
+	nnoremap <buffer> <c-t> :call support#pop_stack<cr>
 	" preview declaration
 	nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
 	" preview declaration line
-	nnoremap <buffer> <space><c-p> :call preview#line("normal \\d")<cr>
+	nnoremap <buffer> <space><c-p> :call preview#jump("normal \\d", '!')<cr>
 endif

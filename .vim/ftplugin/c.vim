@@ -20,7 +20,7 @@ setlocal path+=../include/
 "
 " Due to newline matching, does not work with built-in 'define' functionality;
 " requires specialized versions.
-setlocal define=\\v(^\|;)\\s*(\\w+\\_s+)+\\zs\\ze\\w+\\_s*\\(\\_[^)]*\\)(\\_[^;]*\\{\|;)
+setlocal define=\\v(^\|;)\\s*([a-zA-Z_*&]+\\_s+)+\\zs\\ze[a-zA-Z_*&]+\\_s*\\(\\_[^)]*\\)\\_[^;]*(\\{\|;)
 
 " Regex to match #include macros.
 setlocal include&vim
@@ -39,26 +39,27 @@ let b:lintcmd = ""
 let b:runpath = "./a.out"
 
 " Have 'K' open the man page in a preview window
-nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"))<cr>
+nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"), '')<cr>
 
 " If clang exists, use clang
 if exists('g:clang_complete_loaded')
 	" jump to declaration
-	nnoremap <buffer> <c-]>        :FTStackPush<cr>:call g:ClangGotoDeclaration()<cr>
+	" note g<c-]> is still available to access tag jump
+	nnoremap <buffer> <c-]>        :call support#push_stack()<cr>:call g:ClangGotoDeclaration()<cr>
 	" jump to declaration without using tag stack
 	nnoremap <buffer> gd           :call g:ClangGotoDeclaration()<cr>
 	" pop tag stack
-	nnoremap <buffer> <c-t>        :FTStackPop<cr>
+	nnoremap <buffer> <c-t>        :call support#pop_stack()<cr>
 	" preview declaration
 	nnoremap <buffer> <space>P     :call g:ClangGotoDeclarationPreview()<cr>
 	" preview declaration line
-	nnoremap <buffer> <space><c-p> :call preview#line("call g:ClangGotoDeclaration()")<cr>
+	nnoremap <buffer> <space><c-p> :call preview#line("call g:ClangGotoDeclaration()", '!')<cr>
 	" Use clang to lint
 	let b:lintcmd = "cd %:p:h | call ClangUpdateQuickFix() | cd -"
 	let b:linterrorformat = &l:errorformat
 endif
 
-call snippet#map(";main","
+call snippet#add(";main","
 \int main(int argc, char *argv[])
 \\<cr>{
 \\<cr>(void)argc;
@@ -69,31 +70,31 @@ call snippet#map(";main","
 \\<cr>\<c-d>return 0;
 \\<cr>}")
 
-call snippet#map(";if","
+call snippet#add(";if","
 \if (<++>) {
 \\<cr><++>
 \\<cr>}")
 
-call snippet#map(";for","
+call snippet#add(";for","
 \for (<++>) {
 \\<cr><++>
 \\<cr>}")
 
-call snippet#map(";while","
+call snippet#add(";while","
 \while (<++>) {
 \\<cr><++>
 \\<cr>}")
 
-call snippet#map(";do","
+call snippet#add(";do","
 \do {
 \\<cr><++>
 \\<cr>} while (<++>)")
 
-call snippet#map(";func","
+call snippet#add(";func","
 \<++>(<++>)
 \\<cr>{
 \\<cr><++>
 \\<cr>}")
 
-call snippet#map(";printf","
+call snippet#add(";printf","
 \printf(\"<++>\", <++>);<++>")

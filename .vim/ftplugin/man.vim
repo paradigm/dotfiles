@@ -2,6 +2,7 @@
 " = man ftplugin                                                               =
 " ==============================================================================
 
+" section headers
 setlocal define=\\v^\\zs\\ze[A-Z-\ ]+$
 
 " man sets the content width to the window width.  The number column ends up

@@ -20,13 +20,13 @@ inoremap <buffer> <c-x><c-o> <c-x><c-u>
 " launch eclim
 nnoremap <buffer> <space>o :silent execute "!xterm -e eclimd &"<cr>
 " jump to declaration/definition
-nnoremap <buffer> <c-]> :FTStackPush<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>
+nnoremap <buffer> <c-]> :call support#push_stack()<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>
 " pop tag stack
-nnoremap <buffer> <c-t> :FTStackPop<cr>
+nnoremap <buffer> <c-t>        :call support#pop_stack()<cr>
 " preview declaration
 nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
 " preview declaration line
-nnoremap <buffer> <space><c-p> :call preview#line("JavaSearchContext")<cr>
+nnoremap <buffer> <space><c-p> :call preview#jump("JavaSearchContext", '!')<cr>
 
 " 		" assumes eclim
 " 		call eclim#lang#UpdateSrcFile('java',1) " have eclim populate loclist

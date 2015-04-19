@@ -1,45 +1,45 @@
-[submodule ".vim/remote_bundle/skybison"]
-	path = .vim/remote_bundle/skybison
+[submodule ".vim/remote/skybison"]
+	path = .vim/remote/skybison
 	url = git@github.com:paradigm/SkyBison.git
-[submodule ".vim/remote_bundle/languagetool"]
-	path = .vim/remote_bundle/languagetool
+[submodule ".vim/remote/languagetool"]
+	path = .vim/remote/languagetool
 	url = git://github.com/vim-scripts/LanguageTool.git
-[submodule ".vim/remote_bundle/latexbox"]
-	path = .vim/remote_bundle/latexbox
+[submodule ".vim/remote/latexbox"]
+	path = .vim/remote/latexbox
 	url = git://github.com/LaTeX-Box-Team/LaTeX-Box.git
-[submodule ".vim/remote_bundle/tabular"]
-	path = .vim/remote_bundle/tabular
+[submodule ".vim/remote/tabular"]
+	path = .vim/remote/tabular
 	url = git://github.com/godlygeek/tabular.git
-[submodule ".vim/remote_bundle/multicursor"]
-	path = .vim/remote_bundle/multicursor
+[submodule ".vim/remote/multicursor"]
+	path = .vim/remote/multicursor
 	url = git@github.com:paradigm/vim-multicursor.git
-[submodule ".vim/remote_bundle/textobjectify"]
-	path = .vim/remote_bundle/textobjectify
+[submodule ".vim/remote/textobjectify"]
+	path = .vim/remote/textobjectify
 	url = git@github.com:paradigm/TextObjectify.git
-[submodule ".vim/remote_bundle/jedi-vim"]
-	path = .vim/remote_bundle/jedi-vim
+[submodule ".vim/remote/jedi-vim"]
+	path = .vim/remote/jedi-vim
 	url = git://github.com/davidhalter/jedi-vim.git
-[submodule ".vim/remote_bundle/vim-fugitive"]
-	path = .vim/remote_bundle/vim-fugitive
+[submodule ".vim/remote/vim-fugitive"]
+	path = .vim/remote/vim-fugitive
 	url = git://github.com/tpope/vim-fugitive.git
-[submodule ".vim/remote_bundle/SimpylFold"]
-	path = .vim/remote_bundle/SimpylFold
+[submodule ".vim/remote/SimpylFold"]
+	path = .vim/remote/SimpylFold
 	url = https://github.com/tmhedberg/SimpylFold
-[submodule ".vim/remote_bundle/AnsiEsc.vim"]
-	path = .vim/remote_bundle/AnsiEsc.vim
+[submodule ".vim/remote/AnsiEsc.vim"]
+	path = .vim/remote/AnsiEsc.vim
 	url = https://github.com/vim-scripts/AnsiEsc.vim.git
-[submodule ".vim/remote_bundle/visincr"]
-	path = .vim/remote_bundle/visincr
+[submodule ".vim/remote/visincr"]
+	path = .vim/remote/visincr
 	url = https://github.com/vim-scripts/VisIncr.git
-[submodule ".vim/remote_bundle/wmgraphviz.vim"]
-	path = .vim/remote_bundle/wmgraphviz.vim
+[submodule ".vim/remote/wmgraphviz.vim"]
+	path = .vim/remote/wmgraphviz.vim
 	url = https://github.com/wannesm/wmgraphviz.vim.git
-[submodule ".vim/remote_bundle/clang_complete-src"]
-	path = .vim/remote_bundle/clang_complete-src
+[submodule ".vim/remote/clang_complete-src"]
+	path = .vim/remote/clang_complete-src
 	url = https://github.com/Rip-Rip/clang_complete.git
-[submodule ".vim/remote_bundle/vim-zsh-completion"]
-	path = .vim/remote_bundle/vim-zsh-completion
+[submodule ".vim/remote/vim-zsh-completion"]
+	path = .vim/remote/vim-zsh-completion
 	url = https://github.com/Valodim/vim-zsh-completion.git
-[submodule ".vim/remote_bundle/rainbow"]
-	path = .vim/remote_bundle/rainbow
+[submodule ".vim/remote/rainbow"]
+	path = .vim/remote/rainbow
 	url = https://github.com/luochen1990/rainbow

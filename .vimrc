@@ -2,70 +2,59 @@
 " = paradigm's_.vimrc                                                          =
 " ==============================================================================
 
-" Disclaimer: Note that I have unusual tastes.  Blindly copying lines from this
-" or any of my configuration files will not necessarily result in what you will
-" consider a sane system.  Please do your due diligence in ensuring you fully
-" understand what will happen if you attempt to utilize content from this file,
-" either in part or in full.
+" Disclaimer: Note that I have unusual tastes.  Blindly copying lines from
+" this or any of my configuration files will not necessarily result in what
+" you will consider a sane system.  Please do your due diligence in ensuring
+" you fully understand what will happen if you attempt to utilize any content
+" here, either in part or in full.
 
-" Add ~/.vim to the runtimepath in Windows so I can use the same ~/.vim across
-" OSs
-if has('win32') || has('win64')
-	set runtimepath+=~/.vim
-endif
+" Set 'nocompatible' defaults.  This is useful when using -u to avoid also
+" requiring -N.  This changes quite a few settings and should be placed very
+" early to avoid stepping on other settings.
+set nocompatible
 
-set rtp+=~/.vim/local_bundle/general
-set rtp+=~/.vim/local_bundle/theme_currentterm
-set rtp+=~/.vim/local_bundle/libs
-set rtp+=~/.vim/local_bundle/custom_text_objects
-set rtp+=~/.vim/local_bundle/custom_operators
-set rtp+=~/.vim/local_bundle/cmdline_window_default
-set rtp+=~/.vim/local_bundle/dictionary
-set rtp+=~/.vim/local_bundle/wiserange
-set rtp+=~/.vim/local_bundle/highlight
-set rtp+=~/.vim/local_bundle/digraph_lookup
-set rtp+=~/.vim/local_bundle/viewsearch
-set rtp+=~/.vim/local_bundle/parajump
-set rtp+=~/.vim/local_bundle/diffsigns
-set rtp+=~/.vim/local_bundle/signmarks
-set rtp+=~/.vim/local_bundle/run
-set rtp+=~/.vim/local_bundle/preview
-set rtp+=~/.vim/local_bundle/ftstack
-set rtp+=~/.vim/local_bundle/skybison
-set rtp+=~/.vim/local_bundle/session
-set rtp+=~/.vim/local_bundle/snippet
-set rtp+=~/.vim/local_bundle/line
-set rtp+=~/.vim/local_bundle/switchheader
-set rtp+=~/.vim/local_bundle/selectsamelines
-set rtp+=~/.vim/local_bundle/grepbuffers
-set rtp+=~/.vim/local_bundle/cconerror
-set rtp+=~/.vim/local_bundle/paratags
-set rtp+=~/.vim/local_bundle/custcomplete
-set rtp+=~/.vim/local_bundle/make
-set rtp+=~/.vim/local_bundle/qfsplit
-set rtp+=~/.vim/local_bundle/quickfixsigns
-set rtp+=~/.vim/local_bundle/getheaders
-set rtp+=~/.vim/local_bundle/plugin_settings
-set rtp+=~/.vim/local_bundle/scratch
-set rtp+=~/.vim/local_bundle/handle_directory
-set rtp+=~/.vim/local_bundle/yankredir
-set rtp+=~/.vim/local_bundle/parainclude
-set rtp+=~/.vim/local_bundle/diffdirs
-set rtp+=~/.vim/local_bundle/tagcallgraph
+" explicitly set 'runtimepath' - no default
+set runtimepath=
+set runtimepath+=~/.vim/
 
-set rtp+=~/.vim/remote_bundle/AnsiEsc.vim
-set rtp+=~/.vim/remote_bundle/clang_complete
-set rtp+=~/.vim/remote_bundle/jedi-vim
-set rtp+=~/.vim/remote_bundle/languagetool
-set rtp+=~/.vim/remote_bundle/latexbox
-set rtp+=~/.vim/remote_bundle/rainbow
-set rtp+=~/.vim/remote_bundle/SimpylFold
-set rtp+=~/.vim/remote_bundle/tabular
-set rtp+=~/.vim/remote_bundle/vim-zsh-completion
-set rtp+=~/.vim/remote_bundle/visincr
-set rtp+=~/.vim/remote_bundle/wmgraphviz.vim
+set runtimepath+=~/.vim/local/settings
+set runtimepath+=~/.vim/local/support
+set runtimepath+=~/.vim/local/commands
+set runtimepath+=~/.vim/local/cmdline_window
+set runtimepath+=~/.vim/local/mappings
+set runtimepath+=~/.vim/local/autocmds
+set runtimepath+=~/.vim/local/syntax_omnicomplete
+set runtimepath+=~/.vim/local/syntax_settings
+set runtimepath+=~/.vim/local/next_previous
+set runtimepath+=~/.vim/local/plugin_settings
+set runtimepath+=~/.vim/local/set_filetype
+set runtimepath+=~/.vim/local/theme_currentterm
+set runtimepath+=~/.vim/local/text_objects
+set runtimepath+=~/.vim/local/operators
+set runtimepath+=~/.vim/local/motions
+set runtimepath+=~/.vim/local/ins_completion
+set runtimepath+=~/.vim/local/wiserange
+set runtimepath+=~/.vim/local/preview
+set runtimepath+=~/.vim/local/dictionary
+set runtimepath+=~/.vim/local/digraph
+set runtimepath+=~/.vim/local/highlight
+set runtimepath+=~/.vim/local/snippet
+set runtimepath+=~/.vim/local/grep_buffers
+set runtimepath+=~/.vim/local/sign_marks
+set runtimepath+=~/.vim/local/diffdirs
+set runtimepath+=~/.vim/local/diffsigsn
+set runtimepath+=~/.vim/local/make
+set runtimepath+=~/.vim/local/run
+set runtimepath+=~/.vim/local/quickfixsigns
+set runtimepath+=~/.vim/local/switchheader
+set runtimepath+=~/.vim/local/parainclude
+set runtimepath+=~/.vim/local/get_headers
+set runtimepath+=~/.vim/local/skybison
+set runtimepath+=~/.vim/local/handle_directory
+set runtimepath+=~/.vim/local/paratags
+set runtimepath+=~/.vim/local/session
+set runtimepath+=~/.vim/local/line
+set runtimepath+=~/.vim/local/tagcallgraph
 
-" set rtp+=~/.vim/remote_bundle/vim-fugitive
-"set rtp+=~/.vim/remote_bundle/multicursor
-"set rtp+=~/.vim/remote_bundle/skybison
-"set rtp+=~/.vim/remote_bundle/textobjectify
+" scripts bundled with vim
+set runtimepath+=$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after
