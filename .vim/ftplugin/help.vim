@@ -9,5 +9,5 @@ setlocal define=\\v\\*\\zs\\ze\\k*\\*
 
 " use default ctrl-]
 if maparg("\<c-]>", "n") != ""
-	nunmap <buffer> <c-]>
+	nnoremap <buffer> <c-]> <c-]>
 endif
