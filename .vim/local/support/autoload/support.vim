@@ -38,11 +38,11 @@ endfunction
 " -----------------------------------------------------------------------------
 " custom location stack
 
-function! support#push_stack(name)
-	if a:name == ''
+function! support#push_stack(...)
+	if a:0 == 0
 		let name = 'default'
 	else
-		let name = a:name
+		let name = a:1
 	endif
 	if !exists("g:stack")
 		let g:stack = {}
@@ -53,11 +53,11 @@ function! support#push_stack(name)
 	let g:stack[name] += [[expand("%"), bufnr("%"), getcurpos()]]
 endfunction
 
-function! support#pop_stack(name)
-	if a:name == ''
+function! support#pop_stack(...)
+	if a:0 == 0
 		let name = 'default'
 	else
-		let name = a:name
+		let name = a:1
 	endif
 	if !exists("g:stack") || !has_key(g:stack, name) || len(g:stack[name]) == 0
 		redraw
