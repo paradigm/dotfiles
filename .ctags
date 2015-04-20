@@ -1,5 +1,8 @@
 --c-kinds=+p
 
+--langmap=sh:+.bashrc+.zshrc
+--langmap=vim:+.vimperatorrc+.pentadactylrc
+
 --langdef=latex
 --langmap=latex:.tex,latex:.sty
 --regex-latex=/\\label\{([^}]*)\}/\1/l,label/
@@ -40,3 +43,5 @@
 --langdef=asm68k
 --langmap=asm68k:.x68
 --regex-asm68k=/^([^ \t*:]+)/\1/l,label/
+
+
