@@ -6,9 +6,9 @@ cnoremap <c-l>     <c-\>eskybison#cmdline_switch()<cr><cr>
 autocmd CmdwinEnter * let b:cmdline_window_running = 1
 
 " Settings for skybison window
-autocmd Filetype skybison inoremap <buffer> <silent> <c-c> <esc>:call skybison#quit()<cr>
-autocmd Filetype skybison nnoremap <buffer> <silent> <c-c> :call skybison#quit()<cr>
-autocmd Filetype skybison nnoremap <buffer> <silent> <esc> :call skybison#quit()<cr>
+autocmd User skybison_setup inoremap <buffer> <silent> <c-c> <esc>:call skybison#quit()<cr>
+autocmd User skybison_setup nnoremap <buffer> <silent> <c-c> :call skybison#quit()<cr>
+autocmd User skybison_setup nnoremap <buffer> <silent> <esc> :call skybison#quit()<cr>
 
 " General SkyBison prompt
 nnoremap <space>; :<c-u>call skybison#run()<cr>
@@ -23,10 +23,17 @@ nnoremap <space>d :<c-u>call skybison#run("bd ")<cr>
 nnoremap <space>e  :<c-u>call skybison#run("e ")<cr>
 " SkyBison prompt to load a session
 nnoremap <space>t :<c-u>call skybison#run("SessionLoad ", 2)<cr>
-" SkyBison prompt to load a session
-nnoremap <space>f :<c-u>PTGroup favorites \| call skybison#run('tag ', 2)<cr>
 " SkyBison prompt to jump to a line
 nnoremap <space>? :<c-u>call skybison#run("Line ", 2)<cr>
+" SkyBison prompt from favorites tags
+nnoremap <space>f :<c-u>call SkyBisonParaTagsFavorites()<cr>
+function! SkyBisonParaTagsFavorites()
+	augroup SkyBisonParaTagsFavorites
+	autocmd User skybison_end PTPrevious | autocmd! SkyBisonParaTagsFavorites
+	augroup END
+	PTGroup favorites
+	call skybison#run('tag ', 2)
+endfunction
 
 " A normal-mode <cr> mapping breaks some special vim windows, so undo the mapping there
 autocmd CmdwinEnter * nnoremap <buffer> <cr> <cr>

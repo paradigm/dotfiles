@@ -57,10 +57,14 @@ function! skybison#run(...)
 	" do setup
 	noautocmd call s:setup_vars()
 	noautocmd call s:setup_windows(s:init_cmdline)
-	set filetype=skybison " trigger user settings
+	set filetype=skybison
 	set syntax=vim " use vim syntax highlighting
 	noautocmd call s:setup_maps()
 	noautocmd call s:setup_autocmds()
+
+	" user settings
+	silent doautocmd User skybison_setup
+
 	" start insert on bottom-most line
 	call cursor(line("$"), 1)
 	startinsert!
@@ -357,6 +361,7 @@ function! s:quit(...)
 			execute a:1
 		endif
 	endif
+	silent doautocmd User skybison_end
 endfunction
 
 function! <sid>select(n)

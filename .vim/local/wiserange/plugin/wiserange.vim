@@ -5,9 +5,9 @@
 " Note: accepts but ignores range provided in front of it, as vim only passes
 " along lines (making it useless)
 
-command -range -nargs=+ CW call wiserange#char(<f-args>)
-command -range -nargs=+ LW call wiserange#line(<f-args>)
-command -range -nargs=+ BW call wiserange#block(<f-args>)
+command! -range -nargs=+ CW call wiserange#char(<f-args>)
+command! -range -nargs=+ LW call wiserange#line(<f-args>)
+command! -range -nargs=+ BW call wiserange#block(<f-args>)
 
 if maparg(":", "x") ==# ""
 	xnoremap <expr> : ":" . wiserange#prepend_cmdline()

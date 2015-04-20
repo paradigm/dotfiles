@@ -8,4 +8,6 @@ command! -bar SyntaxGroup echo map(synstack(line('.'), col('.')), 'synIDattr(v:v
 
 command! -bar Scratch new|setlocal buftype=nofile bufhidden=delete noswapfile
 
-command -bar -nargs=+ YankRedir redir @" | execute "silent! " . <q-args> | redir END
+command! -bar -nargs=+ YankRedir redir @" | execute "silent! " . <q-args> | redir END
+
+command! -nargs=+ Profile execute 'profile start ' . split("<args>")[0] . '|profile file *|profile func *|' . join(split("<args>")[1:], ' ')  | noautocmd qa!

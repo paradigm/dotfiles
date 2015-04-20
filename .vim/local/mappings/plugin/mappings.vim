@@ -12,7 +12,7 @@ nnoremap <space>q :q<cr>
 nnoremap <space>Q :split\|bnext\|wincmd w\|bd<cr>
 nnoremap <space><c-q> :split\|bnext\|wincmd w\|bd!<cr>
 " Re-source the .vimrc
-nnoremap <space>s :so $MYVIMRC<cr>
+nnoremap <space>s :so $MYVIMRC \| runtime! plugin/**/*.vim<cr>
 " Faster mapping for spelling correction
 nnoremap <space>z 1z=
 " close the preview window

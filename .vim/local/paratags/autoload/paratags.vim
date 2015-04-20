@@ -1,10 +1,19 @@
 " -----------------------------------------------------------------------------
-" default to the first group
-
-let s:i = 0
-
-" -----------------------------------------------------------------------------
 " general paratags functions
+
+function! s:current(...)
+	if a:0 == 0
+		let name = g:paratags_group
+	else
+		let name = a:1
+	endif
+	for group in g:paratags_groups
+		if group['name'] == name
+			return group
+		endif
+	endfor
+	return {}
+endfunction
 
 function! paratags#cmdline_completion(A,L,P)
 	let regex = support#glob2regex(a:A)
@@ -19,43 +28,43 @@ endfunction
 
 function! paratags#status()
 	redraw
-	echo "ParaTags group=" . g:paratags_groups[s:i]['name'] . ' auto=' . g:paratags_groups[s:i]['auto']
+	echo "ParaTags group=" . g:paratags_group . ' auto=' . s:current()['auto']
 endfunction
 
 function! paratags#group(name)
-	let found = 0
-	for i in range(0, len(g:paratags_groups)-1)
-		if g:paratags_groups[i]['name'] == a:name
-			let s:i = i
-			let found = 1
-			break
-		endif
-	endfor
-	if !found
+	if s:current(a:name) == {}
 		echohl ErrorMsg
 		echo "ParaTags: no such group \"" . a:name . "\""
 		echohl Normal
 		return
 	endif
-	call function(g:paratags_groups[s:i]['tagfile_func'])()
+	let g:paratags_previous = g:paratags_group
+	let g:paratags_group = a:name
+	call function(s:current()['tagfile_func'])()
 	call paratags#status()
 endfunction
 
+function! paratags#previous()
+	if exists('g:paratags_previous')
+		call paratags#group(g:paratags_previous)
+	endif
+endfunction
+
 function! paratags#auto()
-	if g:paratags_groups[s:i]['auto']
+	if s:current()['auto']
 		call paratags#refresh()
 	endif
 endfunction
 
 function! paratags#refresh()
 	redraw
-	echo 'ParaTags refreshing ' . g:paratags_groups[s:i]['name'] . '... '
-	call function(g:paratags_groups[s:i]['refresh_func'])()
+	echo 'ParaTags refreshing ' . s:current()['name'] . '... '
+	call function(s:current()['refresh_func'])()
 	echon "done"
 endfunction
 
 function! paratags#toggleauto()
-	let g:paratags_groups[s:i]['auto'] = ! g:paratags_groups[s:i]['auto']
+	let s:current()['auto'] = ! s:current['auto']
 	call paratags#status()
 endfunction
 
@@ -149,6 +158,7 @@ function! paratags#library_tagfile()
 endfunction
 
 function! paratags#library_refresh()
+	call paratags#library_tagfile()
 	let paths = filter(split(&path, '\\\@<!,'), 'v:val != "" && v:val[0] != "."')
 	if len(paths) == 0
 		echoerr "ParaTags: no valid entries in 'path'"
@@ -163,7 +173,7 @@ endfunction
 
 function! paratags#favorites_tagfile()
 	if !exists("s:favorites_tagfile")
-		let s:favorites_tagfile = $HOME . '/.vim/favorites'
+		let s:favorites_tagfile = $HOME . '/.vim/tags/favorites'
 	endif
 	setlocal tags=
 	execute 'set tags=' . s:favorites_tagfile
@@ -174,15 +184,15 @@ function! paratags#favorites_refresh()
 endfunction
 
 function! paratags#favorites_add(...)
+	call paratags#favorites_tagfile()
 	if a:0 == 0
 		let name = input("Favorite Name: ")
 	else
 		let name = a:1
 	endif
 
-	let file = $HOME . '/.vim/favorites'
-	if filereadable(file)
-		let contents = readfile(file)
+	if filereadable(s:favorites_tagfile)
+		let contents = readfile(s:favorites_tagfile)
 	else
 		let contents = []
 	endif
@@ -192,8 +202,8 @@ function! paratags#favorites_add(...)
 		return
 	endif
 	
-	if filereadable(file)
-		let contents = readfile(file)
+	if filereadable(s:favorites_tagfile)
+		let contents = readfile(s:favorites_tagfile)
 	else
 		let contents = []
 	endif
@@ -203,7 +213,37 @@ function! paratags#favorites_add(...)
 				\ expand("%:p") . "\t" .
 				\ 'normal! ' . line(".") . 'G' . virtcol('.') . '|'
 				\ ]
-	call writefile(contents, file)
+	call writefile(contents, s:favorites_tagfile)
+endfunction
+
+" -----------------------------------------------------------------------------
+" cdu_error
+
+function! paratags#cdu_error_tagfile()
+	if !exists("s:cdu_error_tagfile")
+		let s:cdu_error_tagfile = $HOME . '/.vim/tags/cdu_error'
+	endif
+	setlocal tags=
+	execute 'set tags=' . s:cdu_error_tagfile
+endfunction
+
+function! paratags#cdu_error_refresh()
+	call paratags#cdu_error_tagfile()
+	let msgfile = $HOME . '/workspace/trunk/ndmunix/misc/msgfile.cfg'
+	let lnum=0
+	let contents = []
+	for line in readfile(msgfile)
+		let lnum+=1
+		if line =~ '\v^[^: \\].*:\\$'
+			let name = split(line,':')[0]
+			let contents += [
+						\ name . "\t" .
+						\ msgfile . "\t" .
+						\ lnum
+						\ ]
+		endif
+	endfor
+	call writefile(contents, s:cdu_error_tagfile)
 endfunction
 
 " -----------------------------------------------------------------------------

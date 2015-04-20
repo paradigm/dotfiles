@@ -32,6 +32,7 @@ set runtimepath+=~/.vim/local/theme_currentterm
 set runtimepath+=~/.vim/local/text_objects
 set runtimepath+=~/.vim/local/operators
 set runtimepath+=~/.vim/local/motions
+set runtimepath+=~/.vim/local/registers
 set runtimepath+=~/.vim/local/ins_completion
 set runtimepath+=~/.vim/local/wiserange
 set runtimepath+=~/.vim/local/preview
@@ -71,7 +72,6 @@ set runtimepath+=~/.vim/remote/vim-fugitive
 set runtimepath+=~/.vim/remote/vim-zsh-completion
 set runtimepath+=~/.vim/remote/visincr
 set runtimepath+=~/.vim/remote/wmgraphviz.vim
-
 
 " scripts bundled with vim
 set runtimepath+=$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after
