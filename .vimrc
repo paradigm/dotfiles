@@ -56,5 +56,22 @@ set runtimepath+=~/.vim/local/session
 set runtimepath+=~/.vim/local/line
 set runtimepath+=~/.vim/local/tagcallgraph
 
+set runtimepath+=~/.vim/remote/AnsiEsc.vim
+set runtimepath+=~/.vim/remote/clang_complete
+set runtimepath+=~/.vim/remote/jedi-vim
+set runtimepath+=~/.vim/remote/languagetool
+set runtimepath+=~/.vim/remote/latexbox
+set runtimepath+=~/.vim/remote/multicursor
+set runtimepath+=~/.vim/remote/rainbow
+set runtimepath+=~/.vim/remote/SimpylFold
+set runtimepath+=~/.vim/remote/skybison
+set runtimepath+=~/.vim/remote/tabular
+set runtimepath+=~/.vim/remote/textobjectify
+set runtimepath+=~/.vim/remote/vim-fugitive
+set runtimepath+=~/.vim/remote/vim-zsh-completion
+set runtimepath+=~/.vim/remote/visincr
+set runtimepath+=~/.vim/remote/wmgraphviz.vim
+
+
 " scripts bundled with vim
 set runtimepath+=$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after
