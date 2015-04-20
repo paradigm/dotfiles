@@ -37,7 +37,7 @@ if exists(":Pyimport")
 	" jump to assignment
 	nnoremap <buffer> gd :call jedi#goto_assignments()<cr>
 	" pop tag stack
-	nnoremap <buffer> <c-t> :call support#pop_stack<cr>
+	nnoremap <buffer> <c-t> :call support#pop_stack()<cr>
 	" preview declaration
 	nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
 	" preview declaration line
