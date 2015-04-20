@@ -1,7 +1,9 @@
 --c-kinds=+p
 
---langmap=sh:+.bashrc+.zshrc
---langmap=vim:+.vimperatorrc+.pentadactylrc
+--langmap=sh:+.bashrc
+--langmap=sh:+.zshrc
+--langmap=vim:+.vimperatorrc
+--langmap=vim:+.pentadactylrc
 
 --langdef=latex
 --langmap=latex:.tex,latex:.sty
