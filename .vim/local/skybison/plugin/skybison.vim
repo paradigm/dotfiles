@@ -20,7 +20,7 @@ nnoremap <c-\>     :call skybison#run("Djump ")<cr>
 " SkyBison prompt to delete buffer
 nnoremap <space>d :<c-u>call skybison#run("bd ")<cr>
 " SkyBison prompt to edit a file
-nnoremap <space>e  :<c-u>call skybison#run("e ")<cr>
+nnoremap <space>e  :<c-u>call skybison#run("E ")<cr>
 " SkyBison prompt to load a session
 nnoremap <space>t :<c-u>call skybison#run("SessionLoad ", 2)<cr>
 " SkyBison prompt to jump to a line

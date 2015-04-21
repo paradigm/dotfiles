@@ -55,6 +55,7 @@ set runtimepath+=~/.vim/local/handle_directory
 set runtimepath+=~/.vim/local/paratags
 set runtimepath+=~/.vim/local/session
 set runtimepath+=~/.vim/local/line
+set runtimepath+=~/.vim/local/edit
 set runtimepath+=~/.vim/local/tagcallgraph
 
 set runtimepath+=~/.vim/remote/AnsiEsc.vim

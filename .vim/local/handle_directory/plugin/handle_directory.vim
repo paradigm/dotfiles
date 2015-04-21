@@ -1,4 +1,4 @@
-let g:handle_directory_cmd = 'bd | call skybison#run("e " . g:handle_directory_arg . "/")'
+let g:handle_directory_cmd = 'bd | call skybison#run("E " . g:handle_directory_arg . "/")'
 
 augroup HandleDirectory
 	autocmd BufEnter * call s:HandleDirectory(expand("<amatch>"))
