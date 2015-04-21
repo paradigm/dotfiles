@@ -4,7 +4,6 @@ let g:paratags_groups = [
 			\ {'name': 'git',       'keys': '<c-p>g', 'auto': 0, 'refresh_func': 'paratags#git_refresh',       'tagfile_func': 'paratags#git_tagfile'},
 			\ {'name': 'library',   'keys': '<c-p>l', 'auto': 0, 'refresh_func': 'paratags#library_refresh',   'tagfile_func': 'paratags#library_tagfile'},
 			\ {'name': 'favorites', 'keys': '<c-p>f', 'auto': 0, 'refresh_func': 'paratags#favorites_refresh', 'tagfile_func': 'paratags#favorites_tagfile'},
-			\ {'name': 'cdu_error', 'keys': '<c-p>e', 'auto': 0, 'refresh_func': 'paratags#cdu_error_refresh', 'tagfile_func': 'paratags#cdu_error_tagfile'},
 			\ ]
 let g:paratags_group = 'buffers'
 

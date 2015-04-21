@@ -217,36 +217,6 @@ function! paratags#favorites_add(...)
 endfunction
 
 " -----------------------------------------------------------------------------
-" cdu_error
-
-function! paratags#cdu_error_tagfile()
-	if !exists("s:cdu_error_tagfile")
-		let s:cdu_error_tagfile = $HOME . '/.vim/tags/cdu_error'
-	endif
-	setlocal tags=
-	execute 'set tags=' . s:cdu_error_tagfile
-endfunction
-
-function! paratags#cdu_error_refresh()
-	call paratags#cdu_error_tagfile()
-	let msgfile = $HOME . '/workspace/trunk/ndmunix/misc/msgfile.cfg'
-	let lnum=0
-	let contents = []
-	for line in readfile(msgfile)
-		let lnum+=1
-		if line =~ '\v^[^: \\].*:\\$'
-			let name = split(line,':')[0]
-			let contents += [
-						\ name . "\t" .
-						\ msgfile . "\t" .
-						\ lnum
-						\ ]
-		endif
-	endfor
-	call writefile(contents, s:cdu_error_tagfile)
-endfunction
-
-" -----------------------------------------------------------------------------
 " map vim's filetype to corresponding ctag's filetype
 
 function! s:GetCtagsFiletype(vimfiletype)
