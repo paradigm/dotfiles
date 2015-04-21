@@ -12,7 +12,7 @@ function! edit#run(bang, ...)
 				endif
 			endfor
 		else
-			let files += [expand(entry)]
+			let files += [expand(arg)]
 		endif
 	endfor
 	for i in range(0, (len(files) > g:edit_max ? g:edit_max : len(files))-1)
