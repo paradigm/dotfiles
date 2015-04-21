@@ -1,45 +1,60 @@
 [submodule ".vim/remote/skybison"]
 	path = .vim/remote/skybison
-	url = git@github.com:paradigm/SkyBison.git
+	url = https://github.com/paradigm/SkyBison.git
+	ignore = dirty
 [submodule ".vim/remote/languagetool"]
 	path = .vim/remote/languagetool
-	url = git://github.com/vim-scripts/LanguageTool.git
+	url = https://github.com/vim-scripts/LanguageTool.git
+	ignore = dirty
 [submodule ".vim/remote/latexbox"]
 	path = .vim/remote/latexbox
-	url = git://github.com/LaTeX-Box-Team/LaTeX-Box.git
+	url = https://github.com/LaTeX-Box-Team/LaTeX-Box.git
+	ignore = dirty
 [submodule ".vim/remote/tabular"]
 	path = .vim/remote/tabular
-	url = git://github.com/godlygeek/tabular.git
+	url = https://github.com/godlygeek/tabular.git
+	ignore = dirty
 [submodule ".vim/remote/multicursor"]
 	path = .vim/remote/multicursor
-	url = git@github.com:paradigm/vim-multicursor.git
+	url = https://github.com/paradigm/vim-multicursor.git
+	ignore = dirty
 [submodule ".vim/remote/textobjectify"]
 	path = .vim/remote/textobjectify
-	url = git@github.com:paradigm/TextObjectify.git
+	url = https://github.com/paradigm/TextObjectify.git
+	ignore = dirty
 [submodule ".vim/remote/jedi-vim"]
 	path = .vim/remote/jedi-vim
-	url = git://github.com/davidhalter/jedi-vim.git
+	url = https://github.com/davidhalter/jedi-vim.git
+	ignore = dirty
 [submodule ".vim/remote/vim-fugitive"]
 	path = .vim/remote/vim-fugitive
-	url = git://github.com/tpope/vim-fugitive.git
+	url = https://github.com/tpope/vim-fugitive.git
+	ignore = dirty
 [submodule ".vim/remote/SimpylFold"]
 	path = .vim/remote/SimpylFold
 	url = https://github.com/tmhedberg/SimpylFold
+	ignore = dirty
 [submodule ".vim/remote/AnsiEsc.vim"]
 	path = .vim/remote/AnsiEsc.vim
 	url = https://github.com/vim-scripts/AnsiEsc.vim.git
+	ignore = dirty
 [submodule ".vim/remote/visincr"]
 	path = .vim/remote/visincr
 	url = https://github.com/vim-scripts/VisIncr.git
+	ignore = dirty
 [submodule ".vim/remote/wmgraphviz.vim"]
 	path = .vim/remote/wmgraphviz.vim
 	url = https://github.com/wannesm/wmgraphviz.vim.git
+	ignore = dirty
 [submodule ".vim/remote/clang_complete-src"]
 	path = .vim/remote/clang_complete-src
 	url = https://github.com/Rip-Rip/clang_complete.git
+	ignore = dirty
 [submodule ".vim/remote/vim-zsh-completion"]
 	path = .vim/remote/vim-zsh-completion
 	url = https://github.com/Valodim/vim-zsh-completion.git
+	ignore = dirty
 [submodule ".vim/remote/rainbow"]
 	path = .vim/remote/rainbow
 	url = https://github.com/luochen1990/rainbow
+	ignore = dirty
