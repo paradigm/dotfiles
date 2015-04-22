@@ -29,7 +29,7 @@ setlocal path+=../include/
 " - Fails with C++:
 "   - False negative on Constructors and Destructors due to lack of return value
 "   - False positive on initialization with parens, e.g. `int x(5);`
-set define=\\v(^\|}\|;)\\s*(<else>)@!(\\h\\w*(\\s+[*&])?\\_s+)+\\zs\\h\\w*\\ze\\_s*\\(
+set define=\\v(^\|}\|;)\\s*(<else>)@!(\\h\\w*(\\s*[*&])?\\_s+)+\\zs\\h\\w*\\ze\\_s*\\(
 "             |           ||        ||                        ||             |       \- opening ( for args
 "             |           ||        ||                        |\-------------+- func name
 "             |           ||        |\------------------------+- return value, qualifiers (e.g. const int)
