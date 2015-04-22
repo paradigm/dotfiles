@@ -3,7 +3,7 @@
 
 function! text_objects#add(keys, i_cmd, a_cmd)
 	execute 'xnoremap <silent> i' . a:keys . ' :<c-u>' . a:i_cmd . '<cr>'
-	execute 'onoremap <silent> i' . a:keys . ' :normal vi' . a:keys '<cr>'
+	execute 'onoremap <silent> i' . a:keys . ' :normal vi' . a:keys . '<cr>'
 	execute 'xnoremap <silent> a' . a:keys . ' :<c-u>' . a:a_cmd . '<cr>'
 	execute 'onoremap <silent> a' . a:keys . ' :normal va' . a:keys . '<cr>'
 endfunction
