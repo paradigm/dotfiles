@@ -20,7 +20,25 @@ setlocal path+=../include/
 "
 " Due to newline matching, does not work with built-in 'define' functionality;
 " requires specialized versions.
-setlocal define=\\v(^\|;)\\s*([a-zA-Z_*&]+\\_s+)+\\zs\\ze[a-zA-Z_*&]+\\_s*\\(\\_[^)]*\\)\\_[^;]*(\\{\|;)
+"
+" Fails in many cases:
+" - False negatives on anything comments or preprocessor part-way through
+" - False positives on macros
+" - False positives if wrapped in comment or string
+" - False negatives on K&R C style, requires ANSI
+" - Fails with C++:
+"   - False negative on Constructors and Destructors due to lack of return value
+"   - False positive on initialization with parens, e.g. `int x(5);`
+set define=\\v(^\|}\|;)\\s*(<else>)@!(\\h\\w*(\\s+[*&])?\\_s+)+\\zs\\h\\w*\\ze\\_s*\\(
+"             |           ||        ||                        ||             |       \- opening ( for args
+"             |           ||        ||                        |\-------------+- func name
+"             |           ||        |\------------------------+- return value, qualifiers (e.g. const int)
+"             |           |\+-------+- do not consider "else" a return value / qualifier, avoids recognizing "else if (" as function
+"             \--------+- possible preceding situation.
+"                         Using start-of-line rather than more correct
+"                         start-of-buffer to avoid having to parse out
+"                         #include's and comments common up top.
+
 
 " Regex to match #include macros.
 setlocal include&vim
