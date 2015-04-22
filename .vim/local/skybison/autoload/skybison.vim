@@ -311,7 +311,7 @@ function! s:setup_autocmds()
 		" fix window sizes on resize
 		autocmd VimResized * noautocmd call s:fix_win_height()
 		" update comp window
-		autocmd TextChanged,TextChangedI,CursorMoved,CursorMovedI * call s:update_comp(getline("."))
+		autocmd TextChanged,TextChangedI * call s:update_comp(getline("."))
 	augroup END
 endfunction
 
@@ -447,6 +447,7 @@ function! s:update_comp(cmdline)
 
 	" autoselect
 	if len(s:results) == 1 && s:count > 0 && len(split(a:cmdline,'\\\@<!\s\+')) == s:count
+		" TODO: remove feedkeys()
 		call feedkeys("\<cr>")
 	endif
 endfunction
