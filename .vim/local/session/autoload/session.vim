@@ -57,6 +57,9 @@ function! session#save(bang, ...)
 		autocmd!
 		autocmd VimLeavePre * if bufname("%") != "" | call session#save(1, g:session_name) | endif
 	augroup END
+
+	redraw
+	echo "Session: saved " . g:session_name
 endfunction
 
 function! session#load(...)
@@ -91,4 +94,5 @@ function! session#load(...)
 	augroup END
 
 	redraw
+	echo "Session: loaded " . name
 endfunction
