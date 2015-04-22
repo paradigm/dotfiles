@@ -13,6 +13,10 @@ set backspace=2
 set foldmethod=syntax
 " Do not fold anything by default.
 set foldlevelstart=999
+" Do not automatically open folds after a motion
+set foldopen=
+" Do not automatically close folds after a motion (default)
+set foldclose=
 " Allow modified/unsaved buffers in the background.
 set hidden
 " Highlight search results.
@@ -61,6 +65,9 @@ set timeout ttimeoutlen=10 timeoutlen=500
 set formatoptions+=j
 " Save almost everything when executing a :mksession
 set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize,globals,localoptions,tabpages
+" Characters to fill empty space in status lines.  Helps differentiate between
+" windows without utilizing color differences.
+set fillchars+=stl:=,stlnc:-
 " store swap in ~/.vim/swap
 if !isdirectory($HOME . "/.vim/swap")
 	call mkdir($HOME . "/.vim/swap", "p", 0700)
