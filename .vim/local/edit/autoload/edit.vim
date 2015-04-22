@@ -3,24 +3,39 @@ function! edit#run(bang, ...)
 		execute 'e' . a:bang
 		return
 	endif
-	let files = []
+
+	" expand glob in arguments
+	let args = []
 	for arg in a:000
+		let args += split(glob(arg), "\n")
+	endfor
+
+	" recurse down into directories
+	let files = []
+	for arg in args
 		if isdirectory(expand(arg))
-			for entry in split(glob(expand(arg) . '/**/*'), "\n")
-				if !isdirectory(expand(entry))
-					let files += [expand(entry)]
-				endif
-			endfor
+			let files += filter(split(glob(expand(arg) . '/**/*'), "\n"), '!isdirectory(v:val)')
 		else
 			let files += [expand(arg)]
 		endif
 	endfor
-	for i in range(0, (len(files) > g:edit_max ? g:edit_max : len(files))-1)
-		execute 'e' . a:bang . ' ' . files[i]
-	endfor
+
+	" :e first item, :badd the rest
+	let max = len(files) > g:edit_max ? g:edit_max : len(files)
+	if len(files) > 0
+		execute 'e ' . a:bang . ' ' . files[0]
+		for i in range(1, max-1)
+			execute 'badd ' . files[i]
+		endfor
+	endif
+
+	" warn if we found more than g:edit_max files
 	if len(files) > g:edit_max
+		redraw
 		echohl ErrorMsg
 		echo "E: hit max"
 		echohl Normal
 	endif
+
+	let files = []
 endfunction
