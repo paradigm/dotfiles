@@ -39,13 +39,11 @@ nnoremap ]A :last<cr>
 " next/previous/first/last/first-include/last-include 'define' match
 nnoremap [e :call support#push_jumplist()<cr>:call search(&define, 'bW')<cr>
 nnoremap ]e :call support#push_jumplist()<cr>:call search(&define, 'W')<cr>
+nnoremap [E :call support#push_jumplist()<cr>:call next_previous#do_while('call search(&define, "bW")', 'getcurpos()', 'bufnr("%")')<cr>
+nnoremap ]E :call support#push_jumplist()<cr>:call next_previous#do_while('call search(&define, "W")', 'getcurpos()', 'bufnr("%")')<cr>
 " TODO
-" nnoremap [E :call support#push_jumplist()<cr>:call whilepos#change(":call search(&define, 'Wb')\<lt>cr>",1,1,1,1)<cr>
-" nnoremap ]E :call support#push_jumplist()<cr>:call whilepos#change(":call search(&define, 'W')\<lt>cr>",1,1,1,1)<cr>
 " nnoremap [<c-e> :call parainclude#djump('.',1)<cr>
 " nnoremap ]<c-e> :call parainclude#djump('.','$')<cr>
 " next/previous file from jump history
 nnoremap [f :call next_previous#do_while("normal! \<lt>c-o>", 'getcurpos()', 'bufnr("%")')<cr>
-" <esc> is used to indicate the end of the whitespace separation after a
-" :normal in the function call
 nnoremap ]f :call next_previous#do_while("normal! 1\<lt>c-i>", 'getcurpos()', 'bufnr("%")')<cr>
