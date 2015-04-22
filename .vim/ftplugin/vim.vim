@@ -36,9 +36,9 @@ inoremap <buffer> <c-@> <c-x><c-v>
 " Remove the "=" and "," characters from consideration for a file path when
 " using things such as `gf`.  This is useful to follow file paths provided to
 " Vim variables and settings.
-set isfname -==
-set isfname -=,
+setlocal isfname -==
+setlocal isfname -=,
 
 " Include "#" and ":" in identifiers, as its used in some vim function names
-set isident +=#
-set isident +=:
+setlocal isident +=#
+setlocal isident +=:
