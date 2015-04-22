@@ -97,10 +97,13 @@ function! operators#toggle_comment(type)
 	if c ==# "/**/"
 		let c = "//"
 	endif
+	if c =~ ' $'
+		let c = substitute(c, '\v +$', '', '')
+	endif
 
 	let toggle_on = 0
 	for linenr in range(line(quotestart), line(quoteend))
-		if getline(linenr) !~ "^" . c . " "
+		if getline(linenr) !~ "^" . c
 			let toggle_on = 1
 			break
 		endif
