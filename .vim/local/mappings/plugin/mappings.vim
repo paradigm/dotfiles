@@ -12,7 +12,7 @@ nnoremap <space>q :q<cr>
 nnoremap <space>Q :split\|bnext\|wincmd w\|bd<cr>
 nnoremap <space><c-q> :split\|bnext\|wincmd w\|bd!<cr>
 " Re-source the .vimrc
-nnoremap <space>s :so $MYVIMRC \| runtime! plugin/**/*.vim<cr>
+nnoremap <space>s :so $MYVIMRC \| runtime! plugin/**/*.vim \| doautocmd Filetype<cr>
 " Faster mapping for spelling correction
 nnoremap <space>z 1z=
 " close the preview window
@@ -77,5 +77,10 @@ xnoremap # "*y<Esc>?<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<
 xnoremap / "*y<Esc>q/i<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr><esc>0
 " Prepare substitution based on visually-selected area.
 xnoremap ? "*y<Esc>q:i%s/<c-r>=substitute(escape(@*, '\/.*$^~[]'), "\n", '\\n', "g")<cr>/
+
+" ]p and ]P paste after/before and adjust current indent
+" add new mapping to paste after/before and use = to 'smart' adjust mapping
+nnoremap [p p`[=`]
+nnoremap [P P`[=`]
 
 nnoremap <space>S :Scratch<cr>
