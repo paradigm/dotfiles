@@ -217,6 +217,22 @@ function! paratags#favorites_add(...)
 endfunction
 
 " -----------------------------------------------------------------------------
+" help
+
+function! paratags#help_tagfile()
+	execute 'set tags+=' . join(map(split(&rtp, ','), 'v:val . "/doc/tags"'), ',')
+endfunction
+
+function! paratags#help_refresh()
+	for rtp in split(&rtp, ',')
+		if isdirectory(rtp . '/doc')
+			execute 'silent! helptags ' . rtp . '/doc'
+		endif
+	endfor
+endfunction
+
+
+" -----------------------------------------------------------------------------
 " map vim's filetype to corresponding ctag's filetype
 
 function! s:GetCtagsFiletype(vimfiletype)

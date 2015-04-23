@@ -22,15 +22,15 @@ nnoremap ]q :cnext<cr>
 nnoremap [q :cprevious<cr>
 nnoremap [Q :cfirst<cr>
 nnoremap ]Q :clast<cr>
-nnoremap [<c-q> :call next_previous#do_while('silent! cprev', 'getcurpos()', 'bufnr("%")') \| cc<cr>
-nnoremap ]<c-q> :call next_previous#do_while('silent! cnext', 'getcurpos()', 'bufnr("%")') \| cc<cr>
+nnoremap ]<c-q> :cnfile<cr>
+nnoremap [<c-q> :cpfile<cr>
 " next/previous/first/last location list item
 nnoremap ]l :lnext<cr>
 nnoremap [l :lprevious<cr>
 nnoremap [L :lfirst<cr>
 nnoremap ]L :llast<cr>
-nnoremap [<c-l> :call next_previous#do_while('silent! lprev', 'getcurpos()', 'bufnr("%")') \| ll<cr>
-nnoremap ]<c-l> :call next_previous#do_while('silent! lnext', 'getcurpos()', 'bufnr("%")') \| ll<cr>
+nnoremap ]<c-l> :lnfile<cr>
+nnoremap [<c-l> :lpfile<cr>
 " next/previous/first/last argument list item
 nnoremap ]a :next<cr>
 nnoremap [a :previous<cr>

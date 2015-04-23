@@ -62,7 +62,8 @@ function! s:get_matches(pattern, listtype, skipcomments)
 	let include = &include
 
 	" create scratch buffer
-	tabnew|setlocal buftype=nofile bufhidden=delete noswapfile
+	tabnew
+	call support#scratch()
 
 	" set required buffer-local settings for s:in_comment()
 	let &l:filetype = filetype

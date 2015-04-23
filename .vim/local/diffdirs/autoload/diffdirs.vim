@@ -8,7 +8,8 @@ function! diffdirs#run(...)
 		execute "lcd " . s:cwd
 		execute "lcd " . dir
 		wincmd v
-		enew|setlocal buftype=nofile bufhidden=delete noswapfile
+		enew
+		call support#scratch()
 		set filetype=diffdirs
 		r!find . -type f | xargs sha1sum | awk '{print $2" "$1}'
 		%sort

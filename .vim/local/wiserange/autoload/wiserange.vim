@@ -156,7 +156,7 @@ function! s:main(wise, cmd)
 
 	" paste into temporary buffer
 	new
-	setlocal buftype=nofile bufhidden=delete noswapfile
+	call support#scratch()
 	put
 	1d _
 

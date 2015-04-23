@@ -356,8 +356,8 @@ function! s:quit(...)
 		execute s:init_winnr . "wincmd w"
 		let s:running = 0
 		if a:0 > 0
-			redraw
 			call histadd(':', a:1)
+			redraw!
 			execute a:1
 		endif
 	endif

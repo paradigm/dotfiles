@@ -12,7 +12,8 @@ endfunction
 
 function! support#retab(line)
 	" make scratch buffer to apply retab to
-	new|setlocal buftype=nofile bufhidden=delete noswapfile
+	new
+	call support#scratch()
 	setlocal expandtab
 
 	" retab
@@ -101,4 +102,14 @@ endfunction
 
 function! support#cmdline_arg(string)
 	return substitute(escape(a:string, '\/.*$^~[]'), "\n", '\\n', "g")
+endfunction
+
+" -----------------------------------------------------------------------------
+" turn current buffer into scratch buffer
+function! support#scratch()
+	setlocal nobuflisted
+	setlocal buftype=nofile
+	setlocal bufhidden=delete
+	setlocal nobuflisted
+	setlocal noswapfile
 endfunction

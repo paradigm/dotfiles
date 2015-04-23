@@ -5,10 +5,7 @@ function! preview#shell(cmd, bang)
 	else
 		execute "pedit! " . tempname()
 		wincmd P
-		setlocal buftype=nofile
-		setlocal bufhidden=delete
-		setlocal nobuflisted
-		setlocal noswapfile
+		call support#scratch()
 
 		let filename = substitute(a:cmd, ' ', '_', 'g')
 		let filename = substitute(filename, '[|"]', '\\&', 'g')
@@ -73,10 +70,7 @@ function! preview#cmd(cmd, bang)
 	else
 		execute "pedit! " . tempname()
 		wincmd P
-		setlocal buftype=nofile
-		setlocal bufhidden=delete
-		setlocal nobuflisted
-		setlocal noswapfile
+		call support#scratch()
 
 		call append(1, split(@", "\n"))
 		1d _

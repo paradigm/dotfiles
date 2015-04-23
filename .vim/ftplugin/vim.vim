@@ -25,7 +25,7 @@ endfor
 setlocal define=\\v^\\s*fu%[nction]!?\\s+\\zs\\ze\\i+\\(
 
 " open help page for word under cursor in preview window
-nnoremap <buffer> K :execute ":help " . expand("<cword>") . " \| pedit % \| q"<cr>
+nnoremap <buffer> K :execute 'H ' . expand("<cword>")<cr>
 
 " Vim has its own omnicompletion mapping by default, separate from the normal
 " one. Set the normal omnicompletion mapping to cover the special VimL
