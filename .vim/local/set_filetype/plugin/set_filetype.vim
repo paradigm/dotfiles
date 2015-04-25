@@ -1,6 +1,7 @@
 " Set filetype
-autocmd BufRead,BufNewFile .vimperatorrc  setfiletype vim
-autocmd BufRead,BufNewFile .pentadactylrc setfiletype vim
-autocmd BufNewFile,BufRead *.x68          setfiletype asm68k
-autocmd BufNewFile,BufRead *.md           setfiletype markdown
-autocmd BufNewFile,BufRead *.gv           setfiletype dot
+autocmd BufRead,BufNewFile .vimperatorrc  setlocal filetype=vim
+autocmd BufRead,BufNewFile .pentadactylrc setlocal filetype=vim
+autocmd BufNewFile,BufRead *.x68          setlocal filetype=asm68k
+autocmd BufNewFile,BufRead *.md           setlocal filetype=markdown
+autocmd BufNewFile,BufRead *.gv           setlocal filetype=dot
+autocmd BufRead *                         if getline(1) =~ '\v^#!.*busybox sh$' | setlocal filetype=sh | endif
