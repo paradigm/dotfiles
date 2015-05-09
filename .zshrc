@@ -654,6 +654,61 @@ r() {
 	pwd
 }
 
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+# ~ vim pipe                                                                   ~
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+
+# use vim ex commands in a UNIX pipe
+ve() {
+	# create file for vim to operate on
+	output="/tmp/ve_out_$RANDOM"
+	cat > $output
+
+	# create ex input script
+	# each arg is put on its own line, treated as separate ex command.
+	input="/tmp/ve_in_$RANDOM"
+	for cmd in "$@"
+	do
+		echo "$cmd" >> $input
+	done
+	echo "wqa!" >> $input
+
+	# -n -> no swap file
+	# -es -> batch mode (:help -s-ex)
+	# -S -> run ex commands from file
+	vim -n -es -S "$input" "$output"
+
+	# print output
+	cat "$output"
+	# clean up
+	rm "$input" "$output"
+}
+
+# use vim normal mode commands in a UNIX pipe
+vn() {
+	# create file for vim to operate on
+	output="/tmp/vn_out_$RANDOM"
+	cat > $output
+
+	# create normal mode input script
+	# try to save/quit
+	input="/tmp/vn_in_$RANDOM"
+	echo -n "$@" > $input
+	echo -n ':wqa!' >> $input
+
+	# nohup -> fakes terminal so vim doesn't warn about not using a
+	# terminal
+	# >/dev/null 2>&1 -> makes nohup quiet
+	# -n -> no swap file
+	# -s -> run input file as normal mode commands
+	nohup vim -n -s "$input" "$output" >/dev/null 2>&1
+
+	# print output
+	cat "$output"
+	# clean up
+	rm "$input" "$output"
+}
+
 # ==============================================================================
 # = key_bindings                                                               =
 # ==============================================================================
