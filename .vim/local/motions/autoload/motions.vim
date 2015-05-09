@@ -34,22 +34,43 @@ endfunction
 " move across region of whitespace or non-whitespace
 
 function! s:parajump(direction)
-	" get starting line number
-	let lnum = line(".")
-	let vcol = virtcol(".")
+	let lnum = line('.')
+	if col('.') == 1
+		let vcol = 1
+	elseif getline('.')[col('.')-1] == "\t"
+		normal! h
+		let vcol = virtcol('.')+1
+		normal! l
+	else
+		let vcol = virtcol('.')
+	endif
 
-	" "move" once to start
+	" "move" once
 	let lnum += a:direction
+	let init_w = s:parajump_is_w(lnum, vcol)
 
-	" get starting type
-	let init_type = s:parajump_type(getline(lnum), vcol)
+	while 1
+		" going up, hit top of buffer
+		if a:direction == -1 && lnum <= 1
+			break
+		endif
 
-	" find change
-	while lnum < line("$") &&
-				\ lnum > 1 && (
-				\ getline(lnum) == "" ||
-				\ s:parajump_type(getline(lnum), vcol) == init_type
-				\ )
+		" going down, hit buttom of buffer
+		if a:direction == 1 && lnum >= line('$')
+			break
+		endif
+
+		" going over whitespace, stop when hitting non-whitespace
+		if init_w && ! s:parajump_is_w(lnum, vcol)
+			break
+		endif
+
+		" going over non-whitespace, stop just before hitting
+		" shorter line
+		if ! init_w && s:parajump_is_w(lnum + a:direction, vcol)
+			break
+		endif
+
 		let lnum += a:direction
 	endwhile
 
@@ -59,14 +80,19 @@ function! s:parajump(direction)
 	execute 'normal! ' . pos[4] . '|'
 endfunction
 
-" return if position is non-whitespace
-function! s:parajump_type(line, vcol)
-	let line = support#retab(a:line)
-
-	if strlen(line) < a:vcol
-		return 0
+" returns if character at specified position is over whitespace
+function! s:parajump_is_w(lnum, vcol)
+	let line = getline(a:lnum)
+	if len(line) == 0
+		return 1
+	elseif strdisplaywidth(line, 0) < a:vcol
+		return 1
 	else
-		return line[a:vcol-1] != " "
+		while stridx(line, "\t") != -1
+			let spaces = repeat(' ', strdisplaywidth("\t", stridx(line, "\t")))
+			let line = substitute(line, "\t", spaces, '')
+		endwhile
+		return line[a:vcol-1] == ' '
 	endif
 endfunction
 
