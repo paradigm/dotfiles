@@ -55,12 +55,12 @@ cd() {
 # use vim ex commands in a UNIX pipe
 ve() {
 	# create file for vim to operate on
-	output="/tmp/ve_out_$RANDOM"
+	output="$(mktemp)"
 	cat > $output
 
 	# create ex input script
 	# each arg is put on its own line, treated as separate ex command.
-	input="/tmp/ve_in_$RANDOM"
+	input="$(mktemp)"
 	for cmd in "$@"
 	do
 		echo "$cmd" >> $input
@@ -81,12 +81,12 @@ ve() {
 # use vim normal mode commands in a UNIX pipe
 vn() {
 	# create file for vim to operate on
-	output="/tmp/vn_out_$RANDOM"
+	output="$(mktemp)"
 	cat > $output
 
 	# create normal mode input script
 	# try to save/quit
-	input="/tmp/vn_in_$RANDOM"
+	input="$(mktemp)"
 	echo -n "$@" > $input
 	echo -n ':wqa!' >> $input
 
