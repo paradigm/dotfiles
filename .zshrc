@@ -709,6 +709,33 @@ vn() {
 	rm "$input" "$output"
 }
 
+# run vim ex command, read message output
+vp() {
+	input="$(mktemp)"
+	buffer="$(mktemp)"
+	output="$(mktemp)"
+
+	cat > "$buffer"
+
+	echo "redir > $output" > $input
+	for cmd in "$@"
+	do
+		echo "$cmd" >> $input
+	done
+	echo "redir END" >> $input
+	echo "qa!" >> $input
+
+	# -n -> no swap file
+	# -es -> batch mode (:help -s-ex)
+	# -S -> run ex commands from file
+	vim -n -es -S "$input" "$buffer"
+
+	# print output
+	cat "$output"
+	# clean up
+	rm "$input" "$buffer" "$output"
+}
+
 # ==============================================================================
 # = key_bindings                                                               =
 # ==============================================================================
