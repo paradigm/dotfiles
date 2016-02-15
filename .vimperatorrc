@@ -79,6 +79,11 @@ highlight Hint background-color: white; color: black
 highlight HintActive background-color: white; color: black
 highlight HintElem background-color: white; color: black
 
+highlight CmdLine font-size: 12px; font-weight: normal; font-family: "Terminus"; padding: 0 0;
+highlight StatusLine font-size: 12px; font-weight: normal; font-family: "Terminus"; padding: 0 0;
+"highlight StatusLineBroken
+"highlight StatusLineSecure
+
 " chrome
 style -name chrome * <<EOM
 	@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); /*set default namespace to XUL */
@@ -102,6 +107,7 @@ style -name chrome * <<EOM
 		min-height: 12px !important;
 		/*max-width: 200px !important;*/
 		font-family: "Terminus" !important;
+		font-size: 12px !important;
 	}
 	.tabbrowser-tab .tab-text[selected] {
 		color: #000000 !important; /* selected tab foreground */
