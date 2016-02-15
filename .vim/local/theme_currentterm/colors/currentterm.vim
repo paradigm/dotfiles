@@ -185,5 +185,5 @@ if loaded_colors
 	execute "highlight SpellRare    ctermfg = NONE"
 	execute "highlight SpellRare    ctermbg = NONE"
 else
-	echoerr "Could not load 'currentterm' theme - probably problem with t_Co or ~/.themes/current/terminal/<t_Co>-theme"
+	"	echoerr "Could not load 'currentterm' theme - probably problem with t_Co or ~/.themes/current/terminal/<t_Co>-theme"
 endif
