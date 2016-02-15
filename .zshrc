@@ -474,7 +474,8 @@ zle -N history-beginning-search-backward-then-append
 # using "/" as part of the substring to specify a parent directory.
 #
 # d() searches _d_ownward for the specified directory.  It returns the match
-# closest to the pwd (i.e. does a depth-first search).
+# closest to the pwd (i.e. does a depth-first search).  If there is only one
+# downward directory, it will go to it without any argument.
 #
 # u() searches _u_pward for the specified directory.  It returns the match
 # closest to the pwd (i.e. the deepest directory which matches).
@@ -496,8 +497,13 @@ zle -N history-beginning-search-backward-then-append
 # Careful with special characters; globbing and regex are used under-the-hood.
 
 d() {
-	# no arg, don't do anything
-	[ -z "$1" ] && pwd && return
+	# no arg.  If there is a single downward directory, go to it.
+	if [ -z "$1" ]
+	then
+		[ "$(ls -lA | grep -c '^d')" -eq 1 ] && cd "$(ls -lA | awk '/^d/{print$NF}')"
+		pwd
+		return
+	fi
 
 	# get argument for `find`
 	# -> last directory with "*" set for globbing on non-anchored sides
@@ -1182,7 +1188,10 @@ fi
 # If runit is set up for a user session but not running, launch it.
 
 export SVDIR="$HOME/.sv"
-if ! ps -u $(id -u) -o cmd | grep -v grep | grep -qF "runsvdir $SVDIR"
+if ! ps -u $(id -u) -o cmd | grep -q "^runsvdir " && \
+	[ -d $SVDIR ] && \
+	[ "$(stat -c %u $SVDIR)" = "$(id -u)" ] && \
+	type -p runsvdir >/dev/null 2>&1
 then
 	printf "Starting runsvdir: "
 	runsvdir $SVDIR &
@@ -1353,7 +1362,7 @@ zsh_directory_name() {
 #    " #word" -> "~[f:word]"
 #    " !word" -> "~[v:word]"
 _insert_dynamic_named_directories() {
-	BUFFER=$(echo $BUFFER | sed -e \
+	BUFFER=$(printf "%s" "$BUFFER" | sed -e \
 		's,\(^\| \)@\([a-zA-Z0-9/.*]\+\),\1~[d:\2],g' -e \
 		's,\(^\| \)#\([a-zA-Z0-9/.*]\+\),\1~[f:\2],g' -e \
 		's,\(^\| \)!\([a-zA-Z0-9/.*]\+\),\1~[v:\2],g' )
