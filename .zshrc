@@ -1190,7 +1190,8 @@ fi
 # If runit is set up for a user session but not running, launch it.
 
 export SVDIR="$HOME/.sv"
-if ! ps -u $(id -u) -o cmd | grep -q "^runsvdir " && \
+if ! uname -a | grep -q 'Android' && \
+	! ps -u $(id -u) -o cmd | grep -q "^runsvdir " && \
 	[ -d $SVDIR ] && \
 	[ "$(stat -c %u $SVDIR)" = "$(id -u)" ] && \
 	type -p runsvdir >/dev/null 2>&1
