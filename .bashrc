@@ -187,7 +187,7 @@ d() {
 	#
 	# If there's no "/" other than trailing anchor and GNU find is available,
 	# use slightly faster version.
-	if ! echo "$greparg" | grep -q "/" && find --version | grep -q "GNU"
+	if ! echo "$greparg" | grep -q "/" && find --version 2>&1 | grep -q "GNU"
 	then
 		target="$(
 		while [ "$depth" != "$maxdepth" ] && ! find -mindepth $depth -maxdepth $depth -type d -name "$findarg" -print -quit 2>/dev/null | grep "."
@@ -425,7 +425,9 @@ export GPG_AGENT_INFO="$HOME/.gnupg/S.gpg-agent::1"
 # ------------------------------------------------------------------------------
 #
 # parse theme file
-if [ $(tput colors) -eq "256" ] && [ -r ~/.themes/current/terminal/256-theme ]
+if type -p tput >/dev/null 2>&1 && \
+	[ $(tput colors) -eq "256" ] && \
+	[ -r ~/.themes/current/terminal/256-theme ]
 then
 	source ~/.themes/current/terminal/256-theme
 
@@ -510,9 +512,9 @@ alias cl="cclive --format=best"
 alias df="df -h"
 alias du="du -hs"
 alias greps="grep -IR --color=yes -D skip --exclude-dir=.git"
-alias la="ls -A --color=auto -h --group-directories-first"
-alias ll="ls -lA --color=auto -h  --group-directories-first"
-alias ls="ls --color=auto -h  --group-directories-first"
+alias la="ls -A --color=auto -h"
+alias ll="ls -lA --color=auto -h"
+alias ls="ls --color=auto -h"
 alias octave="octave --silent"
 alias xpdfr="xpdf -remote 127.0.0.1"
 alias xpdfv="xpdf -rv"
