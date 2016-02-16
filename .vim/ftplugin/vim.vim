@@ -24,6 +24,16 @@ endfor
 
 setlocal define=\\v^\\s*fu%[nction]!?\\s+\\zs\\ze\\i+\\(
 
+let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ "0jv\<esc>" .
+			\ ":call search('^endf', 'W')\<cr>" .
+			\ "kV`<"
+
+let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ "0v\<esc>" .
+			\ ":call search('^endf', 'W')\<cr>" .
+			\ "V`<"
+
 " open help page for word under cursor in preview window
 nnoremap <buffer> K :execute 'H ' . expand("<cword>")<cr>
 

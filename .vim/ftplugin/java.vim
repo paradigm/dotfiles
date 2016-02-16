@@ -8,6 +8,15 @@
 " requires specialized versions.
 setlocal define=\\v(^\|;)\\s*(\\w+\\_s+)+\\zs\\ze\\w+\\_s*\\(\\_[^)]*\\)(\\_[^;]*\\{\|;)
 
+let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ ":call search('{', 'W')\<cr>" .
+			\ "V%koj"
+
+let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ ":call search('{', 'W')\<cr>" .
+			\ "%v" .
+			\ ":\<c-u>call search(&define, 'bW')\<cr>" .
+			\ "0v`>o"
 
 let l:project = eclim#project#util#GetCurrentProjectName()
 let b:runcmd = "eclim -editor vim -command java -p " . l:project

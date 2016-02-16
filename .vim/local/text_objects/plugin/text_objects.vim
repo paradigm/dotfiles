@@ -11,7 +11,8 @@ endfor
 
 " Folding regions
 " With syntax folding on, this very often does "the right thing"
-call text_objects#add('f', 'normal![zjV]zk', 'normal![zV]z')
+"call text_objects#add('f', 'normal![zjV]zk', 'normal![zV]z')
+call text_objects#add('f', 'exec b:sel_i_func', 'exec b:sel_a_func')
 
 " Entire buffer
 call text_objects#add("\<cr>", 'normal!VggoG', 'normal!VggoG')

@@ -39,6 +39,16 @@ set define=\\v(^\|}\|;)\\s*(<else>)@!(\\h\\w*(\\s*[*&])?\\_s+)+\\zs\\h\\w*\\ze\\
 "                         start-of-buffer to avoid having to parse out
 "                         #include's and comments common up top.
 
+let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ ":call search('{', 'W')\<cr>" .
+			\ "V%koj"
+
+let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ ":call search('{', 'W')\<cr>" .
+			\ "%v" .
+			\ ":\<c-u>call search(&define, 'bW')\<cr>" .
+			\ "0v`>o"
+
 
 " Regex to match #include macros.
 setlocal include&vim

@@ -12,6 +12,16 @@ setlocal include=^\\s*\\<\\(source\\\|[.]\\)\\>
 " requires specialized versions.
 setlocal define=\\v(^\|;)\\s*(\\zs\\ze\\i+\\s*\\(\\s*\\)\|(function\\_s*\\zs\\ze\\i+))\\_s*\\{
 
+let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ ":call search('{', 'W')\<cr>" .
+			\ "V%koj"
+
+let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ ":call search('{', 'W')\<cr>" .
+			\ "%v" .
+			\ ":\<c-u>call search(&define, 'bW')\<cr>" .
+			\ "0v`>o"
+
 nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"), '')<cr>
 
 let b:runpath = expand("%:p")
