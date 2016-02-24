@@ -38,9 +38,13 @@ nnoremap x :set! permissions.default.image=2<cr>
 nnoremap X :set! permissions.default.image=1<cr>
 
 " custom css
-nnoremap c :styleenable -name paradigm<cr>
+nnoremap c :style -name paradigm * html * { background-color: #000000 !important; /* all bg */ background-image: none !important; color: #ffffff !important; /* all fg */ border-color: #ffffff !important; /* all border */ font-family: "Terminus" !important; /*line-height: 1.0 !important;*/ } a:link { color: #aaaaaa !important; /* link fg */ background-color: #000000 !important; /* link bg  */ } input { border: 1px solid #ffffff !important; /* input border  */ color: #ffffff !important; /* input fg */ }<cr>
+
 nnoremap C :styledisable -name paradigm<cr>
-nnoremap v :styleenable -name chrome<cr>
+
+nnoremap v :style -name chrome * @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); /*set default namespace to XUL */ tabbrowser tabpanels { background-color: black !important; } /* sometimes kill white flash - sometimes flash remains */ /* fancy stuff around tab */ .tab-background {opacity:0!important;} .tabbrowser-tab, .tabbrowser-tabs, .tabs-newtab-button, .tab-stack, .tab-content, .tab { -moz-appearance: none !important; -moz-border-image: none !important; background-image: none !important; background-color: #000000 !important; color: #ffffff !important; border-radius: 0px !important; /* square tabs */ border: 0px solid #ffffff !important; padding: 0px !important; padding-left: 1px !important; max-height: 12px !important; min-height: 12px !important; /*max-width: 200px !important;*/ font-family: "Terminus" !important; font-size: 12px !important; } .tabbrowser-tab .tab-text[selected] { color: #000000 !important; /* selected tab foreground */ background-color: #ffffff !important; /* selected tab foreground */ } .tab-icon-image, .tab-close-button { display: none !important; }<cr>
+
+
 nnoremap V :styledisable -name chrome<cr>
 
 " noscript
@@ -84,63 +88,9 @@ highlight StatusLine font-size: 12px; font-weight: normal; font-family: "Terminu
 "highlight StatusLineBroken
 "highlight StatusLineSecure
 
-" chrome
-style -name chrome * <<EOM
-	@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); /*set default namespace to XUL */
-	tabbrowser tabpanels { background-color: black !important; } /* sometimes kill white flash - sometimes flash remains */
-
-
-	/* fancy stuff around tab */
-	.tab-background {opacity:0!important;}
-
-	.tabbrowser-tab, .tabbrowser-tabs, .tabs-newtab-button, .tab-stack, .tab-content, .tab {
-		-moz-appearance: none !important;
-		-moz-border-image: none !important;
-		background-image: none !important;
-		background-color: #000000 !important;
-		color: #ffffff !important;
-		border-radius: 0px !important; /* square tabs */
-		border: 0px solid #ffffff !important;
-		padding: 0px !important;
-		padding-left: 1px !important;
-		max-height: 12px !important;
-		min-height: 12px !important;
-		/*max-width: 200px !important;*/
-		font-family: "Terminus" !important;
-		font-size: 12px !important;
-	}
-	.tabbrowser-tab .tab-text[selected] {
-		color: #000000 !important; /* selected tab foreground */
-		background-color: #ffffff !important; /* selected tab foreground */
-	}
-	.tab-icon-image, .tab-close-button {
-		display: none !important;
-	}
-EOM
-
-" website content
-style -name paradigm * <<EOM
-	html * {
-		background-color: #000000 !important; /* all bg */
-		background-image: none !important;
-		color: #ffffff !important; /* all fg */
-		border-color: #ffffff !important; /* all border */
-		font-family: "Terminus" !important;
-		/*line-height: 1.0 !important;*/
-	}
-	a:link {
-		color: #aaaaaa !important; /* link fg */
-		background-color: #000000 !important; /* link bg  */
-	}
-	input {
-		border: 1px solid #ffffff !important; /* input border  */
-		color: #ffffff !important; /* input fg */
-	}
-EOM
-
 " ==============================================================================
 " = firefox-settings                                                           =
 " ==============================================================================
 
 " do not show images automatically
-set! permissions.default.image=2
+" set! permissions.default.image=2
