@@ -2,6 +2,18 @@
 " = rust ftplugin                                                              =
 " ==============================================================================
 
+setlocal define=\\<fn\\>\\s\\+\\zs\\i\\+\\ze\\s*(
+
+let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ ":call search('{', 'W')\<cr>" .
+			\ "V%koj"
+
+let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
+			\ ":call search('{', 'W')\<cr>" .
+			\ "%v" .
+			\ ":\<c-u>call search(&define, 'bW')\<cr>" .
+			\ "0v`>o"
+
 if exists('g:loaded_racer')
 	" remove problematic autocmds created by plugins
 	autocmd! Filetype rust
