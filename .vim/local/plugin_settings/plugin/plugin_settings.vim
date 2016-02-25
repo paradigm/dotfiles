@@ -31,3 +31,7 @@ let g:EclimJavaSearchSingleResult = 'edit'
 
 " Run grammar check on buffer
 nnoremap <space>L :LanguageToolCheck<cr>
+
+" rust completion
+let g:racer_cmd = 'racer'
+let $RUST_SRC_PATH=$HOME . "/.vim/remote/rust/src/"

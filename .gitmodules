@@ -58,3 +58,12 @@
 	path = .vim/remote/rainbow
 	url = https://github.com/luochen1990/rainbow
 	ignore = dirty
+[submodule ".vim/remote/rust.vim"]
+	path = .vim/remote/rust.vim
+	url = https://github.com/rust-lang/rust.vim.git
+[submodule ".vim/remote/vim-racer"]
+	path = .vim/remote/vim-racer
+	url = https://github.com/racer-rust/vim-racer.git
+[submodule ".vim/remote/rust"]
+	path = .vim/remote/rust
+	url = https://github.com/rust-lang/rust.git
