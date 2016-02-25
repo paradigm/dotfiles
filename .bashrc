@@ -747,7 +747,7 @@ fi
 
 export SVDIR="$HOME/.sv"
 if ! uname -a | grep -q 'Android' && \
-	ps -u $(id -u) -o cmd | grep -q "^runsvdir " && \
+	! ps -u $(id -u) -o cmd | grep -q "^runsvdir " && \
 	[ -d $SVDIR ] && \
 	[ "$(stat -c %u $SVDIR)" = "$(id -u)" ] && \
 	type -p runsvdir >/dev/null 2>&1
