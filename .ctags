@@ -46,4 +46,6 @@
 --langmap=asm68k:.x68
 --regex-asm68k=/^([^ \t*:]+)/\1/l,label/
 
-
+--langdef=rust
+--langdef=rust:.rs
+--regex-rust=/(^|[ \t])fn[ \t]+([a-zA-Z0-9_]+)/\2/f,function/

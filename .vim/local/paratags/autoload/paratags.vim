@@ -322,6 +322,9 @@ function! s:GetCtagsFiletype(vimfiletype)
 		return("vim")
 	elseif a:vimfiletype == "yacc"
 		return("yacc")
+	elseif a:vimfiletype == "rust"
+		" not supported by default, added to ~/.ctags
+		return("rust")
 	else
 		return("")
 	endif
