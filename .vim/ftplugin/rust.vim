@@ -4,6 +4,12 @@
 
 setlocal define=\\<fn\\>\\s\\+\\zs\\i\\+\\ze\\s*(
 
+setlocal formatprg=rustfmt
+
+setlocal makeprg=cargo\ build
+
+let b:runcmd='cargo run'
+
 let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
 			\ ":call search('{', 'W')\<cr>" .
 			\ "V%koj"

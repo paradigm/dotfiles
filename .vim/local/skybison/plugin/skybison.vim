@@ -21,8 +21,6 @@ nnoremap <c-\>     :call skybison#run("Djump ")<cr>
 nnoremap <space>d :<c-u>call skybison#run("bd ")<cr>
 " SkyBison prompt to edit a file
 nnoremap <space>e  :<c-u>call skybison#run("E ")<cr>
-" SkyBison prompt to change directory
-nnoremap <space>a  :<c-u>call skybison#run("cd ")<cr>
 " SkyBison prompt to load a session
 nnoremap <c-k>l :<c-u>call skybison#run("SessionLoad ", 2)<cr>
 " SkyBison prompt to jump to a line

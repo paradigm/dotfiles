@@ -57,6 +57,7 @@ set runtimepath+=~/.vim/local/session
 set runtimepath+=~/.vim/local/line
 set runtimepath+=~/.vim/local/edit
 set runtimepath+=~/.vim/local/tagcallgraph
+set runtimepath+=~/.vim/local/general_increment
 
 set runtimepath+=~/.vim/remote/AnsiEsc.vim
 set runtimepath+=~/.vim/remote/clang_complete
