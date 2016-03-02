@@ -8,15 +8,20 @@
 " requires specialized versions.
 setlocal define=\\v(^\|;)\\s*(\\w+\\_s+)+\\zs\\ze\\w+\\_s*\\(\\_[^)]*\\)(\\_[^;]*\\{\|;)
 
-let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
-			\ ":call search('{', 'W')\<cr>" .
-			\ "V%koj"
+function! Text_Obj_Around_java_func()
+	call search(&define, 'bcW')
+	call search('{', 'W')
+	normal! %V
+	call search(&define, 'bW')
+endfunction
+let b:sel_a_func="Text_Obj_Around_java_func"
 
-let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
-			\ ":call search('{', 'W')\<cr>" .
-			\ "%v" .
-			\ ":\<c-u>call search(&define, 'bW')\<cr>" .
-			\ "0v`>o"
+function! Text_Obj_Inside_java_func()
+	call search(&define, 'bcW')
+	call search('{', 'W')
+	normal! V%koj
+endfunction
+let b:sel_i_func="Text_Obj_Inside_java_func"
 
 let l:project = eclim#project#util#GetCurrentProjectName()
 let b:runcmd = "eclim -editor vim -command java -p " . l:project
@@ -35,7 +40,7 @@ nnoremap <buffer> <c-t>        :call support#pop_stack()<cr>
 " preview declaration
 nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P<cr>:JavaSearchContext<cr>:autocmd! eclim_show_error<cr>:wincmd w<cr>
 " preview declaration line
-nnoremap <buffer> <space><c-p> :call preview#jump("JavaSearchContext", '!')<cr>
+nnoremap <buffer> <space><c-p> :call preview#jump("JavaSearchContext", 1)<cr>
 
 " 		" assumes eclim
 " 		call eclim#lang#UpdateSrcFile('java',1) " have eclim populate loclist

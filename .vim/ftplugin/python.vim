@@ -41,5 +41,5 @@ if exists(":Pyimport")
 	" preview declaration
 	nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
 	" preview declaration line
-	nnoremap <buffer> <space><c-p> :call preview#jump("normal \\d", '!')<cr>
+	nnoremap <buffer> <space><c-p> :call preview#jump("normal \\d", 1)<cr>
 endif

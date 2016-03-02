@@ -12,6 +12,8 @@ nnoremap ]b :bnext<cr>
 nnoremap [b :bprevious<cr>
 nnoremap [B :bfirst<cr>
 nnoremap ]B :blast<cr>
+nnoremap <c-w>b <c-w>v<c-w><c-w>:bn<cr><c-w><c-w>
+nnoremap <c-w>B <c-w>s<c-w><c-w>:bn<cr><c-w><c-w>
 " next/previous/first/last tag
 nnoremap ]t :PTAuto<cr>:tnext<cr>
 nnoremap [t :PTAuto<cr>:tprevious<cr>

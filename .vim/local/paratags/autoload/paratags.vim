@@ -64,7 +64,11 @@ function! paratags#refresh()
 endfunction
 
 function! paratags#toggleauto()
-	let s:current()['auto'] = ! s:current['auto']
+	for group in g:paratags_groups
+		if group['name'] == g:paratags_group
+			let group['auto'] = ! group['auto']
+		endif
+	endfor
 	call paratags#status()
 endfunction
 

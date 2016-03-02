@@ -10,15 +10,20 @@ setlocal makeprg=cargo\ build
 
 let b:runcmd='cargo run'
 
-let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
-			\ ":call search('{', 'W')\<cr>" .
-			\ "V%koj"
+function! Text_Obj_Around_rust_func()
+	call search(&define, 'bcW')
+	call search('{', 'W')
+	normal! %V
+	call search(&define, 'bW')
+endfunction
+let b:sel_a_func="Text_Obj_Around_rust_func"
 
-let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
-			\ ":call search('{', 'W')\<cr>" .
-			\ "%v" .
-			\ ":\<c-u>call search(&define, 'bW')\<cr>" .
-			\ "0v`>o"
+function! Text_Obj_Inside_rust_func()
+	call search(&define, 'bcW')
+	call search('{', 'W')
+	normal! V%koj
+endfunction
+let b:sel_i_func="Text_Obj_Inside_rust_func"
 
 if exists('g:loaded_racer')
 	" remove problematic autocmds created by plugins

@@ -29,3 +29,4 @@ nnoremap          <c-p>F     :<c-u>PTFavoriteAdd<cr>
 nnoremap <silent> <c-]>    :<c-u>PTAuto<cr><c-]>
 nnoremap <silent> g<c-]>   :<c-u>PTAuto<cr>g<c-]>
 nnoremap <silent> <space>P :<c-u>PTAuto<cr><c-w>}
+nnoremap <silent> <space><c-p> :<c-u>PTAuto<cr>:call preview#jump("normal! \<lt>c-]>", 1)<cr>

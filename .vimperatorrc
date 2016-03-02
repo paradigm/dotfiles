@@ -13,7 +13,7 @@ set noautocomplete
 "bmark https://encrypted.google.com/search?btnI=I%27m+Feeling+Lucky&complete=0&q=%s -title='Google feeling lucky search' -keyword=googlelucky
 set defsearch=googlelucky
 
-set gui="nonavigation"
+set gui=nonavigation
 
 " ==============================================================================
 " = mappings                                                                   =
@@ -94,3 +94,5 @@ highlight StatusLine font-size: 12px; font-weight: normal; font-family: "Terminu
 
 " do not show images automatically
 " set! permissions.default.image=2
+
+normal! <esc>

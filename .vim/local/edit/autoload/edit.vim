@@ -7,7 +7,11 @@ function! edit#run(bang, ...)
 	" expand glob in arguments
 	let args = []
 	for arg in a:000
-		let args += split(glob(arg), "\n")
+		if glob(arg) != ""
+			let args += split(glob(arg), "\n")
+		else
+			let args += [arg]
+		endif
 	endfor
 
 	" recurse down into directories
@@ -36,6 +40,4 @@ function! edit#run(bang, ...)
 		echo "E: hit max"
 		echohl Normal
 	endif
-
-	let files = []
 endfunction

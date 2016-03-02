@@ -24,15 +24,20 @@ endfor
 
 setlocal define=\\v^\\s*fu%[nction]!?\\s+\\zs\\ze\\i+\\(
 
-let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
-			\ "0jv\<esc>" .
-			\ ":call search('^endf', 'W')\<cr>" .
-			\ "kV`<"
+function! Text_Obj_Around_vim_func()
+	call search(&define, 'bcW')
+	normal! V
+	call search('^endf', 'W')
+endfunction
+let b:sel_a_func="Text_Obj_Around_vim_func"
 
-let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
-			\ "0v\<esc>" .
-			\ ":call search('^endf', 'W')\<cr>" .
-			\ "V`<"
+function! Text_Obj_Inside_vim_func()
+	call search(&define, 'bcW')
+	normal! 0jV
+	call search('^endf', 'W')
+	normal! k
+endfunction
+let b:sel_i_func="Text_Obj_Inside_vim_func"
 
 " open help page for word under cursor in preview window
 nnoremap <buffer> K :execute 'H ' . expand("<cword>")<cr>

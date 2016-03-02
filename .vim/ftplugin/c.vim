@@ -29,25 +29,31 @@ setlocal path+=../include/
 " - Fails with C++:
 "   - False negative on Constructors and Destructors due to lack of return value
 "   - False positive on initialization with parens, e.g. `int x(5);`
-set define=\\v(^\|}\|;)\\s*(<else>)@!(\\h\\w*(\\s*[*&])?\\_s+)+\\zs\\h\\w*\\ze\\_s*\\(
-"             |           ||        ||                        ||             |       \- opening ( for args
-"             |           ||        ||                        |\-------------+- func name
-"             |           ||        |\------------------------+- return value, qualifiers (e.g. const int)
-"             |           |\+-------+- do not consider "else" a return value / qualifier, avoids recognizing "else if (" as function
+set define=\\v(^\|}\|;)\\s*(<(else\|return)>)@!(\\h\\w*(\\s*[*&])?\\_s+)+[*&]?\\s*\\zs\\h\\w*\\ze\\_s*\\(
+"             |           ||                  ||                        ||        ||             |       \- opening ( for args
+"             |           ||                  ||                        ||        |\-------------+- func name
+"             |           ||                  ||                        |\--------+- pointer/ref indicator
+"             |           ||                  |\------------------------+- return value, qualifiers (e.g. const int)
+"             |           |\+-----------------+- do not consider "else" or "return" a return value / qualifier, avoids recognizing "else if (" or "return func()" as function declaration
 "             \--------+- possible preceding situation.
 "                         Using start-of-line rather than more correct
 "                         start-of-buffer to avoid having to parse out
 "                         #include's and comments common up top.
 
-let b:sel_i_func="normal! :call search(&define, 'bW')\<cr>" .
-			\ ":call search('{', 'W')\<cr>" .
-			\ "V%koj"
+function! Text_Obj_Around_c_func()
+	call search(&define, 'bcW')
+	call search('{', 'W')
+	normal! %V
+	call search(&define, 'bW')
+endfunction
+let b:sel_a_func="Text_Obj_Around_c_func"
 
-let b:sel_a_func="normal! :call search(&define, 'bW')\<cr>" .
-			\ ":call search('{', 'W')\<cr>" .
-			\ "%v" .
-			\ ":\<c-u>call search(&define, 'bW')\<cr>" .
-			\ "0v`>o"
+function! Text_Obj_Inside_c_func()
+	call search(&define, 'bcW')
+	call search('{', 'W')
+	normal! V%koj
+endfunction
+let b:sel_i_func="Text_Obj_Inside_c_func"
 
 
 " Regex to match #include macros.
@@ -81,7 +87,7 @@ if exists('g:clang_complete_loaded')
 	" preview declaration
 	nnoremap <buffer> <space>P     :call g:ClangGotoDeclarationPreview()<cr>
 	" preview declaration line
-	nnoremap <buffer> <space><c-p> :call preview#line("call g:ClangGotoDeclaration()", '!')<cr>
+	nnoremap <buffer> <space><c-p> :call preview#jump("call g:ClangGotoDeclaration()", 1)<cr>
 	" Use clang to lint
 	let b:lintcmd = "cd %:p:h | call ClangUpdateQuickFix() | cd -"
 	let b:linterrorformat = &l:errorformat

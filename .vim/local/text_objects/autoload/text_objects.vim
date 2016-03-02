@@ -1,11 +1,32 @@
 " -----------------------------------------------------------------------------
 " function to create new text objects
 
-function! text_objects#add(keys, i_cmd, a_cmd)
-	execute 'xnoremap <silent> i' . a:keys . ' :<c-u>' . a:i_cmd . '<cr>'
-	execute 'onoremap <silent> i' . a:keys . ' :normal vi' . a:keys . '<cr>'
-	execute 'xnoremap <silent> a' . a:keys . ' :<c-u>' . a:a_cmd . '<cr>'
-	execute 'onoremap <silent> a' . a:keys . ' :normal va' . a:keys . '<cr>'
+function! text_objects#add(keys, cmd, prefered_mode)
+	execute 'xnoremap <silent> '      . a:keys . ' :<c-u>call text_objects#apply("' . a:cmd . '", "' . a:prefered_mode . '")<cr>'
+	execute 'onoremap <silent> '      . a:keys . ' :<c-u>call text_objects#apply("' . a:cmd . '", "' . a:prefered_mode . '")<cr>'
+	execute 'onoremap <silent> v'     . a:keys . ' :<c-u>call text_objects#apply("' . a:cmd . '", "v")<cr>'
+	execute 'onoremap <silent> V'     . a:keys . ' :<c-u>call text_objects#apply("' . a:cmd . '", "V")<cr>'
+	execute 'onoremap <silent> <c-v>' . a:keys . ' :<c-u>call text_objects#apply("' . a:cmd . '", "<lt>c-v>")<cr>'
+endfunction
+
+function! text_objects#apply(cmd, mode)
+	if a:mode == 'default' && visualmode() == ""
+		let mode = 'v'
+	elseif a:mode == 'default'
+		let mode = visualmode()
+	else
+		let mode = a:mode
+	endif
+
+	for i in range(1, v:count1)
+		execute a:cmd
+		execute "normal! \<esc>"
+		let left = getpos("'<")
+		let right = getpos("'>")
+		call setpos(".", left)
+		execute "normal! " . mode
+		call setpos(".", right)
+	endfor
 endfunction
 
 " -----------------------------------------------------------------------------
