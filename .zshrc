@@ -77,7 +77,7 @@ setopt autopushd
 
 # "/bin/zsh" should be the value of $SHELL if this config is parsed.  This line
 # should not be necessary, but it's not a bad idea to have just in case.
-export SHELL="/bin/zsh"
+export SHELL="zsh"
 
 # Set pagers
 if which vim >/dev/null 2>&1
@@ -954,6 +954,7 @@ alias gusu='git submodule foreach git pull origin master'
 alias gdh='git diff HEAD'
 alias gt="git rev-parse --show-toplevel"
 alias gT='cd "$(git rev-parse --show-toplevel)"'
+alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
 
 # ------------------------------------------------------------------------------
 # - bedrock_clients_(aliases)                                                  -

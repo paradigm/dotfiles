@@ -549,6 +549,7 @@ alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 alias gusu='git submodule foreach git pull origin master'
 alias gdh='git diff HEAD'
 alias gT='cd "$(git rev-parse --show-toplevel)"'
+alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
 
 # ------------------------------------------------------------------------------
 # - bedrock_clients_(aliases)                                                  -
