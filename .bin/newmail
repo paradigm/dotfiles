@@ -1,0 +1,52 @@
+#!/usr/bin/python
+
+import imaplib, re, getpass, time, os, sys
+
+file = open('/home/paradigm/.offlineimaprc','r')
+host=""
+username=""
+password=""
+accounts=[]
+for line in file.readlines():
+    if(line[0:9] == "[Account "):
+        account=line[9:len(line)-2]
+        host=""
+        username=""
+        password=""
+    if(line[0:12] == "type = Gmail"):
+        host="imap.gmail.com"
+    if(line[0:12] == "remotehost ="):
+        host=line[13:-1]
+    if(line[0:12] == "remoteuser ="):
+        username=line[13:-1]
+    if(line[0:12] == "remotepass ="):
+        password =line[13:-1]
+    if(host!="" and username!="" and password!=""):
+        accounts.append([account,host,username,password])
+        host=""
+file.close()
+
+while True:
+    print ""
+    print "Syncing imap at",
+    print time.strftime("%a-%Y-%m-%d-%H%M",time.localtime()),
+    print "..."
+    os.system("offlineimap | grep '^\*'")
+    print "okay"
+    
+    print "Checking new mail count..."
+    newmail = 0
+    for account in accounts:
+        print account[0]+"..."
+        conn = imaplib.IMAP4_SSL(account[1], 993)
+        conn.login(account[2], account[3])
+        newmail += int(re.search("UNSEEN (\d+)", conn.status("INBOX", "(UNSEEN)")[1][0]).group(1))
+    print str(newmail)+" new emails"
+    # save new mail count
+    file = open('/dev/shm/.paradigm-newmail','w')
+    file.write(str(newmail))
+    file.close()
+
+    # sleep until the next hour
+    print "Sleeping until next hour mark"
+    time.sleep((60 - time.localtime()[4])*60-(time.localtime()[5]))

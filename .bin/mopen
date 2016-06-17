@@ -1,0 +1,34 @@
+#!/bin/sh
+
+winid=""
+winname=""
+initwinid=""
+populate_wininfo() {
+	initwinid="$(xdotool getactivewindow)"
+	rootid="$(xdotool search --maxdepth 0 --name "")" 2>/dev/null
+	winid="$(xdotool search --name "$1" | grep -v "^$rootid$" | head -n1)"
+	[ -n "$winid" ] && winname="$(xdotool getwindowname "$winid")"
+}
+
+if ps -e -o comm | grep '^mpd$'
+then
+	uxterm -e ncmpcpp
+elif ps -e -o comm | grep '^mocp$'
+then
+	uxterm -e mocp
+elif ps -e -o comm | grep '^pianobar$'
+then
+	uxterm -e headless_pianobar
+elif populate_wininfo "mpv - "
+then
+	xdotool windowactivate "$winid"
+elif populate_wininfo "VLC media player"
+then
+	xdotool windowactivate "$winid"
+elif populate_wininfo "YouTube"
+then
+	xdotool windowactivate "$winid"
+elif populate_wininfo "Netflix"
+then
+	xdotool windowactivate "$winid"
+fi

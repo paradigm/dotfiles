@@ -5,6 +5,9 @@
 # Use a solid black background.
 xsetroot -solid "#000000"
 
+# set dpi
+xrandr --dpi 96
+
 ## This fixes a font issue on Arch Linux.
 #xset +fp /usr/share/fonts/local
 #xset fp rehash
@@ -44,11 +47,11 @@ then
 fi
 
 # start xorg user session items
-if which sv >/dev/null
+if type sv >/dev/null 2>&1
 then
 	for service in $(ls $SVDIR/*/start-xorg | awk -F/ '{print $(NF-1)}')
 	do
-		if which $service >/dev/null && [ -d $SVDIR/$service ]
+		if type $service >/dev/null 2>&1 && [ -d $SVDIR/$service ]
 		then
 			sv u $SVDIR/$service
 		fi

@@ -1,0 +1,14 @@
+#!/bin/sh
+echo -n "* Disabling usb... "
+if [ "$(uname -n)" = "am" ]
+then
+	#umount /proc/bus/usb
+	rmmod usbmouse
+	rmmod usb_storage
+	rmmod xhci_hcd
+	rmmod uhci_hcd
+	rmmod ehci_hcd
+	rmmod usbcore
+	rmmod usb_common
+fi
+echo "done."

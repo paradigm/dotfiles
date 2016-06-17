@@ -1,0 +1,28 @@
+#!/data/data/com.termux/files/usr/bin/sh
+
+cd ~/.priv
+if [ "$(git rev-parse --show-toplevel)" != "$HOME/.priv" ]
+then
+	echo "Error! Not in expected priv directory"
+	exit 1
+fi
+
+echo "----- changes -----"
+git diff HEAD
+echo "----- ------- -----"
+
+printf "Continue? [n/Y] "
+read YN
+if [ "$YN" != "y" ]
+then
+	echo "User aborted operation"
+	exit 1
+fi
+
+export SSH_AUTH_SOCK="$HOME/.ssh/S.ssh-agent"
+if ! ssh-add -l | awk '{print$3}' | grep -q "$HOME/.ssh/id_rsa"
+then
+	ssh-add "$HOME/.ssh/id_rsa"
+fi
+
+git commit -a -v -m "$(date)" && git pull origin master && git push origin master

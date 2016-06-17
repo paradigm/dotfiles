@@ -130,8 +130,8 @@ function! dictionary#thesaurus_add(word)
 	let results = []
 	for line in readfile(out)
 		let fields = split(line, "\<\\|\>\\|&quot;")
-		if len(fields) > 2 && fields[0] == 'span class="text"'
-			let results += [fields[1]]
+		if len(fields) > 14 && fields[13] == 'span class="text"'
+			let results += [fields[14]]
 		endif
 	endfor
 

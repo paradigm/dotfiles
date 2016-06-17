@@ -1,0 +1,130 @@
+#!/bin/sh
+#
+# This script is used allow declarative syntax for djb daemontools-style
+# process supervision software.  Just put it as a hashbang line in the `run`
+# script (and `finish`, etc).
+#
+# The contents are sourced shell script, so careful with quotes and whitespace.
+#
+# Supports:
+#
+# name=example_name (default="$(pwd | awk -F/ '{print$NF}')")
+#     The name of the service.
+#
+# run=example_command (no default)
+#     Executable to run.  If you want to run multiple commands, you can put a
+#     "sh -c" in here.  Or just not use this.  Or point it to another script.
+#
+# assert=example_command (no default)
+#     Runs value set and checks return value.  If it is false, aborts service.
+#     This may be used to avoid having a service repeatedly crash and restart.
+#     An example of something to check would be if an xserver is running.
+#
+# cgroup_start=yes (default=no)
+#     Attempt to track service via cgroup.  Requires a cgroup directory
+#     hierarchy set up at "/sys/fs/cgroup/thinit/$username" owned by the user
+#     who runs the service.  May try to set it up if root.
+#
+# cgroup_end=yes (default=no)
+#     If cgroup_start was used, this can be used to kill all of the processes
+#     in the service's cgroup.  If your supervision software has a `finish`,
+#     you may want to put it in there.  Otherwise, if it is in `run`, be sure
+#     not to use "exec" below.
+#
+# exec=yes (default=no)
+#     Use exec(1) to "become" what is specified in "run".  If used the script
+#     will never reach "group_end"; do not mix with "group_end".
+#
+# fghack=yes (default=no)
+#     Use `fghack` for executables that refuse to stay in the foreground.
+#
+# quiet_stdout=yes (default=no)
+#     Do not print stdout.  Useful to avoid spamming the logger.
+#
+# quiet_stderr=yes (default=no)
+#     Do not print stderr.  Useful to avoid spamming the logger.
+#
+
+# source script to get lines
+. $1
+
+# get username
+username=$(whoami)
+
+if [ -z "$name" ]
+then
+	name="$(pwd | awk -F/ '{print$NF}')"
+fi
+
+if [ -n "$assert" ] && ! $assert 2>&1 | head -n0
+then
+	echo "thinit-dec: assert failed, aborting"
+	printf d > supervise/control
+	return
+fi
+
+# put self in cgroup
+if [ "$cgroup_start" = "yes" ]
+then
+	# root may have to set this up before hand if we're not root
+	if [ "$(id -u)" -eq 0 ]
+	then
+		mkdir -p   /sys/fs/cgroup/thinit
+		chmod a+rx /sys/fs/cgroup/thinit
+		echo 0 >   /sys/fs/cgroup/thinit/cpuset.mems
+		echo 0 >   /sys/fs/cgroup/thinit/cpuset.cpus
+		mkdir -p   /sys/fs/cgroup/thinit/$username/
+		echo 0 >   /sys/fs/cgroup/thinit/$username/cpuset.mems
+		echo 0 >   /sys/fs/cgroup/thinit/$username/cpuset.cpus
+	fi
+	mkdir -p  /sys/fs/cgroup/thinit/$username/$name
+	echo 0 >  /sys/fs/cgroup/thinit/$username/$name/cpuset.mems
+	echo 0 >  /sys/fs/cgroup/thinit/$username/$name/cpuset.cpus
+	echo $$ > /sys/fs/cgroup/thinit/$username/$name/tasks
+fi
+
+if [ -n "$run" ]
+then
+	cmd="$run"
+
+	if [ "$fghack" = "yes" ]
+	then
+		cmd="fghack $cmd"
+	fi
+
+	if [ "$exec" = "yes" ]
+	then
+		cmd="exec $cmd"
+	fi
+
+	if [ "$quiet_stdout" = "yes" ]
+	then
+		cmd="$cmd 1>/dev/null"
+	fi
+
+	if [ "$quiet_stderr" = "yes" ]
+	then
+		cmd="$cmd 2>/dev/null"
+	fi
+
+	eval $cmd
+fi
+
+if [ "$cgroup_end" = "yes" ]
+then
+IFS="
+"
+	tasks=/sys/fs/cgroup/thinit/$username/$name/tasks
+	while [ "$(cat $tasks | wc -l)" -ne 0 ]
+	do
+		for pid in $(cat $tasks)
+		do
+			kill $pid >/dev/null 2>&1
+		done
+		for pid in $(cat $tasks)
+		do
+			kill -9 $pid >/dev/null 2>&1
+		done
+	done
+	rmdir /sys/fs/cgroup/thinit/$username/$name
+fi

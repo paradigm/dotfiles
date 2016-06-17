@@ -1,0 +1,3 @@
+#!/bin/sh
+amixer set Master 255 >/dev/null
+amixer set Master unmute >/dev/null

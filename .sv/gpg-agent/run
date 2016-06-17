@@ -1,0 +1,4 @@
+#!/bin/sh
+rm ~/.gnupg/S.gpg-agent >/dev/null 2>&1
+GPG_TTY="$(tty)"
+exec fghack gpg-agent --daemon --use-standard-socket >/dev/null 2>&1

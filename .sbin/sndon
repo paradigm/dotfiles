@@ -1,0 +1,19 @@
+#!/bin/sh
+echo -n "* Enabling sound... "
+if [ "$(uname -n)" = "am" ]
+then
+	modprobe soundcore
+	modprobe snd
+	modprobe snd_timer
+	modprobe snd_page_alloc
+	modprobe snd_pcm
+#	modprobe snd_hwdep
+	modprobe snd_hda_intel
+	modprobe snd_hda_codec_realtek
+	modprobe snd_hda_codec_hdmi
+fi
+amixer set Headphone 100 >/dev/null
+amixer set Speaker 100 >/dev/null
+amixer set Master 0 >/dev/null
+amixer set Master mute >/dev/null
+echo "done."

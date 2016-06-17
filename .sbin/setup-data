@@ -1,0 +1,4 @@
+#!/bin/sh
+brc jessie mdadm --assemble --scan
+mkdir -p /mnt/data
+mount /dev/md0p1 /mnt/data

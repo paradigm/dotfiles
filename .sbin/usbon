@@ -1,0 +1,14 @@
+#!/bin/sh
+echo -n "* Enabling usb... "
+if [ "$(uname -n)" = "am" ]
+then
+	modprobe usb_common
+	modprobe usbcore
+	modprobe ehci_hcd
+	modprobe uhci_hcd
+	modprobe xhci_hcd
+	modprobe usb_storage
+	modprobe usbmouse
+	#mount -t usbfs none /proc/bus/usb
+fi
+echo "done."

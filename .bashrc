@@ -53,81 +53,13 @@ cd() {
 }
 
 # use vim ex commands in a UNIX pipe
-ve() {
-	# create file for vim to operate on
-	output="$(mktemp)"
-	cat > $output
-
-	# create ex input script
-	# each arg is put on its own line, treated as separate ex command.
-	input="$(mktemp)"
-	for cmd in "$@"
-	do
-		echo "$cmd" >> $input
-	done
-	echo "wqa!" >> $input
-
-	# -n -> no swap file
-	# -es -> batch mode (:help -s-ex)
-	# -S -> run ex commands from file
-	vim -n -es -S "$input" "$output"
-
-	# print output
-	cat "$output"
-	# clean up
-	rm "$input" "$output"
+vp() {
+	vim - -u NONE -es '+1' "+$*" '+%print' '+:qa!' | tail -n +2
 }
 
 # use vim normal mode commands in a UNIX pipe
 vn() {
-	# create file for vim to operate on
-	output="$(mktemp)"
-	cat > $output
-
-	# create normal mode input script
-	# try to save/quit
-	input="$(mktemp)"
-	echo -n "$@" > $input
-	echo -n ':wqa!' >> $input
-
-	# nohup -> fakes terminal so vim doesn't warn about not using a
-	# terminal
-	# >/dev/null 2>&1 -> makes nohup quiet
-	# -n -> no swap file
-	# -s -> run input file as normal mode commands
-	nohup vim -n -s "$input" "$output" >/dev/null 2>&1
-
-	# print output
-	cat "$output"
-	# clean up
-	rm "$input" "$output"
-}
-
-# run vim ex command, read message output
-vp() {
-	input="$(mktemp)"
-	buffer="$(mktemp)"
-	output="$(mktemp)"
-
-	cat > "$buffer"
-
-	echo "redir > $output" > $input
-	for cmd in "$@"
-	do
-		echo "$cmd" >> $input
-	done
-	echo "redir END" >> $input
-	echo "qa!" >> $input
-
-	# -n -> no swap file
-	# -es -> batch mode (:help -s-ex)
-	# -S -> run ex commands from file
-	vim -n -es -S "$input" "$buffer"
-
-	# print output
-	cat "$output"
-	# clean up
-	rm "$input" "$buffer" "$output"
+	vim - -u NONE -es '+1' "+normal $*" '+%print' '+:qa!' | tail -n +2
 }
 
 # ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
@@ -339,10 +271,10 @@ r() {
 # Bash's vi-mode is not sufficiently extendable, so this remains disabled.
 #set -o vi
 
-# By default, ctrl-w will delete the word before the cursor.  However, this
-# considers "/" a word-character which makes fixing typos in filesystem paths a
-# pain.  Meta-backspace acts as desired, but doesn't fit my muscle memory.
-# This is a work around to make ctrl-w work like meta-backspace.
+# By default, ctrl-w will delete the word before the cursor.  This considers
+# "/" a word-character which makes fixing typos in filesystem paths a pain.
+# Meta-backspace acts as desired, but doesn't fit my muscle memory.  This is a
+# work around to make ctrl-w work like meta-backspace.
 bind '"":""'
 
 # ==============================================================================
@@ -353,34 +285,35 @@ bind '"":""'
 # - general_(environmental_variables)                                          -
 # ------------------------------------------------------------------------------
 
-# "/bin/bash" should be the value of $SHELL if this config is parsed.  This
-# line should not be necessary, but it's not a bad idea to have just in case.
-export SHELL="/bin/bash"
+if ! echo $PATH | grep -q '\(:\|^\)$HOME/.bin\(:\|$\)'
+then
+	export PATH="$HOME/.bin:$PATH"
+fi
 
 # Set pagers
-if which vim >/dev/null 2>&1
+if type vim >/dev/null 2>&1
 then
 	export MANPAGER="sh -c \"unset MANPAGER; col -b -x | vim --cmd 'set modelines=0' -c 'set filetype=man nomod nolist foldlevel=999' -\""
 	export GIT_PAGER="vim --cmd 'set modelines=0' -c 'set filetype=git nomod nolist foldlevel=999' -"
 fi
 
 # Set the default text editor.
-if which vim >/dev/null 2>&1
+if type vim >/dev/null 2>&1
 then
 	export EDITOR="vim"
-elif which vi >/dev/null 2>&1
+elif type vi >/dev/null 2>&1
 then
 	export EDITOR="vi"
 fi
 
 # Set the default web browser.
-if [ -n "$DISPLAY" ] && which "dwb" >/dev/null 2>&1
+if [ -n "$DISPLAY" ] && type "dwb" >/dev/null 2>&1
 then
 	export BROWSER="dwb"
-elif [ -n "$DISPLAY" ] && which "firefox" >/dev/null 2>&1
+elif [ -n "$DISPLAY" ] && type "firefox" >/dev/null 2>&1
 then
 	export BROWSER="firefox"
-elif [ -z "$DISPLAY" ] && which "elinks" >/dev/null 2>&1
+elif [ -z "$DISPLAY" ] && type "elinks" >/dev/null 2>&1
 then
 	export BROWSER="elinks"
 fi
@@ -395,37 +328,34 @@ then
 fi
 
 # set PDF reader
-if which mupdf >/dev/null 2>&1
+if type mupdf >/dev/null 2>&1
 then
 	export PDFREADER="mupdf"
 	export PDFVIEWER="mupdf"
 fi
 
 # Set the default image viewer.
-if which sxiv >/dev/null 2>&1
+if type sxiv >/dev/null 2>&1
 then
 	export IMAGEVIEWER="sxiv"
-fi
-
-# Set Sage's PDF/DVI/PNG browser.  This goes to a shell script which will call
-# the appropriate PDF viewer or image viewer.
-if which sage_browser >/dev/null 2>&1
-then
-	export SAGE_BROWSER="sage_browser"
 fi
 
 # sets mail directory
 export MAIL="~/.mail"
 
 # Use gpg-agent if available
+export GPG_TTY="$(tty)"
 export GPG_AGENT_INFO="$HOME/.gnupg/S.gpg-agent::1"
+
+# Use ssh-agent if available
+export SSH_AUTH_SOCK="$HOME/.ssh/S.ssh-agent"
 
 # ------------------------------------------------------------------------------
 # - theme_(environmental_variables)                                            -
 # ------------------------------------------------------------------------------
 #
 # parse theme file
-if type -p tput >/dev/null 2>&1 && \
+if type tput >/dev/null 2>&1 && \
 	[ $(tput colors) -eq "256" ] && \
 	[ -r ~/.themes/current/terminal/256-theme ]
 then
@@ -473,9 +403,6 @@ fi
 # Clear the screen then run `ls`
 alias cls="clear;ls"
 
-# Search entire filesystem and ignore errors
-alias finds="find / -name 2>/dev/null"
-
 # Take ownership of file or directory
 alias mine="sudo chown -R $(whoami):$(whoami)"
 
@@ -501,7 +428,6 @@ alias ta="tmux attach"
 alias v="vim"
 alias vs="vim --servername vim"
 alias vv="cd /dev/shm"
-alias Z="field_from_last_command"
 
 # ------------------------------------------------------------------------------
 # - set_default_flags_(aliases)                                                -
@@ -518,8 +444,10 @@ alias ls="ls --color=auto -h"
 alias octave="octave --silent"
 alias xpdfr="xpdf -remote 127.0.0.1"
 alias xpdfv="xpdf -rv"
-alias pw="pal -r 7"
-alias pm="pal -r 31"
+alias rem="remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$'"
+alias remcal="remind -c1 -g -q ~/.reminders"
+alias remyear="remind -c12 -g -q ~/.reminders"
+alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
 if [ -r ~/.mozilla/firefox/profiles.ini ]
 then
 	for profile in $(awk -F= '/^Name=/{print$2}' ~/.mozilla/firefox/profiles.ini)
@@ -532,6 +460,7 @@ fi
 # - git_(aliases)                                                              -
 # ------------------------------------------------------------------------------
 
+alias gg="git grep --color"
 alias ga="git add"
 alias gc="git commit -v"
 alias gcd="git commit -a -v -m \"\$(date)\""
@@ -548,19 +477,20 @@ alias gul="git pull"
 alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 alias gusu='git submodule foreach git pull origin master'
 alias gdh='git diff HEAD'
+alias gt="git rev-parse --show-toplevel"
 alias gT='cd "$(git rev-parse --show-toplevel)"'
-alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
 
 # ------------------------------------------------------------------------------
 # - bedrock_clients_(aliases)                                                  -
 # ------------------------------------------------------------------------------
 
-if which brc 1>/dev/null 2>/dev/null
+if type brc >/dev/null 2>&1
 then
-	for CLIENT in $(bri -l)
+	for STRATUM in $(bri -l)
 	do
-		alias $CLIENT="brc $CLIENT"
-		alias s$CLIENT="sudo brc $CLIENT"
+		alias "$STRATUM"="brc $STRATUM"
+		alias "s$STRATUM"="sudo brc $STRATUM"
+		hash -d "$STRATUM"="/bedrock/strata/$STRATUM"
 	done
 fi
 
@@ -635,7 +565,7 @@ then
 	}
 elif [ "$DISTRO" = "Arch" ]
 then
-	if which packer >/dev/null
+	if type packer >/dev/null 2>&1
 	then
 		# Install package
 		alias ki="sudo packer -S"
@@ -747,15 +677,6 @@ fi
 # If runit is set up for a user session but not running, launch it.
 
 export SVDIR="$HOME/.sv"
-if ! uname -a | grep -q 'Android' && \
-	! ps -u $(id -u) -o cmd | grep -q "^runsvdir " && \
-	[ -d $SVDIR ] && \
-	[ "$(stat -c %u $SVDIR)" = "$(id -u)" ] && \
-	type -p runsvdir >/dev/null 2>&1
-then
-	printf "Starting runsvdir: "
-	runsvdir $SVDIR &
-fi
 svall() {
 	if [ -z "$1" ]
 	then
@@ -765,3 +686,25 @@ svall() {
 	fi
 	sv $cmd $SVDIR/*
 }
+svstop() {
+	SVPID=$(ps -u $(id -u) -o pid,cmd | awk '$2 == "runsvdir" && $3 == "'$SVDIR'" {print$1}')
+	if [ -n "$SVPID" ]
+	then
+		svall d
+		echo kill "$SVPID"
+		kill "$SVPID"
+	else
+		echo "Could not find runsvdir process"
+	fi
+}
+if ! uname -a | grep -q 'Android' && \
+	! ps -u $(id -u) -o cmd | grep -q "\(^\|/\)runsvdir $SVDIR" && \
+	[ -d $SVDIR ] && \
+	[ "$(stat -c %u $SVDIR)" = "$(id -u)" ] && \
+	type runsvdir >/dev/null 2>&1
+then
+	find $SVDIR -name "lock" -size 0 -delete
+	svall d
+	printf "Starting runsvdir: "
+	runsvdir $SVDIR &
+fi

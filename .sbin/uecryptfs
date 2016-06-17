@@ -1,0 +1,18 @@
+#!/bin/sh
+
+abort() {
+	echo "Error: $@"
+	exit 2
+}
+
+[ -n "$1" ] || abort "No user provided"
+USER=$1
+USERHOME=$(awk -F: "/^$USER:/{print\$6}" /etc/passwd)
+modprobe ecryptfs || abort "Could not modprobe ecryptfs"
+[ -d $USERHOME ] || abort "Could not find home directory"
+[ -f $USERHOME/.ecryptfssettings ] || abort "Could not find ecryptfs settings"
+[ -d $USERHOME/.encrypted ] || abort "Could not find encrypted directory"
+[ -d $USERHOME/.decrypted ] || abort "Could not find decrypted directory"
+echo "Mounting with:"
+echo mount -t ecryptfs -o $(cat $USERHOME/.ecryptfssettings) $USERHOME/.encrypted $USERHOME/.decrypted
+mount -t ecryptfs -o $(cat $USERHOME/.ecryptfssettings) $USERHOME/.encrypted $USERHOME/.decrypted

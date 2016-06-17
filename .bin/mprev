@@ -1,0 +1,42 @@
+#!/bin/sh
+
+winid=""
+winname=""
+initwinid=""
+populate_wininfo() {
+	initwinid="$(xdotool getactivewindow)"
+	rootid="$(xdotool search --maxdepth 0 --name "")" 2>/dev/null
+	winid="$(xdotool search --name "$1" | grep -v "^$rootid$" | head -n1)"
+	[ -n "$winid" ] && winname="$(xdotool getwindowname "$winid")"
+}
+
+run_in_window() {
+	xdotool mousemove --window "$initwinid" 0 0
+	xdotool mousemove --window "$winid" 0 0
+	eval "$@"
+	xdotool mousemove --window "$winid" 0 0
+	xdotool mousemove --window "$initwinid" 0 0
+}
+
+if ps -e -o comm | grep '^mpd$'
+then
+	ncmpcpp prev
+elif ps -e -o comm | grep '^mocp$'
+then
+	nocmp --previous
+elif ps -e -o comm | grep '^pianobar$'
+then
+	false
+elif populate_wininfo "mpv - "
+then
+	run_in_window 'xdotool click --clearmodifiers 1 && sleep 0.1 && xdotool type --clearmodifiers "<"'
+elif populate_wininfo "VLC media player"
+then
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers "p"'
+elif populate_wininfo "YouTube"
+then
+	false
+elif populate_wininfo "Netflix"
+then
+	false
+fi

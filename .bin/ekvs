@@ -1,0 +1,740 @@
+#!/bin/sh
+#
+# ekvs
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# version 2 as published by the Free Software Foundation.
+#
+# Copyright (c) 2014 Daniel Thau <paradigm@bedrocklinux.org>
+#
+# Encrypted Key Value Store
+#
+# This program serves as an interface for a relatively simple encrypted
+# key-value store.  Encrypting, decrypting, signing and verifying the store is
+# automated by this utility.
+#
+# The main limitations are:
+# - Keys cannot contain a newline.
+# - Values are forced to end in a newline.
+# - This will probably not scale up well into megabyte-sized stores.
+#   - Everything is stored as a flat-file - no indexing or trees or hashes
+#   - The store is decrypted/iterated-over/encrypted as needed, often
+#   repeatedly in succession where things could have been cached.  This
+#   simplifies the code but hurts performance.
+#
+# Baring the use of gpg for encryption and xclip for xorg-clipboard-integration
+# everything should be POSIX-portable.
+
+# Abort if anything returns non-zero unexpectedly
+set -e
+# Abort if accessing unassigned variable
+set -u
+
+# ------------------------------------------------------------------------------
+# - output and error handling                                                  -
+# ------------------------------------------------------------------------------
+
+# Print message if quiet is false without a newline
+out() {
+	"${quiet}" || printf "%s" "$@"
+}
+
+# Print message if quiet is false with a newline
+outln() {
+	"${quiet}" || printf "%s\n" "$@"
+}
+
+# Print error message and abort
+outerr() {
+	echo "$@" >&2
+	exit 1
+}
+
+
+# ------------------------------------------------------------------------------
+# - populate variables                                                         -
+# ------------------------------------------------------------------------------
+
+populate_gpg_id() {
+	# No need to repopulate
+	[ -n "${gpg_id:-""}" ] && return
+	gpg_id=$(gpg --verify "${store_file}" 2>&1 | awk 'NR==1{print$NF}')
+}
+
+populate_fingerprint() {
+	# No need to repopulate fingerprint
+	[ -n "${fingerprint:-""}" ] && return
+	populate_gpg_id
+	fingerprint=$(gpg --fingerprint "${gpg_id}" | awk -F= '/Key fingerprint/{gsub(" ","",$2);print$2}')
+}
+
+populate_password() {
+	# No need to repopulate
+	[ -n "${passphrase:-""}" ] && return
+	populate_fingerprint
+
+	# Try to get pinentry to populate gpg-agent if needed.
+	echo "test input" | gpg --use-agent --batch -as --no-tty >/dev/null 2>&1 || true
+
+	# Attempt to get password from gpg-agent
+	if which gpg-connect-agent >/dev/null
+	then
+		gpg_agent_output=$(echo "GET_PASSPHRASE --data --no-ask ${fingerprint} - - -" | gpg-connect-agent | head -n1) 2>/dev/null
+	fi
+
+	# If we got password from gpg-agent, store it.  Otherwise, ask user for password.
+	if [ "$(echo "${gpg_agent_output}" | cut -d' ' -f1 )" = "D" ]
+	then
+		password="$(echo "${gpg_agent_output}" | cut -d' ' -f2)"
+	else
+		# get password without echoing back to terminal
+		out "Enter PASSWORD: "
+		stty -echo
+		read -r password || true
+		stty echo
+		outln ""
+	fi
+
+	# test password against gpg
+	(
+		echo "${password}"
+		echo "test input"
+	) | gpg -r "${fingerprint}" --batch --sign --no-tty --passphrase-fd 0 -o /dev/null >/dev/null 2>&1 || outerr "Bad password, aborting."
+}
+
+
+# ------------------------------------------------------------------------------
+# - crypto                                                                     -
+# ------------------------------------------------------------------------------
+
+encrypt_and_sign() {
+	gpg -r ${gpg_id} --armor --encrypt |\
+	sed "1i${password}" | gpg --no-tty --quiet -r ${gpg_id} --passphrase-fd 0 -o ${store_tmp} --clearsign
+	mv "${store_tmp}" "${store_file}"
+}
+
+decrypt() {
+	gpg --quiet --decrypt "${store_file}" 2>/dev/null |\
+	sed "1i${password}" |\
+	gpg --no-tty --quiet --passphrase-fd 0 --decrypt
+}
+
+verify() {
+	gpg --verify "${store_file}" 2>/dev/null || outerr "ERROR: Bad signature, aborting."
+}
+
+
+# ------------------------------------------------------------------------------
+# - auxiliary                                                                  -
+# ------------------------------------------------------------------------------
+
+list_keys() {
+	decrypt | grep "^k " | cut -c3-
+}
+
+match_count() {
+	list_keys | grep "${1}" | wc -l
+}
+
+get_value() {
+	in_section="/bin/false"
+	for line in $(decrypt)
+	do
+		type=$(echo "${line}" | cut -c1)
+		content=$(echo ${line} | cut -c3-)
+		if [ "${type}" = "k" ] && [ "${content}" = "${1}" ]
+		then
+			in_section="/bin/true"
+		elif [ "${type}" = "k" ] && ! [ "${content}" = "${1}" ]
+		then
+			in_section="/bin/false"
+		elif [ "${type}" = "v" ] && "${in_section}"
+		then
+			echo "${content}"
+		fi
+	done
+}
+
+filter_out_item() {
+	in_section="/bin/false"
+	for line in $(decrypt)
+	do
+		type=$(echo ${line} | cut -c1)
+		content=$(echo ${line} | cut -c3-)
+		if [ "${type}" = "k" ] && [ "${content}" = "${1}" ]
+		then
+			in_section="/bin/true"
+		elif [ "${type}" = "k" ] && ! [ "${content}" = "${1}" ]
+		then
+			in_section="/bin/false"
+			echo "${line}"
+		elif [ "${type}" = "v" ] && ! "${in_section}"
+		then
+			echo "${line}"
+		fi
+	done
+}
+
+
+# ------------------------------------------------------------------------------
+# - constraints and warnings                                                   -
+# ------------------------------------------------------------------------------
+#
+# Due to `set -e`, have to be careful about return values here.  If something
+# is "good", the *function*'s return value should be 0.  If something is "bad",
+# then we outerr.  For example, the following function will return
+# non-zero and trigger `set -e`:
+#
+#   f() { false && outerr }
+#
+# In general, ending a function with "conditional || abort" works but
+# "conditional && abort" will either abort or return non-zero.
+
+abort_if_store_exists() {
+	[ ! -e "${store_file}" ] || outerr "ERROR: Store file already exists, refusing to overwrite, aborting."
+}
+
+abort_if_store_does_not_exist() {
+	[ -e "${store_file}" ] || outerr "ERROR: Store file does not exists, nothing to operate on, aborting."
+}
+
+abort_if_key_exists() {
+	for test_key in $(list_keys)
+	do
+		[ "${test_key}" != "${key}" ] || outerr "ERROR: Key already in store, aborting."
+	done
+}
+
+abort_if_multiple_matches() {
+	[ "$(match_count "${key_re}")" -le 1 ] || outerr "ERROR: Multiple matches, aborting."
+}
+
+abort_if_no_matches() {
+	[ "$(match_count "${key_re}")" -ne 0 ] || outerr "ERROR: No matches, aborting."
+}
+
+warn_if_multiple_matches() {
+	if [ "$(match_count "${key_re}")" -gt 1 ]
+	then
+		out "Warning: Multiple matches. Continue? (y/N) "
+		read -r YN || true
+		[ "${YN}" = "y" ] || outerr "Did not accept multiple matches with 'y', aborting."
+	fi
+}
+
+double_check() {
+	out "Are you sure? (y/N) "
+	read -r YN || true
+	[ "${YN}" = "y" ] || outerr "Did not accept dump with 'y', aborting."
+}
+
+
+# ------------------------------------------------------------------------------
+# - commands                                                                   -
+# ------------------------------------------------------------------------------
+
+cmd_quiet() {
+	quiet=true
+}
+
+cmd_store() {
+	# The store was set as an argument for this command.
+	# This new store may potentially use a different gpg key and thus the
+	# current gpg key information should be cleared to be repopulated for any
+	# upcoming command which requires it.
+	unset gpg_id
+	unset fingerprint
+	unset password
+}
+
+cmd_init() {
+	out "Creating new store... "
+	echo -n "" | encrypt_and_sign
+	outln "done."
+}
+
+cmd_add() {
+	out "Adding new key-value pair... "
+	(
+		# add current store
+		decrypt
+		# add key
+		echo "k ${key}"
+		# add value
+		echo "${value}" | sed "s/^/v /" | awk '1'
+	) | encrypt_and_sign
+	outln "done."
+}
+
+cmd_append() {
+	abort_if_multiple_matches
+	abort_if_no_matches
+	# need actual key to append, not just the regex to match it
+	key=$(list_keys | grep "${key_re}")
+	out "Appending value... "
+	(
+		# get current store without item we are appending
+		filter_out_item "${key}"
+		# get current item we are appending
+		echo "k ${key}"
+		get_value "${key}" | sed "s/^/v /"
+		# add new value content (from stdin, ensuring "v " prefix and newline)
+		echo "${value}" | sed "s/^/v /" | awk '1'
+	) | encrypt_and_sign
+	outln "done."
+}
+
+cmd_rm() {
+	out "Removing key-value pairs... "
+	for key in $(list_keys | grep "${key_re}")
+	do
+		filter_out_item "${key}" | encrypt_and_sign || abort
+	done
+	outln "done"
+}
+
+cmd_list() {
+	list_keys | grep "${key_re}" | sort
+}
+
+cmd_grep() {
+	for line in $(decrypt)
+	do
+		type=$(echo ${line} | cut -c1)
+		content=$(echo ${line} | cut -c3-)
+		if [ "${type}" = "k" ]
+		then
+			section="$content"
+		elif [ "${type}" = "v" ] && echo "${content}" | grep -q "${value_re}"
+		then
+			echo "${section}"
+		fi
+	done | sort | uniq
+}
+
+cmd_get() {
+	if [ "$(match_count "${key_re}")" -gt 1 ]
+	then
+		for key in $(list_keys | grep "${key_re}" | sort)
+		do
+			echo "----- BEGIN ${key} -----"
+			get_value "${key}"
+			echo "------ END ${key} ------"
+		done
+	else
+		for key in $(list_keys | grep "${key_re}" | sort)
+		do
+			get_value "${key}"
+		done
+	fi
+}
+
+cmd_clip() {
+	abort_if_multiple_matches
+	abort_if_no_matches
+	# need actual key to append, not just the regex to match it
+	key=$(list_keys | grep "${key_re}")
+	# use printf to avoid trailing newline
+	printf "%s" "$(get_value "${key}")" | xclip
+	outln "Set to clipboard, will clear in 10 seconds"
+	(
+		sleep 10
+		echo -n "overwrote ekvs clipboard entry" | xclip
+	) &
+}
+
+cmd_dump() {
+	echo "----- BEGIN DUMP -----"
+	decrypt
+	echo "------ END DUMP ------"
+}
+
+cmd_help() {
+cat <<EOF
+ekvs is an encrypted key-value store.
+
+Usage: ekvs [COMMAND [KEY|KEY-REGEX|VALUE-REGEX|GPG-ID|STORE-FILE] [VALUE]]
+
+Multiple COMMANDs and their additional information may be queued up in the
+cmdline argument list.  If required information is missing from the cmdline
+arguments (for example, adding a new key without specifying the value) ekvs
+will prompt for the additional information via stdin.  If no arguments are
+provided, ekvs will repeatedly prompt for new commands until stdin is closed
+(e.g. from a pipe) or an illegal command (such as an empty command) is
+specified.
+
+All COMMANDs which operate on the store require a gpg passphrase.  For security
+reasons, this passphrase cannot be provided by a cmdline argument.  If
+gpg-agent appears to be available, ekvs will query it for the passphrase.
+Otherwise, the user will be prompted for a passphrase when a new passphrase is
+needed.
+
+If the environmental variable EKVS_STORE is set, its value will be the file on
+which to operate.  Otherwise, ekvs defaults to ~/.ekvs/store.  Note this can be
+changed via the "store" command.
+
+COMMANDs:
+  q, quiet   Do not print prompts, warnings, or progress information.
+             Takes no further arguments.
+             Use this when interacting with ekvs in automated fashion.
+  s, store   Set the ekvs store file on which to operate.
+             Following argument is STORE-FILE.
+  i, init    Create a new store.
+             Following argument is GPG-ID.
+  a, add     Adds a new key-value pair.
+             First following argument is KEY.
+             Second following argument is VALUE
+  p, append  Append to the value of a pre-existing key.
+             First following argument is KEY-REGEX.
+             Second following argument is VALUE to append.
+  r, rm      Remove matching key-value pair(s).
+             Following argument is KEY-REGEX.
+  l, list    Lists all keys matching a pattern.
+             Following argument is KEY-REGEX.
+  e, grep    Lists all keys who have a value matching a pattern.
+             Following argument is VALUE-REGEX.
+  g, get     Prints the value of key(s) specified.
+             Following argument is KEY-REGEX.
+  c, clip    Puts the value of a key into the clipboard.
+             Following argument is KEY-REGEX.
+             Automatically clears clipboard after 20 sceonds.
+  d, dump    Prints entire raw, unencrypted store.
+             Takes no further arguments.
+  x, exit    Quit.
+             Takes no further arguments.
+
+Examples:
+
+Create a new store at ~/.work/passwords using gpg key "abc12345":
+
+  ekvs store ~/.work/passwords init abc12345
+
+Add new key-value pair to the default store without leaking either key or value
+to cmdline.
+
+  ekvs add
+  (prompt for key)
+  (prompt for value)
+
+Query ekvs for both the account and password associated with example.com from
+the default store:
+
+  ekvs get example.com-account get example.com-password
+
+Another way to query ekvs for both the account and password associated with
+example.com from the default store:
+
+  ekvs get example.com-\(account\|password\)
+
+Query ekvs for everything associated with example.com in the default store:
+
+  ekvs get example.com
+
+Query ekvs for imap credentials without printing prompts or leaking information
+such as an e-mail address to other users via /proc, and store this information
+in the shell variables.  This could be used, for example, by a new email
+notification tool.  Assumes gpg-agent is set so ekvs acts as a keyring.
+
+  imap_user=\$(echo "user@example.com-smtp-user" | ekvs quiet get)
+  imap_pass=\$(echo "user@example.com-smtp-pass" | ekvs quiet get)
+
+EOF
+}
+
+
+# ------------------------------------------------------------------------------
+# - execution starts here                                                      -
+# ------------------------------------------------------------------------------
+
+# Check for need to print help now and get it out of the way
+case "${1:-""}" in
+	"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"")
+		# legal command
+		true
+		;;
+	*)
+		# illegal command, print help
+		cmd_help
+		exit 0
+		;;
+esac
+
+# Will loop over lines
+IFS="
+"
+
+# Clear/default variables
+unset store_file
+unset store_tmp
+unset password
+unset gpg_id
+unset fingerprint
+quiet=/bin/false
+
+# Get initial store_file
+if [ -n "${EKVS_STORE:-""}" ]
+then
+	store_file="${EKVS_STORE}"
+else
+	store_file="${HOME}/.ekvs/store"
+fi
+
+# Get temporary store file
+store_tmp="${store_file}-tmp-$$"
+
+# no command specified, possible interactive session, loop continuously.
+[ -z "${1:-""}" ] && loop=true || loop=false
+
+
+# ------------------------------------------------------------------------------
+# - main loop                                                                  -
+# ------------------------------------------------------------------------------
+
+while [ -n "${1:-""}" ] || "${loop}"
+do
+	# Clear variables
+	unset cmd
+	unset key
+	unset key_re
+	unset value
+	unset value_re
+
+	# Get command
+	if [ -n "${1:-""}" ]
+	then
+		cmd="${1}"
+		shift
+	else
+		outln "Commands: [q]uiet, [s]tore, [i]nit, [a]dd, a[p]pend, [r]m, [l]ist, gr[e]p, [g]et, [c]lip, [d]ump, e[x]it"
+		out "Enter COMMAND: "
+		read -r cmd || true
+	fi
+	# Ensure command is legal
+	case "${cmd}" in
+		"x"|"exit")
+			exit 0
+			;;
+		"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump")
+			# legal command
+			true
+			;;
+		*)
+			outerr "Illegal command, aborting."
+			;;
+	esac
+
+	# Get arguments for command
+	case "${cmd}" in
+		"quiet"|"q"|"dump"|"d")
+			# no additional arguments needed
+			true
+			;;
+		"store"|"s")
+			if [ -n "${1:-""}" ]
+			then
+				store_file="${1}"
+				shift
+				store_tmp="${store_file}-tmp-$$"
+			else
+				out "Enter STORE: "
+				read -r store_file || true
+				store_tmp="${store_file}-tmp-$$"
+			fi
+			# Ensure non-empty
+			[ -n "${store_file}" ] || outerr "No STORE provided, aborting."
+			# this shouldn't ever happen
+			[ -n "${store_tmp}" ] || outerr "ERROR: Could not populate store_tmp, aborting."
+			;;
+		"init"|"i")
+			if [ -n "${1:-""}" ]
+			then
+				gpg_id="${1}"
+				shift
+			else
+				out "Enter GPG-ID: "
+				read -r gpg_id || true
+			fi
+			# Ensure non-empty
+			[ -n "${gpg_id}" ] || outerr "No GPG-ID provided, aborting."
+			;;
+		"add"|"a")
+			if [ -n "${1:-""}" ]
+			then
+				key="${1}"
+				shift
+			else
+				out "Enter KEY: "
+				read -r key || true
+			fi
+			# Ensure non-empty
+			[ -n "${key}" ] || outerr "No KEY provided, aborting."
+			if [ -n "${1:-""}" ]
+			then
+				value="${1}"
+				shift
+			else
+				outln "Enter VALUE, ending with ctrl-n,ctrl-d OR ctrl-d,ctrld"
+				value=$(cat) || true
+				outln ""
+			fi
+			# Ensure non-empty
+			[ -n "${value}" ] || outerr "No VALUE provided, aborting."
+			;;
+		"append"|"p")
+			if [ -n "${1:-""}" ]
+			then
+				key_re="${1}"
+				shift
+			else
+				out "Enter KEY-REGEX: "
+				read -r key_re || true
+			fi
+			# Ensure non-empty
+			[ -n "${key_re}" ] || outerr "No KEY-REGEX provided, aborting."
+			if [ -n "${1:-""}" ]
+			then
+				value="${1}"
+				shift
+			else
+				outln "Enter VALUE to append, ending with ctrl-n,ctrl-d OR ctrl-d,ctrld"
+				value=$(cat) || true
+				outln ""
+			fi
+			# Ensure non-empty
+			[ -n "${value}" ] || outerr "No VALUE provided, aborting."
+			;;
+		"rm"|"r"|"list"|"l"|"get"|"g"|"clip"|"c")
+			if [ -n "${1:-""}" ]
+			then
+				key_re="${1}"
+				shift
+			else
+				out "Enter KEY-REGEX: "
+				read -r key_re || true
+			fi
+			# Ensure non-empty
+			[ -n "${key_re}" ] || outerr "No KEY-REGEX provided, aborting."
+			;;
+		"grep"|"e")
+			if [ -n "${1:-""}" ]
+			then
+				value_re="${1}"
+				shift
+			else
+				out "Enter VALUE-REGEX: "
+				read -r value_re || true
+			fi
+			# Ensure non-empty
+			[ -n "${value_re}" ] || outerr "No VALUE-REGEX provided, aborting."
+			;;
+		"*")
+			outerr "ERROR: should never get to this part of the code"
+			;;
+	esac
+
+	# verify store if using a command which touches existing store
+	case "${cmd}" in
+		"q"|"quiet"|"s"|"store"|"i"|"init")
+			# these commands do not operate on an existing store and thus do not need a password
+			true
+			;;
+		"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump")
+			# these commands operate on the store and need a password set
+			verify
+			;;
+		"*")
+			outerr "ERROR: should never get to this part of the code"
+			;;
+	esac
+
+	# get password if using a command which touches it
+	case "${cmd}" in
+		"q"|"quiet"|"s"|"store")
+			# these commands do not operate on a store and thus do not need a password
+			true
+			;;
+		"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump")
+			# these commands operate on the store and need a password set
+			populate_password
+			;;
+		"*")
+			outerr "ERROR: should never get to this part of the code"
+			;;
+	esac
+
+	# Check command constraints
+	case "${cmd}" in
+		"quiet"|"q"|"store"|"s")
+			# no constraints
+			true
+			;;
+		"init"|"i")
+			# store-file must not already exist
+			abort_if_store_exists
+			;;
+		"add"|"a")
+			# store must exist
+			abort_if_store_does_not_exist
+			# key must NOT already exists
+			abort_if_key_exists
+			;;
+		"append"|"p"|"clip"|"c")
+			# store must exist
+			abort_if_store_does_not_exist
+			# must be exactly one match
+			abort_if_multiple_matches
+			abort_if_no_matches
+			;;
+		"get"|"g"|"rm"|"r")
+			# store must exist
+			abort_if_store_does_not_exist
+			# Possible mistake if querying for multiple matches, prompt.
+			warn_if_multiple_matches
+			# Must have some possible match to continue
+			abort_if_no_matches
+			;;
+		"list"|"l"|"grep"|"e")
+			# store must exist
+			abort_if_store_does_not_exist
+			;;
+		"dump"|"d")
+			# store must exist
+			abort_if_store_does_not_exist
+			# Double-check the user wants to perform this operation.
+			double_check
+			;;
+		"*")
+			outerr "ERROR: should never get to this part of the code"
+			;;
+	esac
+
+	# Actually perform command
+	case "${cmd}" in
+		"quiet"|"q")
+			cmd_quiet ;;
+		"store"|"s")
+			cmd_store ;;
+		"init"|"i")
+			cmd_init ;;
+		"add"|"a")
+			cmd_add ;;
+		"append"|"p")
+			cmd_append ;;
+		"rm"|"r")
+			cmd_rm ;;
+		"list"|"l")
+			cmd_list ;;
+		"grep"|"e")
+			cmd_grep ;;
+		"get"|"g")
+			cmd_get ;;
+		"clip"|"c")
+			cmd_clip ;;
+		"dump"|"d")
+			cmd_dump ;;
+		"*")
+			outerr "ERROR: should never get to this part of the code"
+			;;
+	esac
+done

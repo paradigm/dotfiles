@@ -1,0 +1,81 @@
+#!/bin/sh
+rm $(ls  | grep "texautofollow-error" | xargs) 2>/dev/null
+if [ $(ls | grep -c ".tex$") -ne 1 ]
+then
+	echo "Could not guess tex file"
+	echo "Press ENTER close"
+	read PAUSE
+	quit
+fi
+infile=$(ls | grep ".tex$")
+outfile=$(echo $infile | sed 's/tex$/pdf/')
+echo "Input is: $infile"
+echo "Output is: $outfile"
+echo "Watching for changes and following cursor"
+
+compile_loop(){
+	while inotifywait $infile 1>/dev/null 2>/dev/null
+	do
+		# wait for write to finish
+		sleep 1
+		printf " Compiling...\r"
+		if lualatex -interaction=nonstopmode -synctex=1 $infile > texautofollow-error-output
+		then
+			printf " Okay         \r"
+			window=$(xwininfo -root -children | awk '/'$outfile'/{print$1}')
+			if [ -n "$window" ]
+			then
+				xdotool type --window $window "r"
+			fi
+			if [ -f texautofollow-error ]
+			then
+				rm texautofollow-error
+			fi
+		else
+			printf " Error         \r"
+			awk 'substr($0,1,1)=="!"{x=1}x==1{print$0}' texautofollow-error-output > texautofollow-error-output-filtered
+cat > texautofollow-error.tex << EOF
+\\documentclass{article}
+\\usepackage{verbatim}
+\\usepackage{fullpage}
+\\begin{document}
+\\Large
+\\verbatiminput{texautofollow-error-output-filtered}
+\\end{document}
+EOF
+			pdflatex texautofollow-error.tex 1>/dev/null 2>/dev/null
+			mv texautofollow-error.pdf $outfile
+			rm $(ls  | grep "texautofollow-error" | xargs) 2>/dev/null
+			touch "texautofollow-error"
+			pkill -HUP mupdf
+		fi
+	done
+}
+follow_cursor(){
+	previous=""
+	while sleep .5
+	do
+		current=$(vim --servername "tex" --remote-expr 'line(".").":".col(".")')
+		if [ "$current" != "$previous" ] && [ ! -f texautofollow-error ]
+		then
+			previous="$current"
+			page=$(synctex view -i $current:./$infile -o $outfile | awk -F: '/^Page:[0-9]/{print$2;exit}')
+			window=$(xwininfo -root -children | awk '/'$outfile'/{print$1}')
+			xdotool type --window $window "${page}g"
+		fi
+	done
+}
+quit(){
+	kill $compile_pid $follow_pid
+	rm $(ls  | grep "texautofollow-error" | xargs) 2>/dev/null
+}
+
+trap quit HUP INT TERM
+compile_loop &
+compile_pid=$!
+follow_cursor &
+follow_pid=$!
+
+echo "Press ENTER or CTRL-C to quit"
+read PAUSE
+quit

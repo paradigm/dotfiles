@@ -1,3 +1,36 @@
+[submodule ".src/dwm"]
+	path = .src/dwm
+	url = https://github.com/paradigm/dwm
+	ignore = dirty
+[submodule ".src/dmenu"]
+	path = .src/dmenu
+	url = http://git.suckless.org/dmenu
+	ignore = dirty
+[submodule ".src/vim"]
+	ignore = dirty
+	path = .src/vim
+	url = https://github.com/vim/vim.git
+[submodule ".src/paraPDF"]
+	path = .src/paraPDF
+	ignore = dirty
+	url = https://github.com/paradigm/paraPDF.git
+[submodule ".src/xcape"]
+	path = .src/xcape
+	url = https://github.com/alols/xcape.git
+	ignore = dirty
+[submodule ".src/sxiv"]
+	path = .src/sxiv
+	url = https://github.com/paradigm/sxiv.git
+	ignore = dirty
+[submodule ".src/slock"]
+	path = .src/slock
+	url = http://git.suckless.org/slock
+	ignore = dirty
+
+[submodule ".vim/remote/vim-ledger"]
+	path = .vim/remote/vim-ledger
+	url = https://github.com/ledger/vim-ledger.git
+	ignore = dirty
 [submodule ".vim/remote/skybison"]
 	path = .vim/remote/skybison
 	url = https://github.com/paradigm/SkyBison.git
@@ -58,12 +91,15 @@
 	path = .vim/remote/rainbow
 	url = https://github.com/luochen1990/rainbow
 	ignore = dirty
-[submodule ".vim/remote/rust.vim"]
-	path = .vim/remote/rust.vim
-	url = https://github.com/rust-lang/rust.vim.git
-[submodule ".vim/remote/vim-racer"]
-	path = .vim/remote/vim-racer
-	url = https://github.com/racer-rust/vim-racer.git
-[submodule ".vim/remote/rust"]
-	path = .vim/remote/rust
-	url = https://github.com/rust-lang/rust.git
+#[submodule ".vim/remote/rust.vim"]
+#	path = .vim/remote/rust.vim
+#	url = https://github.com/rust-lang/rust.vim.git
+#	ignore = dirty
+#[submodule ".vim/remote/vim-racer"]
+#	path = .vim/remote/vim-racer
+#	url = https://github.com/racer-rust/vim-racer.git
+#	ignore = dirty
+#[submodule ".vim/remote/rust"]
+#	path = .vim/remote/rust
+#	url = https://github.com/rust-lang/rust.git
+#	ignore = dirty

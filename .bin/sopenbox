@@ -1,0 +1,18 @@
+#!/bin/sh
+if type openbox >/dev/null 2>&1
+then
+	if pidof dwm >/dev/null
+	then
+		kill $(pidof dwm)
+	fi
+	if pidof openbox >/dev/null
+	then
+		kill $(pidof openbox)
+	fi
+	if pidof compiz >/dev/null
+	then
+		kill $(pidof compiz)
+		sleep 2
+	fi
+	exec openbox
+fi

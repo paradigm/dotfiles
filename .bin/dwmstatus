@@ -1,0 +1,142 @@
+#!/bin/sh
+trap '[ -n $PID ] && kill $PID' HUP
+
+WHITE=''
+LIGHTGRAY=''
+GRAY=''
+ALERT=''
+END=''
+
+NEXT_COLOR="$GRAY"
+
+can_run() {
+	if ! type "$1" >/dev/null 2>&1
+	then
+		false
+		return
+	elif [ -n "$2" ]
+	then
+		eval "$2" >/dev/null 2>&1
+		return
+	else
+		true
+		return
+	fi
+}
+
+colorize() {
+	if [ -z "$1" ]
+	then
+		return
+	fi
+
+	if [ -n "$2" ]
+	then
+		NEXT_COLOR="$2"
+	fi
+
+	printf "$NEXT_COLOR"
+	echo "$1" | awk 'BEGIN{ORS=", "}1' | sed 's/, $/\n/'
+
+	if [ "$NEXT_COLOR" != "$GRAY" ]
+	then
+		NEXT_COLOR="$GRAY"
+	else
+		NEXT_COLOR="$WHITE"
+	fi
+}
+
+media_status() {
+	can_run mtitle && mtitle | sed -e 's/<3/❤ /g'
+}
+
+todo_high_priority_status() {
+	can_run task 'task top prio=H' && task top prio=H | awk 'NR>=4 && $0 == "" {sawblank=1} NR>=4 && NR<= 6 && !sawblank'
+}
+
+todo_status() {
+	can_run task 'task top prio!=H prio!=L' && task top prio!=H prio!=L | awk 'NR>=4 && $0 == "" {sawblank=1} NR>=4 && NR<=6 && NR && !sawblank'
+}
+
+calendar_status() {
+	can_run remind && remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$' | awk 'NR>2'
+}
+
+weather_status() {
+	can_run metar && metar
+}
+
+battery_status() {
+	can_run bat '[ -d "/sys/class/power_supply/BAT0" ]' && bat
+}
+
+volume_status() {
+	can_run amixer 'amixer get Master' && amixer get Master | awk -F'[][]' '/[0-9]%/{printf "Vol %s", $2;exit}'
+}
+
+cpu_status() {
+	printf "CPU "
+	awk '{printf "%s ", $1;exit}' /proc/loadavg
+	awk '$1 < min || min == 0 {min=$1} $1 > max {max=$1} END {printf "%.1fGhz-%.1fGhz", min/1000/1000, max/1000/1000}' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq
+	printf " "
+	awk '$1 < min || min == 0 {min=$1} $1 > max {max=$1} END {printf "%.1f°C-%.1f°C", min/1000, max/1000}' /sys/class/hwmon/hwmon2/temp*_input
+	printf " "
+	awk '/MemAvailable/{available=($2/1024/1024)} /MemTotal/{total=($2/1024/1024)} END{printf "%.1fGB/%.1fGB\n", total - available, total }' /proc/meminfo
+}
+
+gpu_status() {
+	if ! can_run nvidia-settings "nvidia-settings -q GPUCurrentClockFreqs"
+	then
+		return
+	fi
+	printf "GPU "
+	nvidia-settings -t -q GPUUtilization 2>/dev/null | awk -F'[=, ]' '{printf "%.2f ", $2/100}'
+	nvidia-settings -tq '[gpu:0]/GPUCurrentClockFreqs' 2>/dev/null | awk -F, '{printf "%dMhz ", $1}'
+	nvidia-settings -tq '[gpu:0]/GPUCoreTemp' 2>/dev/null | awk '{printf "%d°C ", $1}'
+	nvidia-settings -tq '[gpu:0]/UsedDedicatedGPUMemory' -q '[gpu:0]/TotalDedicatedGPUMemory' 2>/dev/null | awk 'NR==1 {printf "%dMB", $1} NR==2 {printf "/%dMB", $1}'
+}
+
+time_status() {
+	date "+%a-%Y-%m-%d-%H%M"
+}
+
+all_status() {
+	# get CPU first so that we get the fresh stats before the rest of the script uses CPU
+	precomputed_cpu_status="$(cpu_status)"
+
+	colorize "$precomputed_cpu_status"
+	colorize "$(gpu_status)"
+	colorize "$(volume_status)"
+	colorize "$(battery_status)"
+	colorize "$(time_status)" | tr -d '\n'
+	printf ''
+	colorize "$(todo_high_priority_status)" "$ALERT"
+	colorize "$(todo_status)"
+	colorize "$(calendar_status)" | tr -d '\n'
+	printf ''
+	colorize "$(media_status)" "$WHITE"
+	colorize "$(weather_status)" | tr -d '\n'
+}
+
+# debug
+if [ "$1" = "debug" ]
+then
+	echo "$(all_status | paste -d' ' -s)"
+	exit 0
+elif [ "$1" = "lines" ]
+then
+	echo "$(all_status)"
+	exit 0
+fi
+
+while true
+do
+	# update
+	xsetroot -name "$(all_status | paste -d' ' -s)"
+
+	# wait until next minute mark
+	sleep "$(expr 60 - $(date +%S))" &
+	PID=$!
+	wait
+	PID=""
+done
