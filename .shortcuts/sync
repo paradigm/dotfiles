@@ -7,16 +7,18 @@ then
 	exit 1
 fi
 
-echo "----- changes -----"
-git diff HEAD
-echo "----- ------- -----"
-
-printf "Continue? [n/Y] "
-read YN
-if [ "$YN" != "y" ]
+if [ -n "$(git diff HEAD)" ]
 then
-	echo "User aborted operation"
-	exit 1
+	echo "----- changes -----"
+	git diff HEAD
+	echo "----- ------- -----"
+	printf "Continue? [n/Y] "
+	read YN
+	if [ "$YN" != "y" ]
+	then
+		echo "User aborted operation"
+		exit 1
+	fi
 fi
 
 export SSH_AUTH_SOCK="$HOME/.ssh/S.ssh-agent"
@@ -25,4 +27,6 @@ then
 	ssh-add "$HOME/.ssh/id_rsa"
 fi
 
-git commit -a -v -m "$(date)" && git pull origin master && git push origin master
+git commit -a -v -m "$(date)"
+git pull origin master
+git push origin master
