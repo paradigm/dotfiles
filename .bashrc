@@ -447,8 +447,8 @@ alias xpdfv="xpdf -rv"
 alias rem="remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$'"
 alias remcal="remind -c1 -g -q ~/.reminders"
 alias remyear="remind -c12 -g -q ~/.reminders"
-alias balance='ledger -f ~/.ledger balance'
-alias register='ledger -f ~/.ledger register'
+alias balance='ledger balance'
+alias register='ledger register'
 alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
 if [ -r ~/.mozilla/firefox/profiles.ini ]
 then
