@@ -2,7 +2,7 @@
 
 if [ -n "$(task top prio=H)" ]
 then
-	busybox printf '\e[31m'
+	busybox printf '\e[41m'
 	task top prio=H | awk 'NR>=4 && $0 == "" {sawblank=1} NR>=4 && NR<= 6 && !sawblank'
 	busybox printf '\e[0m'
 	echo ""
