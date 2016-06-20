@@ -427,7 +427,14 @@ alias sx="startx& exit"
 alias ta="tmux attach"
 alias v="vim"
 alias vs="vim --servername vim"
-alias vv="cd /dev/shm"
+if [ -d /dev/shm/ ]
+then
+	export vv="/dev/shm/"
+elif [ -d /storage/emulated/0 ]
+then
+	export vv="/storage/emulated/0"
+fi
+alias vv="$vv"
 
 # ------------------------------------------------------------------------------
 # - set_default_flags_(aliases)                                                -

@@ -7,7 +7,12 @@ then
 fi
 
 CODE=$(cat ~/.metar)
-TMP=/dev/shm
+if [ -w /dev/shm/ ]
+then
+	TMP=/dev/shm/
+else
+	TMP=/tmp/
+fi
 CACHE=$TMP/.metar-$CODE-$(id -u)
 
 if ! [ -e $CACHE ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y $CACHE) + 3600) ]

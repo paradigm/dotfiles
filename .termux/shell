@@ -1,0 +1,50 @@
+#!/data/data/com.termux/files/usr/bin/sh
+
+if [ -e /sdcard/.termux-chroot ] && \
+	 [ -x /data/data/com.termux/files/usr/bin/proot ] && \
+	 [ -x /data/data/com.termux/files/usr/bin/zsh ]
+then
+	# copy pasted a bunch from termux-chroot, as it's easier to maintain my
+	# own than fork it into accepting an argument.  Will drop once
+	# termux-chroot is updated to allow arguments.
+
+	# For the /system/bin/linker(64) to be found:
+	ARGS="-b /system:/system"
+
+	# Bind $PREFIX so Termux programs expecting
+	# to find e.g. configurations files there work.
+	ARGS="$ARGS -b $PREFIX/..:$PREFIX/.."
+
+	# Expose external and internal storage:
+	if [ -d /storage ]; then
+		ARGS="$ARGS -b /storage:/storage"
+	fi
+
+	# Mimic traditional Linux file system hierarchy - /usr:
+	ARGS="$ARGS -b $PREFIX:/usr"
+
+	# Mimic traditional Linux file system hierarchy - other Termux dirs:
+	for f in bin etc lib share tmp var; do
+		ARGS="$ARGS -b $PREFIX/$f:/$f"
+	done
+
+	# Mimic traditional Linux file system hierarchy- system dirs:
+	for f in dev proc; do
+		ARGS="$ARGS -b /$f:/$f"
+	done
+
+	# Set /home as current directory:
+	ARGS="$ARGS --cwd=/home"
+
+	# Root of the file system:
+	ARGS="$ARGS -r $PREFIX/.."
+
+	# Program to execute:
+	PROGRAM=/usr/bin/zsh
+	ARGS="$ARGS $PROGRAM -l"
+
+	export HOME=/home
+	exec $PREFIX/bin/proot $ARGS
+else
+	exec /data/data/com.termux/files/usr/bin/sh
+fi
