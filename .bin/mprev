@@ -18,13 +18,13 @@ run_in_window() {
 	xdotool mousemove --window "$initwinid" 0 0
 }
 
-if ps -e -o comm | grep '^mpd$'
+if ps -e -o comm | grep -q '^mpd$'
 then
 	ncmpcpp prev
-elif ps -e -o comm | grep '^mocp$'
+elif ps -e -o comm | grep -q '^mocp$'
 then
 	nocmp --previous
-elif ps -e -o comm | grep '^pianobar$'
+elif ps -e -o comm | grep -q '^pianobar$'
 then
 	false
 elif populate_wininfo "mpv - "

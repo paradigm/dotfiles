@@ -18,13 +18,13 @@ run_in_window() {
 	xdotool mousemove --window "$initwinid" 0 0
 }
 
-if ps -e -o comm | grep '^mpd$'
+if ps -e -o comm | grep -q '^mpd$'
 then
 	false
-elif ps -e -o comm | grep '^mocp$'
+elif ps -e -o comm | grep -q '^mocp$'
 then
 	false
-elif ps -e -o comm | grep '^pianobar$'
+elif ps -e -o comm | grep -q '^pianobar$'
 then
 	sed 's/\r......../\n/g' ~/.config/pianobar/out | grep '^"' | tail -n1
 elif populate_wininfo "mpv - "
