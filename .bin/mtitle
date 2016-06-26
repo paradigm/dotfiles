@@ -26,7 +26,7 @@ then
 	false
 elif ps -e -o comm | grep -q '^pianobar$'
 then
-	awk 'BEGIN{RS=".\x1B[[]2K";ORS="\n"}/^\|>  /{x=substr($0,5)}END{print x}' out
+	awk 'BEGIN{RS=".\x1B[[]2K";ORS="\n"}/^\|>  /{x=substr($0,5)}END{print x}' ~/.config/pianobar/out
 elif populate_wininfo "mpv - "
 then
 	echo "$winname" | sed 's/^mpv - //'
