@@ -1,0 +1,4 @@
+#!/bin/sh
+pid="$(ps -u $(id -u) -o comm,pid | awk 'NF == 2 && $1 == "xinit" {print$2}')"
+[ "$(echo "$pid" | wc -l)" -ne 1 ] && return 1
+cat "/proc/$pid/cmdline" | tr '\0' '\n' | grep '^:[0-9]'

@@ -1,4 +1,4 @@
 #!/bin/sh
-export DISPLAY="$(cat "/proc/$(pidof xinit)/cmdline" | tr '\0' '\n' | grep '^:[0-9]')"
+export DISPLAY="$(get-display)"
 xset -q >/dev/null 2>&1 || echo "d" > supervise/control
 exec ~/.bin/dwmstatus >/dev/null 2>&1
