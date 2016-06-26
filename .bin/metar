@@ -17,7 +17,7 @@ CACHE=$TMP/.metar-$CODE-$(id -u)
 
 if ! [ -e $CACHE ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y $CACHE) + 3600) ]
 then
-	printf "\n$CODE\nX\n" | nc rainmaker.wunderground.com 23 > "$CACHE"
+	printf "\n$CODE\nX\n" | nc -w 2 rainmaker.wunderground.com 23 > "$CACHE"
 	if [ $? -ne 0 ]
 	then
 		rm "$CACHE"
