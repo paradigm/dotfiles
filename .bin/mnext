@@ -29,7 +29,7 @@ then
 	echo n > ~/.config/pianobar/ctl
 elif populate_wininfo "mpv - "
 then
-	run_in_window 'xdotool click --clearmodifiers 1 && sleep 0.1 && xdotool type --clearmodifiers ">"'
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers ">"'
 elif populate_wininfo "VLC media player"
 then
 	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers "n"'
