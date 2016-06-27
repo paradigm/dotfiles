@@ -858,6 +858,7 @@ alias octave="octave --silent"
 alias xpdfr="xpdf -remote 127.0.0.1"
 alias xpdfv="xpdf -rv"
 alias rem="remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$'"
+alias remn="remind -n -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$' | sort"
 alias remcal="remind -c1 -g -q ~/.reminders"
 alias remyear="remind -c12 -g -q ~/.reminders"
 alias balance='ledger balance'
