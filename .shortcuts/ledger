@@ -1,2 +1,112 @@
 #!/data/data/com.termux/files/usr/bin/sh
-exec vim ~/.ledger '+normal G'
+
+list_payees() {
+	awk '/^[0-9]/ {sub("^[^ ]+[ *!]+([(][^)]+[)] +)?", ""); print}' ~/.ledger | sort | uniq
+}
+
+list_expenses() {
+	awk -F':' '/^account expenses:/{print$2}' ~/.ledger
+}
+
+list_assets() {
+	awk -F':' '/^account assets:/{print$2}' ~/.ledger
+}
+
+conf() {
+	printf "[y/N] "
+	read YN
+	[ "$YN" = "y" ]
+}
+
+while :
+do
+	clear
+	printf "Date: $(date --iso)\n"
+
+	printf "Amount: "
+	read amount
+
+	while :
+	do
+		printf "Payee: "
+		read response
+		if [ -n "$response" ] && [ "$(list_payees | grep "$response")" = "$response" ]
+		then
+			payee="$response"
+			break;
+		elif [ -z "$(list_payees | grep "$response")" ]
+		then
+			echo "Payee: $response (new payee)"
+			payee="$response"
+			conf && break
+		elif [ "$(list_payees | grep "$response" | wc -l)" -eq 1 ]
+		then
+			payee="$(list_payees | grep "$response")"
+			echo "Payee: $payee (regex match)"
+			conf && break
+		else
+			list_payees | grep "$response"
+		fi
+	done
+
+	while :
+	do
+		printf "Expense: "
+		read response
+		if [ -n "$response" ] && [ "$(list_expenses | grep "$response")" = "$response" ]
+		then
+			expense="$response"
+			break;
+		elif [ -z "$(list_expenses | grep "$response")" ]
+		then
+			echo "Expense: $response (new expense)"
+			expense="$response"
+			conf && break
+		elif [ "$(list_expenses | grep "$response" | wc -l)" -eq 1 ]
+		then
+			expense="$(list_expenses | grep "$response")"
+			echo "Expense: $expense (regex match)"
+			conf && break
+		else
+			list_expenses | grep "$response"
+		fi
+	done
+
+	while :
+	do
+		printf "Asset: "
+		read response
+		if [ -n "$response" ] && [ "$(list_assets | grep "$response")" = "$response" ]
+		then
+			asset="$response"
+			break;
+		elif [ -z "$(list_assets | grep "$response")" ]
+		then
+			echo "Asset: $response (new asset)"
+			asset="$response"
+			conf && break
+		elif [ "$(list_assets | grep "$response" | wc -l)" -eq 1 ]
+		then
+			asset="$(list_assets | grep "$response")"
+			echo "Asset: $asset (regex match)"
+			conf && break
+		else
+			list_assets | grep "$response"
+		fi
+	done
+
+cat <<EOF
+$(date --iso) $payee
+	expenses:$expense	\$$amount
+	assets:$asset
+EOF
+
+	conf || continue
+
+cat >> ~/.ledger <<EOF
+$(date --iso) $payee
+	expenses:$expense	\$$amount
+	assets:$asset
+EOF
+	break
+done
