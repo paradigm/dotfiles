@@ -13,9 +13,9 @@ list_assets() {
 }
 
 conf() {
-	printf "[y/N] "
+	printf "[Y/n] "
 	read YN
-	[ "$YN" = "y" ]
+	[ "$YN" = "" ] || [ "$YN" = "y" ] || [ "$YN" = "Y" ]
 }
 
 while :
@@ -104,6 +104,7 @@ EOF
 	conf || continue
 
 cat >> ~/.ledger <<EOF
+
 $(date --iso) $payee
 	expenses:$expense	\$$amount
 	assets:$asset
