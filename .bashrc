@@ -291,9 +291,20 @@ then
 fi
 
 # Set pagers
+if type man >/dev/null 2>&1 && type vim >/dev/null 2>&1
+then
+	if man -V >/dev/null 2>&1
+	then
+		# likely a man which groups arguments with quotes
+		export MANPAGER="vim --cmd 'set modelines=0|let \$MANPAGER=\"\"' -c 'silent %s/.\%x08//g' -c '1' -c 'set filetype=man nomod nolist foldlevel=999' -"
+	else
+		# termux's man doesn't support -V; this is probably termux's.
+		# Splits on exactly spaces, but not tabs.  Does not treat quotes specially.
+		export MANPAGER="vim --cmd set	modelines=0|let	\$MANPAGER=\"\" -c silent	%s/.\%x08//g -c 1 -c set	filetype=man	nomod	nolist	foldlevel=999 -"
+	fi
+fi
 if type vim >/dev/null 2>&1
 then
-	export MANPAGER="sh -c \"unset MANPAGER; col -b -x | vim --cmd 'set modelines=0' -c 'set filetype=man nomod nolist foldlevel=999' -\""
 	export GIT_PAGER="vim --cmd 'set modelines=0' -c 'set filetype=git nomod nolist foldlevel=999' -"
 fi
 
