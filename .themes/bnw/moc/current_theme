@@ -1,0 +1,75 @@
+# ELEMENT is an element of MOC interface. This can be:
+# background         - default background for regions when nothing is displayed
+# frame              - frames for windows
+# window_title       - the title of the window (eg name of the current
+#                      directory)
+# directory          - a directory in the menu
+# selected_directory - a directory that is selected using arrows
+# playlist           - playlist file
+# selected_playlist  - see selected directory
+# file               - an ordinary file in the menu (mp3, ogg, ...)
+# selected_file      - see selected directory
+# marked_file        - a file that is currently being played
+# marked_selected_file - a file that is currently being played and is also
+#                      selected using arrows
+# info               - information shown at the right side of files
+# selected_info      - see selected directory
+# marked_info        - a file (its time) that is currently being played
+# marked_selected_info - a file (its time) that is currently being played
+#                      and is also selected using arrows
+# status             - the status line with a message
+# title              - the title of the file that is currently being played
+# state              - the state: play, stop, or paused (>, [], ||)
+# current_time       - current time of playing
+# time_left          - the time left to the end of playing the current file
+# total_time         - the length of the currently played file
+# time_total_frames  - the brackets outside the total time of a file ([10:13])
+# sound_parameters   - the frequency and bitrate numbers
+# legend             - "KHz" and "Kbps"
+# disabled           - disabled element ([STEREO])
+# enabled            - enabled element
+# empty_mixer_bar    - "empty" part of the volume bar
+# filled_mixer_bar   - "filled" part of the volume bar
+# empty_time_bar     - "empty" part of the time bar
+# filled_time_bar    - "filled" part of the time bar
+# entry              - place wher user can type a search query or a file name
+# entry_title        - the title of an entry
+# error              - error message
+# message            - information message
+# plist_time         - total time of displayed items
+
+background		= white		black
+frame			= white		black
+window_title		= white		black
+directory		= white		black
+selected_directory	= white		black	reverse
+playlist		= white		black
+selected_playlist	= white		black	reverse
+file			= white		black
+selected_file		= white		black	reverse
+marked_file		= white		black	bold,underline
+marked_selected_file	= white		black	bold,reverse
+info			= white		black	underline
+selected_info		= white		black
+marked_info		= white		black
+marked_selected_info	= white		black
+status			= white		black
+title			= white		black	bold
+state			= white		black
+current_time		= white		black	bold
+time_left		= white		black	bold
+total_time		= white		black	bold
+time_total_frames	= white		black
+sound_parameters	= white		black	bold
+legend			= white		black
+disabled		= white		black
+enabled			= white		black	bold
+empty_mixer_bar		= white		black
+filled_mixer_bar	= white		black	reverse
+empty_time_bar		= white		black
+filled_time_bar		= white		black	reverse
+entry			= white		black
+entry_title		= white		black
+error			= white		black	bold,underline
+message			= white		black
+plist_time		= white		black
