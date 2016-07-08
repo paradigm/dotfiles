@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if ! type ekvs >/dev/null 2>&1 || ! type offlineimap >/dev/null 2>&1
+then
+	sv d mail
+fi
+
+while true
+do
+	sleep "$(expr 3600 - $(expr $(date +%M) \* 60 + $(date +%S)))"
+	ekvs quiet test && offlineimap
+done

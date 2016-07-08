@@ -100,6 +100,14 @@ time_status() {
 	date "+%a-%Y-%m-%d-%H%M"
 }
 
+mail_status() {
+	new_mail_count="$(ls ~/.mail/*/new/* | wc -l)"
+	if [ "$new_mail_count" -gt 0 ]
+	then
+		echo "mail: $new_mail_count"
+	fi
+}
+
 all_status() {
 	# get CPU first so that we get the fresh stats before the rest of the script uses CPU
 	precomputed_cpu_status="$(cpu_status)"
@@ -110,6 +118,7 @@ all_status() {
 	colorize "$(battery_status)"
 	colorize "$(time_status)" | tr -d '\n'
 	printf ''
+	colorize "$(mail_status)"
 	colorize "$(todo_high_priority_status)" "$ALERT"
 	colorize "$(todo_status)"
 	colorize "$(calendar_status)" | tr -d '\n'
