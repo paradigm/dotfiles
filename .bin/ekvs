@@ -6,7 +6,7 @@
 # modify it under the terms of the GNU General Public License
 # version 2 as published by the Free Software Foundation.
 #
-# Copyright (c) 2014 Daniel Thau <paradigm@bedrocklinux.org>
+# Copyright (c) 2014-2016 Daniel Thau <paradigm@bedrocklinux.org>
 #
 # Encrypted Key Value Store
 #
@@ -23,13 +23,27 @@
 #   repeatedly in succession where things could have been cached.  This
 #   simplifies the code but hurts performance.
 #
-# Baring the use of gpg for encryption and xclip for xorg-clipboard-integration
-# everything should be POSIX-portable.
+# Baring the following three exceptions, everything should be POSIX portable:
+# - use of `gpg` and `gpg-connect-agent` for encryption
+# - `xclip` for xorg-clipboard-integration
+# - `echo` and `printf` must be built-in to avoid sensitive arguments showing
+#   up in /proc (TODO: replace with heredoc to drop requirement?)
 
 # Abort if anything returns non-zero unexpectedly
 set -e
 # Abort if accessing unassigned variable
 set -u
+# Ensure built-in to avoid sensitive material showing up in /proc
+if ! type echo | grep -q '^echo is a shell builtin$'
+then
+	echo '`echo` is not a shell builtin, aborting' >&2
+	exit 1
+fi
+if ! type printf | grep -q '^printf is a shell builtin$'
+then
+	echo '`printf` is not a shell builtin, aborting' >&2
+	exit 1
+fi
 
 # ------------------------------------------------------------------------------
 # - output and error handling                                                  -
@@ -47,7 +61,7 @@ outln() {
 
 # Print error message and abort
 outerr() {
-	echo "$@" >&2
+	"${quiet}" || echo "$@" >&2
 	exit 1
 }
 
@@ -59,26 +73,26 @@ outerr() {
 populate_gpg_id() {
 	# No need to repopulate
 	[ -n "${gpg_id:-""}" ] && return
-	gpg_id=$(gpg --verify "${store_file}" 2>&1 | awk 'NR==1{print$NF}')
+	gpg_id=$(gpg --verify "${store_file}" 2>&1 | awk '/^gpg: Signature made/{print$NF}')
 }
 
 populate_fingerprint() {
 	# No need to repopulate fingerprint
 	[ -n "${fingerprint:-""}" ] && return
 	populate_gpg_id
-	fingerprint=$(gpg --fingerprint "${gpg_id}" | awk -F= '/Key fingerprint/{gsub(" ","",$2);print$2}')
+	fingerprint=$(gpg --fingerprint "${gpg_id}" | sed -e 's/Key fingerprint =//' -e 's/ //g' | awk 'NR==2')
 }
 
 populate_password() {
 	# No need to repopulate
-	[ -n "${passphrase:-""}" ] && return
+	[ -n "${password:-""}" ] && return
 	populate_fingerprint
 
 	# Try to get pinentry to populate gpg-agent if needed.
 	echo "test input" | gpg --use-agent --batch -as --no-tty >/dev/null 2>&1 || true
 
 	# Attempt to get password from gpg-agent
-	if which gpg-connect-agent >/dev/null
+	if type gpg-connect-agent >/dev/null 2>&1
 	then
 		gpg_agent_output=$(echo "GET_PASSPHRASE --data --no-ask ${fingerprint} - - -" | gpg-connect-agent | head -n1) 2>/dev/null
 	fi
@@ -87,7 +101,8 @@ populate_password() {
 	if [ "$(echo "${gpg_agent_output}" | cut -d' ' -f1 )" = "D" ]
 	then
 		password="$(echo "${gpg_agent_output}" | cut -d' ' -f2)"
-	else
+	elif ! "${quiet}"
+	then
 		# get password without echoing back to terminal
 		out "Enter PASSWORD: "
 		stty -echo
@@ -109,15 +124,18 @@ populate_password() {
 # ------------------------------------------------------------------------------
 
 encrypt_and_sign() {
-	gpg -r ${gpg_id} --armor --encrypt |\
-	sed "1i${password}" | gpg --no-tty --quiet -r ${gpg_id} --passphrase-fd 0 -o ${store_tmp} --clearsign
+	(
+		echo "${password}"
+		gpg -r "${gpg_id}" --armor --encrypt
+	) | gpg --no-tty --quiet -r "${gpg_id}" --passphrase-fd 0 -o "${store_tmp}" --clearsign
 	mv "${store_tmp}" "${store_file}"
 }
 
 decrypt() {
-	gpg --quiet --decrypt "${store_file}" 2>/dev/null |\
-	sed "1i${password}" |\
-	gpg --no-tty --quiet --passphrase-fd 0 --decrypt
+	(
+		echo "${password}"
+		gpg --quiet --decrypt "${store_file}" 2>/dev/null
+	) | gpg --no-tty --quiet --passphrase-fd 0 --decrypt
 }
 
 verify() {
@@ -250,7 +268,7 @@ cmd_store() {
 
 cmd_init() {
 	out "Creating new store... "
-	echo -n "" | encrypt_and_sign
+	printf "" | encrypt_and_sign
 	outln "done."
 }
 
@@ -350,6 +368,23 @@ cmd_dump() {
 	echo "------ END DUMP ------"
 }
 
+cmd_test() {
+	populate_fingerprint
+
+	# Attempt to get password from gpg-agent
+	gpg_agent_output=$(echo "GET_PASSPHRASE --data --no-ask ${fingerprint} - - -" | gpg-connect-agent | head -n1) 2>/dev/null
+	possible_password="$(echo "${gpg_agent_output}" | cut -d' ' -f2)"
+
+	# test password against gpg
+	(
+		echo "${possible_password}"
+		echo "test input"
+	) | gpg -r "${fingerprint}" --batch --sign --no-tty --passphrase-fd 0 -o /dev/null >/dev/null 2>&1 || outerr "Either no password or bad password cached by gpg-agent"
+
+	outln "password is cached by gpg-agent"
+	exit 0
+}
+
 cmd_help() {
 cat <<EOF
 ekvs is an encrypted key-value store.
@@ -401,6 +436,11 @@ COMMANDs:
              Automatically clears clipboard after 20 sceonds.
   d, dump    Prints entire raw, unencrypted store.
              Takes no further arguments.
+  t, test    Tests if password is cached by gpg-agent.
+             Returns 0 to indicate password is cached,
+             otherwise non-zero.
+             Immediately exits ekvs either way.
+             Takes no further arguments.
   x, exit    Quit.
              Takes no further arguments.
 
@@ -449,7 +489,7 @@ EOF
 
 # Check for need to print help now and get it out of the way
 case "${1:-""}" in
-	"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"")
+	"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"t"|"test"|"")
 		# legal command
 		true
 		;;
@@ -515,7 +555,7 @@ do
 		"x"|"exit")
 			exit 0
 			;;
-		"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump")
+		"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"t"|"test")
 			# legal command
 			true
 			;;
@@ -526,7 +566,7 @@ do
 
 	# Get arguments for command
 	case "${cmd}" in
-		"quiet"|"q"|"dump"|"d")
+		"quiet"|"q"|"dump"|"d"|"test"|"t")
 			# no additional arguments needed
 			true
 			;;
@@ -639,7 +679,7 @@ do
 			# these commands do not operate on an existing store and thus do not need a password
 			true
 			;;
-		"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump")
+		"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"t"|"test")
 			# these commands operate on the store and need a password set
 			verify
 			;;
@@ -650,7 +690,7 @@ do
 
 	# get password if using a command which touches it
 	case "${cmd}" in
-		"q"|"quiet"|"s"|"store")
+		"q"|"quiet"|"s"|"store"|"t"|"test")
 			# these commands do not operate on a store and thus do not need a password
 			true
 			;;
@@ -665,7 +705,7 @@ do
 
 	# Check command constraints
 	case "${cmd}" in
-		"quiet"|"q"|"store"|"s")
+		"quiet"|"q"|"store"|"s"|"test"|"t")
 			# no constraints
 			true
 			;;
@@ -733,6 +773,8 @@ do
 			cmd_clip ;;
 		"dump"|"d")
 			cmd_dump ;;
+		"test"|"t")
+			cmd_test ;;
 		"*")
 			outerr "ERROR: should never get to this part of the code"
 			;;
