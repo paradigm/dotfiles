@@ -41,4 +41,8 @@ then
 elif populate_wininfo "Netflix"
 then
 	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " "'
+elif populate_wininfo "Twitch"
+then
+	# assumes fullscreen
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " "'
 fi

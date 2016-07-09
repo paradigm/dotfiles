@@ -31,4 +31,7 @@ then
 elif populate_wininfo "Netflix"
 then
 	xdotool windowactivate "$winid"
+elif populate_wininfo "Twitch"
+then
+	xdotool windowactivate "$winid"
 fi

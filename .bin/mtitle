@@ -39,4 +39,7 @@ then
 elif populate_wininfo "Netflix"
 then
 	false
+elif populate_wininfo "Twitch"
+then
+	echo "$winname" | sed 's/ - Twitch.*$//'
 fi
