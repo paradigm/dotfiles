@@ -29,10 +29,10 @@ then
 	echo p > ~/.config/pianobar/ctl
 elif populate_wininfo "mpv - "
 then
-	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " "'
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
 elif populate_wininfo "VLC media player"
 then
-	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " "'
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
 elif populate_wininfo "YouTube"
 then
 	window_width=$(xdotool getwindowgeometry "$winid" | awk '$1 == "Geometry:" {print$2}' | cut -dx -f1)
@@ -40,9 +40,9 @@ then
 	run_in_window 'xdotool mousemove --window "$winid" "$cursor_x_pos" 100 && xdotool click --clearmodifiers 1'
 elif populate_wininfo "Netflix"
 then
-	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " "'
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
 elif populate_wininfo "Twitch"
 then
 	# assumes fullscreen
-	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " "'
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
 fi
