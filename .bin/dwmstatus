@@ -134,7 +134,7 @@ then
 	exit 0
 elif [ "$1" = "lines" ]
 then
-	echo "$(all_status)"
+	echo "$(all_status | sed 's//\n/g')"
 	exit 0
 fi
 
