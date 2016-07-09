@@ -1131,7 +1131,7 @@ alias ln="nocorrect ln"
 if [ -n "$SSH_CLIENT" ] ||\
 	[ -n "$SSH_TTY" ] &&\
 	[ -z "$TMUX" ] &&\
-	ps -u $(id -u) -o cmd | grep -q "^tmux$"
+	get-pid tmux >/dev/null
 then
 	exec tmux attach -d
 fi
@@ -1153,7 +1153,7 @@ svall() {
 	sv $cmd $SVDIR/*
 }
 svstop() {
-	SVPID=$(ps -u $(id -u) -o pid,cmd | awk '$2 ~ "runsvdir" && $3 == "'$SVDIR'" {print$1}')
+	SVPID=$(get-pid runsvdir)
 	if [ -n "$SVPID" ]
 	then
 		svall d
@@ -1164,7 +1164,7 @@ svstop() {
 	fi
 }
 if ! uname -a | grep -q 'Android' && \
-	! ps -u $(id -u) -o cmd | grep -q "\(^\|/\)runsvdir $SVDIR" && \
+	! get-pid runsvdir >/dev/null && \
 	[ -d $SVDIR ] && \
 	[ "$(stat -c %u $SVDIR)" = "$(id -u)" ] && \
 	type runsvdir >/dev/null 2>&1

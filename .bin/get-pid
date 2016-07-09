@@ -1,0 +1,5 @@
+#!/bin/sh
+# like pidof except restricted to user's processes
+# works with both busybox and GNU utils
+
+ps -Ao user,comm,pid | awk '$1 == "'"$(id -un)"'" && $2 == "'"$1"'" {print $3;s=1} END {exit!s}'
