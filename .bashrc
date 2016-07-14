@@ -290,6 +290,14 @@ then
 	export PATH="$HOME/.bin:$PATH"
 fi
 
+if uname -a | grep -i cygwin
+then
+	for app in /cygdrive/c/apps/*
+	do
+		export PATH="$PATH:$app"
+	done
+fi
+
 # Set pagers
 if type man >/dev/null 2>&1 && type vim >/dev/null 2>&1
 then
@@ -720,6 +728,7 @@ svstop() {
 	fi
 }
 if ! uname -a | grep -q 'Android' && \
+	! uname -a | grep -qi 'cygwin' && \
 	! get-pid runsvdir >/dev/null && \
 	[ -d $SVDIR ] && \
 	[ "$(stat -c %u $SVDIR)" = "$(id -u)" ] && \
