@@ -65,7 +65,7 @@ autocmd PageLoad reddit.com nnoremap B Fcommen
 " mplay youtube video in mplayer
 " command! -nargs=0 cclive :execute "!uxterm -e 'cd /dev/shm/; cclive -W --stream=best \""+content.location.href+"\" -O cclive-video & sleep 3 && mplayer cclive-video'"
 " command! -nargs=0 cclive :execute "!uxterm -e 'cd /dev/shm/; cclive -W --stream=best \""+content.location.href+"\" -O cclive-video & sleep 3 && mplayer cclive-video'"
-nnoremap gd :execute "!mpv '"+content.location.href+"'"<cr>
+nnoremap gd :silent execute "!mpv '"+content.location.href+"' &"<cr>
 
 " ==============================================================================
 " = theming                                                                    =
