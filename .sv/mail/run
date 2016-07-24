@@ -8,5 +8,5 @@ fi
 while true
 do
 	sleep "$(expr 3600 - $(expr $(date +%M) \* 60 + $(date +%S)))"
-	ekvs quiet test && offlineimap
+	ekvs quiet test && mbsync -a
 done
