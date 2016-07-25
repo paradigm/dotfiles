@@ -1139,6 +1139,7 @@ alias ln="nocorrect ln"
 if [ -n "$SSH_CLIENT" ] ||\
 	[ -n "$SSH_TTY" ] &&\
 	[ -z "$TMUX" ] &&\
+	type -p /bin/sh >/dev/null 2>&1 &&
 	get-pid tmux >/dev/null
 then
 	exec tmux attach -d
