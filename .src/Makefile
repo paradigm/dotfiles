@@ -19,7 +19,7 @@ clean:
 	- rm -r ~/.opt/
 
 install_debian_dependencies:
-	sudo apt-get install libgtk2.0-dev libncurses5 libncurses5-dev libpango1.0-dev libx11-dev libxft-dev libxt-dev libxtst-dev ncurses-dev python-dev
+	sudo apt-get install libgtk2.0-dev libncurses5 libncurses5-dev libpango1.0-dev libx11-dev libxft-dev libxt-dev libxtst-dev ncurses-dev python-dev libimlib2-dev libjbig2dec0-dev libopenjpeg-dev
 
 dwm: $(HOME)/.bin/dwm
 $(HOME)/.bin/dwm: dwm/*.c dwm/*.h
