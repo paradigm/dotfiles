@@ -2,6 +2,9 @@ data.location=~/.priv/task
 
 urgency.uda.priority.L.coefficient=-6.0
 
+color.uda.priority.H=red
+color.overdue=bold red
+
 report.top.description='Top three descriptions'
 report.top.columns=description.count
 report.top.filter=status:pending
