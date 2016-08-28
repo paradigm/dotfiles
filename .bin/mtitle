@@ -38,7 +38,7 @@ then
 	echo "$winname" | sed 's/ - YouTube.*$//'
 elif populate_wininfo "Netflix"
 then
-	false
+	echo "Netflix"
 elif populate_wininfo "Twitch"
 then
 	echo "$winname" | sed 's/ - Twitch.*$//'
