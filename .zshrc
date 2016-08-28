@@ -1333,18 +1333,42 @@ zsh_directory_name() {
 # This parser is not smart enough to do things like withhold substitution in a
 # string.  It'd sure be nice.
 #
-# To make this disable/bypass-able, it must either be at the very front of the
-# or be prepended with a space.  Thus, things like `echo '@word'` won't trigger
-# the substitution because the "@" follows a quote, not a space.
+# To make this easily disable/bypass-able per entry, it must follow a space.
+# Thus, things like `echo '@word'` won't trigger the substitution because the
+# "@" follows a quote, not a space.  To disable for an extended session, unset
+# ENABLE_FUZZ_BUFFER.
 #
-#    " @word" -> "~[d:word]"
-#    " #word" -> "~[f:word]"
-#    " !word" -> "~[v:word]"
+#    " @word" -> " ~[d:word]"
+#    " #word" -> " ~[f:word]"
+#    " !word" -> " ~[v:word]"
+#
+ENABLE_FUZZ_BUFFER=1
 _insert_dynamic_named_directories() {
-	BUFFER=$(printf "%s" "$BUFFER" | sed -e \
-		's,\(^\| \)@\([a-zA-Z0-9_/.*]\+\),\1~[d:\2],g' -e \
-		's,\(^\| \)#\([a-zA-Z0-9_/.*]\+\),\1~[f:\2],g' -e \
-		's,\(^\| \)!\([a-zA-Z0-9_/.*]\+\),\1~[v:\2],g' )
+	if [ -z "$ENABLE_FUZZ_BUFFER" ]
+	then
+		zle .accept-line
+		return
+	fi
+
+	local RETRY PREFIX BODY PAIR
+
+	RETRY=1
+	while [ -n "$RETRY" ]
+	do
+		RETRY=""
+		for PAIR in "@d" "#f" "!v"
+		do
+			if [[ "$BUFFER" =~ " ${PAIR[1]}" ]]
+			then
+				PREFIX="${BUFFER[1,MEND-1]}"
+				BODY="${BUFFER[MEND+1,-1]}"
+				if [[ "$BODY" =~ '[a-zA-Z0-9_/.*]+' ]]
+				then
+					BUFFER="${PREFIX}~[${PAIR[2]}:${BODY[MEGIN,MEND]}]${BODY[MEND+1,-1]}"
+				fi
+			fi
+		done
+	done
 	zle .accept-line
 }
-#zle -N accept-line _insert_dynamic_named_directories
+zle -N accept-line _insert_dynamic_named_directories
