@@ -168,7 +168,7 @@ u() {
 			# count the number of fields that exist with the remaining part.
 			fields=$(echo ${p%"$1"*}$1 | awk -F/ '{print NF}')
 			# Have awk simply print the desired number of fields
-			cd $(pwd | awk -F/ 'BEGIN{IFS=OFS="/"}{NF='$fields'}1')
+			cd "$(pwd | awk -F/ 'BEGIN{IFS=OFS="/"}{NF='$fields'}1')"
 		fi
 	fi
 	pwd
