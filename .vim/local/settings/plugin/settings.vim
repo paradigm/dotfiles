@@ -43,7 +43,10 @@ set title
 " Enable wordwrap
 set textwidth=0 wrap linebreak
 " Enable unicode characters.  This is needed for the 'listchars' below.
-set encoding=utf-8
+" nvim does this by default and warns if this is explicitly set"
+if !has("nvim")
+	set encoding=utf-8
+endif
 " Use spellcheck
 set spell
 " Disable capitalization check in spellcheck.

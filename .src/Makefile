@@ -4,6 +4,8 @@ local: dwm dmenu xcape sxiv paraPDF vim swarp
 root: slock
 all: local root
 
+jobs := $(shell awk '$$1 == "processor" {x=$$3}END{print x+2}' /proc/cpuinfo)
+
 clean:
 	- rm ~/.bin/dwm
 	- rm ~/.bin/xcape
@@ -66,6 +68,7 @@ vim: $(HOME)/.bin/vim
 $(HOME)/.bin/vim:
 	cd vim && git reset --hard
 	cd vim && git clean -f -d
+	cd vim && make distclean
 	cd vim && ./configure --prefix=$(HOME)/.opt/vim/ --with-features=huge --with-x --with-python-config-dir=/usr/lib/python2.7/config --enable-pythoninterp=yes --enable-gui=yes --enable-option-checking
 	cd vim && make
 	cd vim && make install

@@ -103,3 +103,15 @@
 #	path = .vim/remote/rust
 #	url = https://github.com/rust-lang/rust.git
 #	ignore = dirty
+[submodule ".vim/remote/ale"]
+	path = .vim/remote/ale
+	url = https://github.com/w0rp/ale.git
+[submodule ".vim/remote/asyncrun.vim"]
+	path = .vim/remote/asyncrun.vim
+	url = https://github.com/skywind3000/asyncrun.vim
+[submodule ".vim/remote/agrep"]
+	path = .vim/remote/agrep
+	url = https://github.com/ramele/agrep.git
+[submodule ".vim/remote/codi.vim"]
+	path = .vim/remote/codi.vim
+	url = https://github.com/metakirby5/codi.vim.git

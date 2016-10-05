@@ -72,6 +72,12 @@ set runtimepath+=~/.vim/remote/vim-zsh-completion
 set runtimepath+=~/.vim/remote/visincr
 set runtimepath+=~/.vim/remote/wmgraphviz.vim
 set runtimepath+=~/.vim/remote/vim-ledger
+if has("nvim") || has("timers") && has ("job") && has("channel")
+	set runtimepath+=~/.vim/remote/ale
+	set runtimepath+=~/.vim/remote/asyncrun.vim
+" 	set runtimepath+=~/.vim/remote/agrep
+	set runtimepath+=~/.vim/remote/codi.vim
+endif
 " set runtimepath+=~/.vim/remote/rust.vim
 " set runtimepath+=~/.vim/remote/vim-racer
 " set runtimepath+=~/.vim/remote/multicursor

@@ -32,6 +32,9 @@ let g:EclimJavaSearchSingleResult = 'edit'
 " Run grammar check on buffer
 nnoremap <space>L :LanguageToolCheck<cr>
 
+let g:ale_sign_error = 'EE'
+let g:ale_sign_warning = 'WW'
+
 " rust completion
 let g:racer_cmd = 'racer'
 let $RUST_SRC_PATH=$HOME . "/.vim/remote/rust/src/"

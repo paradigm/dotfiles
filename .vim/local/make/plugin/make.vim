@@ -32,11 +32,11 @@ function! make#make()
 	endif
 
 	" make
-	silent! make
+	silent! lmake
 	" clear bottom line of any output
 	redraw!
 	" if there are any results, jump to the first one
-	call support#cc()
+	call support#ll()
 
 	" restore possibly changed setting
 	let &l:makeprg = l:makeprg
@@ -57,7 +57,7 @@ function! make#lint()
 	let l:lintcmd = ""
 	if get(b:, "lintprg", "") != ""
 		let &l:makeprg = b:lintprg
-		let l:lintcmd = "make"
+		let l:lintcmd = "lmake"
 	elseif get(b:, "lintcmd", "") != ""
 		let l:lintcmd = b:lintcmd
 	endif

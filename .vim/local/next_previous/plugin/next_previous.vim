@@ -27,12 +27,12 @@ nnoremap ]Q :clast<cr>
 nnoremap ]<c-q> :cnfile<cr>
 nnoremap [<c-q> :cpfile<cr>
 " next/previous/first/last location list item
-nnoremap ]l :lnext<cr>
-nnoremap [l :lprevious<cr>
-nnoremap [L :lfirst<cr>
-nnoremap ]L :llast<cr>
-nnoremap ]<c-l> :lnfile<cr>
-nnoremap [<c-l> :lpfile<cr>
+nnoremap ]w :lnext<cr>
+nnoremap [w :lprevious<cr>
+nnoremap [W :lfirst<cr>
+nnoremap ]W :llast<cr>
+nnoremap ]<c-w> :lnfile<cr>
+nnoremap [<c-w> :lpfile<cr>
 " next/previous/first/last argument list item
 nnoremap ]a :next<cr>
 nnoremap [a :previous<cr>
