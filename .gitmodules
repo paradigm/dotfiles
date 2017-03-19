@@ -115,3 +115,6 @@
 [submodule ".vim/remote/codi.vim"]
 	path = .vim/remote/codi.vim
 	url = https://github.com/metakirby5/codi.vim.git
+[submodule ".src/dwmstatus"]
+	path = .src/dwmstatus
+	url = git@github.com:paradigm/dwmstatus.git
