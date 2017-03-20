@@ -1,3 +1,3 @@
 #!/bin/sh
 amixer set Master 10- >/dev/null
-kill $(get-pid dwmstatus) >/dev/null 2>&1
+kill -HUP $(get-pid dwmstatus) >/dev/null 2>&1

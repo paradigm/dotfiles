@@ -1,4 +1,4 @@
 #!/bin/sh
 amixer set Master 255 >/dev/null
 amixer set Master unmute >/dev/null
-kill $(get-pid dwmstatus) >/dev/null 2>&1
+kill -HUP $(get-pid dwmstatus) >/dev/null 2>&1
