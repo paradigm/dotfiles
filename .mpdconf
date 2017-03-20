@@ -5,7 +5,7 @@
 # You can put symlinks in here, if you like. Make sure that
 # the user that mpd runs as (see the 'user' config parameter)
 # can read the files in this directory.
-music_directory		"/var/data/music/"
+music_directory		"/mnt/data/music/"
 playlist_directory	"~/.mpd/playlists"
 db_file			"~/.mpd/db"
 log_file		"~/.mpd/mpd.log"
@@ -40,7 +40,7 @@ state_file		"/var/lib/mpd/state"
 # may resolve to both an IPv4 and an IPv6 address. For MPD 0.13 or earlier,
 # it is recommended to only use one or the other.
 #
-bind_to_address                 "127.0.0.1"
+# bind_to_address                 "127.0.0.1"
 #port                            "6600"
 #
 # Controls the amount of information that is logged.  Can be

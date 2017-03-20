@@ -20,10 +20,15 @@ run_in_window() {
 
 if ps -e -o comm | grep -q '^mpd$'
 then
-	false
+	ncmpcpp --now-playing
 elif ps -e -o comm | grep -q '^mocp$'
 then
-	false
+	if mocp --format "%title" | grep -q '.'
+	then
+		mocp --format "%title"
+	else
+		mocp --format "%file"
+	fi
 elif ps -e -o comm | grep -q '^pianobar$'
 then
 	awk 'BEGIN{RS=".\x1B[[]2K";ORS="\n"}/^\|>  /{x=substr($0,5)}END{print x}' ~/.config/pianobar/out
