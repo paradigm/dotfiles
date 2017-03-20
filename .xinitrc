@@ -8,16 +8,6 @@ xsetroot -solid "#000000"
 # set dpi
 xrandr --dpi 96
 
-## This fixes a font issue on Arch Linux.
-#xset +fp /usr/share/fonts/local
-#xset fp rehash
-
-# Disable certain keys to force the usage of others.
-## Unmap backspace (Learn to use ctrl-h).
-#xmodmap -e "keycode 22 = "
-## Unmap control_l (Learn to use caps_lock).
-#xmodmap -e "keycode 37 = "
-
 # Remap caps_lock act like ctrl.
 xmodmap -e "clear Lock"
 xmodmap -e "keycode 0x42 = Control_L"
@@ -28,9 +18,6 @@ xset s off
 
 # This is required for qgtkstyle.
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
-
-# Allow root to run applications
-xhost +local:root
 
 # add 100dpi fonts to PATH, fixes steam
 xset +fp /usr/share/fonts/X11/100dpi
@@ -46,20 +33,11 @@ then
 	xbacklight -set 30%
 fi
 
-# start xorg user session items
-if type sv >/dev/null 2>&1
+XORG_PPID=$(conctl P xorg)
+if echo $XORG_PPID | grep '^[0-9]\+$'
 then
-	for service in $(ls $SVDIR/*/start-xorg | awk -F/ '{print $(NF-1)}')
-	do
-		if type $service >/dev/null 2>&1 && [ -d $SVDIR/$service ]
-		then
-			sv u $SVDIR/$service
-		fi
-	done
+	kill -USR1 "$XORG_PPID"
 fi
-
-# Run the window manager
-dwm&
 
 # Do not close X11 automatically when the window manager closes.
 while true; do sleep 1d; done

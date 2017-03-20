@@ -75,7 +75,7 @@ setopt autopushd
 # - general_(environmental_variables)                                          -
 # ------------------------------------------------------------------------------
 
-if ! echo $PATH | grep -q '\(:\|^\)$HOME/.bin\(:\|$\)'
+if ! echo "$PATH" | grep -q '\(:\|^\)'"$HOME"'/.bin\(:\|$\)'
 then
 	export PATH="$HOME/.bin:$PATH"
 fi
@@ -84,7 +84,10 @@ if uname -a | grep -qi cygwin
 then
 	for app in /cygdrive/c/apps/*
 	do
-		export PATH="$PATH:$app"
+		if ! echo "$PATH" | grep -q '\(:\|^\)'"$app"'\(:\|$\)'
+		then
+			export PATH="$PATH:$app"
+		fi
 	done
 fi
 
@@ -169,6 +172,10 @@ export GPG_AGENT_INFO="$HOME/.gnupg/S.gpg-agent::1"
 # Use ssh-agent if available
 export SSH_AUTH_SOCK="$HOME/.ssh/S.ssh-agent"
 
+# Specify a location for dbus
+# If this is not used, various programs will spawn a dbus-daemon each instead
+# of sharing one.
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$HOME/.dbus/session-bus/connate"
 
 # ------------------------------------------------------------------------------
 # - theme_(environmental_variables)                                            -
@@ -847,7 +854,7 @@ alias s="sudo"
 alias sd="sudo poweroff"
 alias sr="sudo reboot"
 alias ss="sudo pm-suspend"
-alias sx="startx& exit"
+alias sx="conctl u gui-session & exit"
 alias ta="tmux attach"
 alias v="vim"
 alias vs="vim --servername vim"
@@ -1146,43 +1153,14 @@ then
 fi
 
 # ==============================================================================
-# = runit                                                                      =
+# = connate                                                                    =
 # ==============================================================================
-#
-# If runit is set up for a user session but not running, launch it.
 
-export SVDIR="$HOME/.sv"
-svall() {
-	if [ -z "$1" ]
-	then
-		cmd="status"
-	else
-		cmd="$1"
-	fi
-	sv $cmd $SVDIR/*
-}
-svstop() {
-	SVPID=$(get-pid runsvdir)
-	if [ -n "$SVPID" ]
-	then
-		svall d
-		echo kill "$SVPID"
-		kill "$SVPID"
-	else
-		echo "Could not find runsvdir process"
-	fi
-}
-if ! uname -a | grep -q 'Android' && \
-	! uname -a | grep -qi 'cygwin' && \
-	! get-pid runsvdir >/dev/null && \
-	[ -d $SVDIR ] && \
-	[ "$(stat -c %u $SVDIR)" = "$(id -u)" ] && \
-	type runsvdir >/dev/null 2>&1
+export CONNATE_DIR="$HOME/.config/connate/"
+if ! conctl P >/dev/null 2>&1
 then
-	find $SVDIR -name "lock" -size 0 -delete
-	svall d >/dev/null 2>&1
-	printf "Starting runsvdir: "
-	runsvdir $SVDIR &
+	printf "Starting Connate: "
+	connate "$CONNATE_DIR" >/dev/null 2>&1 &
 fi
 
 # ==============================================================================
