@@ -1,6 +1,6 @@
 .PHONY: all clean install_debian_dependencies
 
-local: dwm dmenu xcape sxiv paraPDF vim swarp
+local: dwm dwmstatus dmenu xcape sxiv paraPDF vim swarp
 root: slock
 all: local root
 
