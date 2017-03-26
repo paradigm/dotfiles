@@ -1,3 +1,4 @@
+#!/bin/sh
 # ==============================================================================
 # = paradigm's .xinitrc                                                        =
 # ==============================================================================
@@ -33,10 +34,22 @@ then
 	xbacklight -set 30%
 fi
 
-XORG_PPID=$(conctl P xorg)
-if echo $XORG_PPID | grep '^[0-9]\+$'
+# TODO
+XORG_PPID=$(conctl --pid xorg)
+if conctl --pid xorg | grep '^[0-9]\+$' &&\
+	[ "$(conctl --target xorg)" = "up" ] ||\
+	[ "$(conctl --target xorg)" = "once" ]
 then
-	kill -USR1 "$XORG_PPID"
+	kill -USR1 "$(conctl --pid xorg)"
+elif which dwm >/dev/null 2>&1
+then
+	dwm &
+	dwmstatus &
+elif which openbox >/dev/null 2>&1
+then
+	openbox &
+else
+	xterm &
 fi
 
 # Do not close X11 automatically when the window manager closes.

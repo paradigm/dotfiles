@@ -1156,11 +1156,15 @@ fi
 # = connate                                                                    =
 # ==============================================================================
 
-export CONNATE_DIR="$HOME/.config/connate/"
+export CONNATE_FIFO="$HOME/.connate";
 if ! conctl P >/dev/null 2>&1
 then
-	printf "Starting Connate: "
-	connate "$CONNATE_DIR" >/dev/null 2>&1 &
+	if ! [ -e "$CONNATE_FIFO" ]
+	then
+		mkfifo "$CONNATE_FIFO"
+	fi
+	printf "Staring Connate: "
+	connate >/dev/null 2>&1 &
 fi
 
 # ==============================================================================

@@ -1,2 +1,2 @@
 #!/data/data/com.termux/files/usr/bin/sh
-exec ~/.bin/conctl ~/.config/connate s
+exec ~/.bin/conctl s
