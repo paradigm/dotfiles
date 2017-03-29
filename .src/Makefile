@@ -1,7 +1,7 @@
 .PHONY: all clean install_debian_dependencies
 
 local: dwm dwmstatus dmenu xcape sxiv paraPDF vim swarp
-root: slock
+root: slock disable_at_services
 all: local root
 
 jobs := $(shell awk '$$1 == "processor" {x=$$3}END{print x+2}' /proc/cpuinfo)
@@ -23,6 +23,17 @@ clean:
 
 install_debian_dependencies:
 	sudo apt-get install libgtk2.0-dev libncurses5 libncurses5-dev libpango1.0-dev libx11-dev libxft-dev libxt-dev libxtst-dev ncurses-dev python-dev libimlib2-dev libjbig2dec0-dev libopenjpeg-dev
+
+disable_at_services:
+	- cd /usr/share/dbus-1/services/ && \
+		grep '^Exec=' org.a11y.Bus.service && \
+		sed 's/^Exec=/#Exec=/' org.a11y.Bus.service > /tmp/org.a11y.Bus.service-new && \
+		sudo mv /tmp/org.a11y.Bus.service-new org.a11y.Bus.service
+	- cd /usr/share/dbus-1/services/ && \
+		grep '^Exec=' org.a11y.atspi.Registry.service && \
+		sed 's/^Exec=/#Exec=/' org.a11y.atspi.Registry.service > /tmp/org.a11y.atspi.Registry.service-new && \
+		sudo mv /tmp/org.a11y.atspi.Registry.service-new org.a11y.atspi.Registry.service
+
 
 dwm: $(HOME)/.bin/dwm
 $(HOME)/.bin/dwm: dwm/*.c dwm/*.h
@@ -51,7 +62,10 @@ $(HOME)/.bin/dmenu: dmenu/*.c dmenu/*.h
 xcape: $(HOME)/.bin/xcape
 $(HOME)/.bin/xcape: xcape/*.c
 	cd xcape && make clean && make
-	mkdir -p ~/.bin/ && cp xcape/xcape ~/.bin/xcape
+	mkdir -p ~/.bin/
+	- [ -e ~/.bin/xcape ] && mv ~/.bin/xcape /tmp/running-xcape
+	cp xcape/xcape ~/.bin/xcape
+	- [ -e /tmp/running-xcape ] && rm /tmp/running-xcape
 
 sxiv: $(HOME)/.bin/sxiv
 $(HOME)/.bin/sxiv: sxiv/*.c
