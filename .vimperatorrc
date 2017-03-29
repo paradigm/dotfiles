@@ -38,7 +38,7 @@ nnoremap x :set! permissions.default.image=2<cr>
 nnoremap X :set! permissions.default.image=1<cr>
 
 " custom css
-nnoremap c :style -name paradigm * html * { -moz-appearance: none !important; background-color: #000000 !important; background-image: none !important; color: #ffffff !important; border-color: #ffffff !important; font-family: "Terminus (TTF)" !important; font-size: 12px !important; line-height: 1.0 !important; } a:link { color: #aaaaaa !important; /* link fg */ background-color: #000000 !important; /* link bg  */ }<cr>
+nnoremap c :style -name paradigm * html * { -moz-appearance: none !important; background-color: #000000 !important; background-image: none !important; color: #ffffff !important; border-color: #ffffff !important; font-family: "Terminus (TTF)" !important; font-size: 12px !important; line-height: 1.0 !important; } a:link { color: #aaaaaa !important; /* link fg */ background-color: #000000 !important; /* link bg  */ } ::-moz-selection { background-color: #ffffff !important; color: #000000 !important; }<cr>
 
 nnoremap C :styledisable -name paradigm<cr>
 
