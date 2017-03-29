@@ -34,13 +34,9 @@ then
 	xbacklight -set 30%
 fi
 
-# TODO
-XORG_PPID=$(conctl --pid xorg)
-if conctl --pid xorg | grep '^[0-9]\+$' &&\
-	[ "$(conctl --target xorg)" = "up" ] ||\
-	[ "$(conctl --target xorg)" = "once" ]
+if [ "$(conctl --state xorg)" = "starting" ]
 then
-	kill -USR1 "$(conctl --pid xorg)"
+	conctl k USR1 xorg >/dev/null 2>&1
 elif which dwm >/dev/null 2>&1
 then
 	dwm &
@@ -53,4 +49,5 @@ else
 fi
 
 # Do not close X11 automatically when the window manager closes.
-while true; do sleep 1d; done
+mkfifo ~/.block
+while read PAUSE < ~/.block; do true; done
