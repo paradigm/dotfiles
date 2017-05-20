@@ -60,7 +60,7 @@ outln() {
 }
 
 # Print error message and abort
-outerr() {
+abort() {
 	"${quiet}" || echo "$@" >&2
 	exit 1
 }
@@ -115,7 +115,7 @@ populate_password() {
 	(
 		echo "${password}"
 		echo "test input"
-	) | gpg -r "${fingerprint}" --batch --sign --no-tty --passphrase-fd 0 -o /dev/null >/dev/null 2>&1 || outerr "Bad password, aborting."
+	) | gpg -r "${fingerprint}" --batch --sign --no-tty --passphrase-fd 0 -o /dev/null >/dev/null 2>&1 || abort "Bad password, aborting."
 }
 
 
@@ -139,7 +139,7 @@ decrypt() {
 }
 
 verify() {
-	gpg --verify "${store_file}" 2>/dev/null || outerr "ERROR: Bad signature, aborting."
+	gpg --verify "${store_file}" 2>/dev/null || abort "ERROR: Bad signature, aborting."
 }
 
 
@@ -201,35 +201,35 @@ filter_out_item() {
 #
 # Due to `set -e`, have to be careful about return values here.  If something
 # is "good", the *function*'s return value should be 0.  If something is "bad",
-# then we outerr.  For example, the following function will return
+# then we abort.  For example, the following function will return
 # non-zero and trigger `set -e`:
 #
-#   f() { false && outerr }
+#   f() { false && abort }
 #
 # In general, ending a function with "conditional || abort" works but
 # "conditional && abort" will either abort or return non-zero.
 
 abort_if_store_exists() {
-	[ ! -e "${store_file}" ] || outerr "ERROR: Store file already exists, refusing to overwrite, aborting."
+	[ ! -e "${store_file}" ] || abort "ERROR: Store file already exists, refusing to overwrite, aborting."
 }
 
 abort_if_store_does_not_exist() {
-	[ -e "${store_file}" ] || outerr "ERROR: Store file does not exists, nothing to operate on, aborting."
+	[ -e "${store_file}" ] || abort "ERROR: Store file does not exists, nothing to operate on, aborting."
 }
 
 abort_if_key_exists() {
 	for test_key in $(list_keys)
 	do
-		[ "${test_key}" != "${key}" ] || outerr "ERROR: Key already in store, aborting."
+		[ "${test_key}" != "${key}" ] || abort "ERROR: Key already in store, aborting."
 	done
 }
 
 abort_if_multiple_matches() {
-	[ "$(match_count "${key_re}")" -le 1 ] || outerr "ERROR: Multiple matches, aborting."
+	[ "$(match_count "${key_re}")" -le 1 ] || abort "ERROR: Multiple matches, aborting."
 }
 
 abort_if_no_matches() {
-	[ "$(match_count "${key_re}")" -ne 0 ] || outerr "ERROR: No matches, aborting."
+	[ "$(match_count "${key_re}")" -ne 0 ] || abort "ERROR: No matches, aborting."
 }
 
 warn_if_multiple_matches() {
@@ -237,14 +237,14 @@ warn_if_multiple_matches() {
 	then
 		out "Warning: Multiple matches. Continue? (y/N) "
 		read -r YN || true
-		[ "${YN}" = "y" ] || outerr "Did not accept multiple matches with 'y', aborting."
+		[ "${YN}" = "y" ] || abort "Did not accept multiple matches with 'y', aborting."
 	fi
 }
 
 double_check() {
 	out "Are you sure? (y/N) "
 	read -r YN || true
-	[ "${YN}" = "y" ] || outerr "Did not accept dump with 'y', aborting."
+	[ "${YN}" = "y" ] || abort "Did not accept dump with 'y', aborting."
 }
 
 
@@ -368,6 +368,11 @@ cmd_dump() {
 	echo "------ END DUMP ------"
 }
 
+cmd_urandom() {
+	cat /dev/urandom | tr -dc _A-Z-a-z-0-9 | head -c${1:-32}
+	echo
+}
+
 cmd_test() {
 	populate_fingerprint
 
@@ -379,7 +384,7 @@ cmd_test() {
 	(
 		echo "${possible_password}"
 		echo "test input"
-	) | gpg -r "${fingerprint}" --batch --sign --no-tty --passphrase-fd 0 -o /dev/null >/dev/null 2>&1 || outerr "Either no password or bad password cached by gpg-agent"
+	) | gpg -r "${fingerprint}" --batch --sign --no-tty --passphrase-fd 0 -o /dev/null >/dev/null 2>&1 || abort "Either no password or bad password cached by gpg-agent"
 
 	outln "password is cached by gpg-agent"
 	exit 0
@@ -436,6 +441,7 @@ COMMANDs:
              Automatically clears clipboard after 20 sceonds.
   d, dump    Prints entire raw, unencrypted store.
              Takes no further arguments.
+  u, urandom Generates password from urandom
   t, test    Tests if password is cached by gpg-agent.
              Returns 0 to indicate password is cached,
              otherwise non-zero.
@@ -489,7 +495,7 @@ EOF
 
 # Check for need to print help now and get it out of the way
 case "${1:-""}" in
-	"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"t"|"test"|"")
+	"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"u"|"urandom"|"t"|"test"|"")
 		# legal command
 		true
 		;;
@@ -546,7 +552,7 @@ do
 		cmd="${1}"
 		shift
 	else
-		outln "Commands: [q]uiet, [s]tore, [i]nit, [a]dd, a[p]pend, [r]m, [l]ist, gr[e]p, [g]et, [c]lip, [d]ump, e[x]it"
+		outln "Commands: [q]uiet, [s]tore, [i]nit, [a]dd, a[p]pend, [r]m, [l]ist, gr[e]p, [g]et, [c]lip, [d]ump, [u]random, e[x]it"
 		out "Enter COMMAND: "
 		read -r cmd || true
 	fi
@@ -555,18 +561,18 @@ do
 		"x"|"exit")
 			exit 0
 			;;
-		"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"t"|"test")
+		"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"u"|"urandom"|"t"|"test")
 			# legal command
 			true
 			;;
 		*)
-			outerr "Illegal command, aborting."
+			abort "Illegal command, aborting."
 			;;
 	esac
 
 	# Get arguments for command
 	case "${cmd}" in
-		"quiet"|"q"|"dump"|"d"|"test"|"t")
+		"quiet"|"q"|"dump"|"d"|"test"|"t"|"urandom"|"u")
 			# no additional arguments needed
 			true
 			;;
@@ -582,9 +588,9 @@ do
 				store_tmp="${store_file}-tmp-$$"
 			fi
 			# Ensure non-empty
-			[ -n "${store_file}" ] || outerr "No STORE provided, aborting."
+			[ -n "${store_file}" ] || abort "No STORE provided, aborting."
 			# this shouldn't ever happen
-			[ -n "${store_tmp}" ] || outerr "ERROR: Could not populate store_tmp, aborting."
+			[ -n "${store_tmp}" ] || abort "ERROR: Could not populate store_tmp, aborting."
 			;;
 		"init"|"i")
 			if [ -n "${1:-""}" ]
@@ -596,7 +602,7 @@ do
 				read -r gpg_id || true
 			fi
 			# Ensure non-empty
-			[ -n "${gpg_id}" ] || outerr "No GPG-ID provided, aborting."
+			[ -n "${gpg_id}" ] || abort "No GPG-ID provided, aborting."
 			;;
 		"add"|"a")
 			if [ -n "${1:-""}" ]
@@ -608,7 +614,7 @@ do
 				read -r key || true
 			fi
 			# Ensure non-empty
-			[ -n "${key}" ] || outerr "No KEY provided, aborting."
+			[ -n "${key}" ] || abort "No KEY provided, aborting."
 			if [ -n "${1:-""}" ]
 			then
 				value="${1}"
@@ -619,7 +625,7 @@ do
 				outln ""
 			fi
 			# Ensure non-empty
-			[ -n "${value}" ] || outerr "No VALUE provided, aborting."
+			[ -n "${value}" ] || abort "No VALUE provided, aborting."
 			;;
 		"append"|"p")
 			if [ -n "${1:-""}" ]
@@ -631,7 +637,7 @@ do
 				read -r key_re || true
 			fi
 			# Ensure non-empty
-			[ -n "${key_re}" ] || outerr "No KEY-REGEX provided, aborting."
+			[ -n "${key_re}" ] || abort "No KEY-REGEX provided, aborting."
 			if [ -n "${1:-""}" ]
 			then
 				value="${1}"
@@ -642,7 +648,7 @@ do
 				outln ""
 			fi
 			# Ensure non-empty
-			[ -n "${value}" ] || outerr "No VALUE provided, aborting."
+			[ -n "${value}" ] || abort "No VALUE provided, aborting."
 			;;
 		"rm"|"r"|"list"|"l"|"get"|"g"|"clip"|"c")
 			if [ -n "${1:-""}" ]
@@ -654,7 +660,7 @@ do
 				read -r key_re || true
 			fi
 			# Ensure non-empty
-			[ -n "${key_re}" ] || outerr "No KEY-REGEX provided, aborting."
+			[ -n "${key_re}" ] || abort "No KEY-REGEX provided, aborting."
 			;;
 		"grep"|"e")
 			if [ -n "${1:-""}" ]
@@ -666,10 +672,10 @@ do
 				read -r value_re || true
 			fi
 			# Ensure non-empty
-			[ -n "${value_re}" ] || outerr "No VALUE-REGEX provided, aborting."
+			[ -n "${value_re}" ] || abort "No VALUE-REGEX provided, aborting."
 			;;
 		"*")
-			outerr "ERROR: should never get to this part of the code"
+			abort "ERROR: should never get to this part of the code"
 			;;
 	esac
 
@@ -684,7 +690,7 @@ do
 			verify
 			;;
 		"*")
-			outerr "ERROR: should never get to this part of the code"
+			abort "ERROR: should never get to this part of the code"
 			;;
 	esac
 
@@ -699,13 +705,13 @@ do
 			populate_password
 			;;
 		"*")
-			outerr "ERROR: should never get to this part of the code"
+			abort "ERROR: should never get to this part of the code"
 			;;
 	esac
 
 	# Check command constraints
 	case "${cmd}" in
-		"quiet"|"q"|"store"|"s"|"test"|"t")
+		"quiet"|"q"|"store"|"s"|"test"|"t"|"urandom"|"u")
 			# no constraints
 			true
 			;;
@@ -745,7 +751,7 @@ do
 			double_check
 			;;
 		"*")
-			outerr "ERROR: should never get to this part of the code"
+			abort "ERROR: should never get to this part of the code"
 			;;
 	esac
 
@@ -773,10 +779,12 @@ do
 			cmd_clip ;;
 		"dump"|"d")
 			cmd_dump ;;
+		"urandom"|"u")
+			cmd_urandom ;;
 		"test"|"t")
 			cmd_test ;;
 		"*")
-			outerr "ERROR: should never get to this part of the code"
+			abort "ERROR: should never get to this part of the code"
 			;;
 	esac
 done
