@@ -105,3 +105,6 @@
 [submodule ".src/dwmstatus"]
 	path = .src/dwmstatus
 	url = git@github.com:paradigm/dwmstatus.git
+[submodule ".vim/remote/idris-vim"]
+	path = .vim/remote/idris-vim
+	url = https://github.com/idris-hackers/idris-vim.git

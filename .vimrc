@@ -72,6 +72,7 @@ set runtimepath+=~/.vim/remote/vim-zsh-completion
 set runtimepath+=~/.vim/remote/visincr
 set runtimepath+=~/.vim/remote/wmgraphviz.vim
 set runtimepath+=~/.vim/remote/vim-ledger
+set runtimepath+=~/.vim/remote/idris-vim
 " set runtimepath+=~/.vim/remote/rust.vim
 " set runtimepath+=~/.vim/remote/vim-racer
 " set runtimepath+=~/.vim/remote/multicursor
