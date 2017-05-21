@@ -285,7 +285,7 @@ bind '"":""'
 # - general_(environmental_variables)                                          -
 # ------------------------------------------------------------------------------
 
-if ! echo $PATH | grep -q '\(:\|^\)'"$HOME"'/.bin\(:\|$\)'
+if ! echo "$PATH" | grep -q '\(:\|^\)'"$HOME"'/.bin\(:\|$\)'
 then
 	export PATH="$HOME/.bin:$PATH"
 fi

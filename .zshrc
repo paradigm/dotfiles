@@ -711,11 +711,17 @@ vn() {
 # Use vi-style keybindings
 bindkey -v
 
-# Remove escape timeout in insert mode
-bindkey -rpM viins '^['
+# Minimize escape sequence detection delay
+export KEYTIMEOUT=1
 
-# Remove escape timeout in normal mode
-bindkey -rpM vicmd '^['
+# Completely remove escape key detection delay.  Note this breaks bracketed
+# paste detection.
+#
+## Remove escape timeout in insert mode
+#bindkey -rpM viins '^['
+#
+## Remove escape timeout in normal mode
+#bindkey -rpM vicmd '^['
 
 # ------------------------------------------------------------------------------
 # - insert_mode_(key bindings)                                                 -

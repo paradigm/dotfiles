@@ -153,7 +153,7 @@ if loaded_colors
 	execute "highlight TabLine      ctermfg = " . theme_insensitive_fg
 	execute "highlight TabLine      ctermbg = " . theme_insensitive_bg
 	execute "highlight TabLineFill  cterm   = NONE"
-	execute "highlight TabLineFill  ctermbg = " . theme_normal_fg
+	execute "highlight TabLineFill  ctermbg = " . theme_normal_bg
 	execute "highlight TabLineSel   cterm   = NONE"
 	execute "highlight TabLineSel   ctermfg = " . theme_highlight_fg
 	execute "highlight TabLineSel   ctermbg = " . theme_highlight_bg
