@@ -84,8 +84,8 @@ highlight Hint background-color: white; color: black
 highlight HintActive background-color: white; color: black
 highlight HintElem background-color: #aaaaaa; color: black
 
-highlight CmdLine font-size: 9pt; font-weight: normal; font-family: "terminus"; padding: 0 0;
-highlight StatusLine font-size: 12px; font-weight: normal; font-family: "terminus"; padding: 0 0;
+highlight CmdLine font-size: 12pt; font-weight: normal; font-family: "Terminus (TTF)"; padding: 0 0;
+highlight StatusLine font-size: 12px; font-weight: normal; font-family: "Terminus (TTF)"; padding: 0 0;
 "highlight StatusLineBroken
 "highlight StatusLineSecure
 
