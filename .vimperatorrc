@@ -96,7 +96,6 @@ highlight StatusLine font-size: 12px; font-weight: normal; font-family: "Terminu
 " do not show images automatically
 " set! permissions.default.image=2
 
-set! browser.display.background_color=#000000
 set! general.autoScroll=true
 set! general.smoothScroll=false
 set! browser.startup.homepage=about:blank
