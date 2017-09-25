@@ -73,7 +73,8 @@ abort() {
 populate_gpg_id() {
 	# No need to repopulate
 	[ -n "${gpg_id:-""}" ] && return
-	gpg_id=$(gpg --verify "${store_file}" 2>&1 | awk '/^gpg: Signature made/{print$NF}')
+
+	gpg_id=$(gpg --verify "${store_file}" 2>&1 | awk '/using RSA key/{print$NF}')
 }
 
 populate_fingerprint() {

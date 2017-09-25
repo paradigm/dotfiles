@@ -108,3 +108,12 @@
 [submodule ".vim/remote/idris-vim"]
 	path = .vim/remote/idris-vim
 	url = https://github.com/idris-hackers/idris-vim.git
+	ignore = dirty
+[submodule ".vim/remote/vim-go"]
+	path = .vim/remote/vim-go
+	url = https://github.com/fatih/vim-go.git
+	ignore = dirty
+[submodule ".src/scron"]
+	path = .src/scron
+	url = https://git.2f30.org/git/scron.git
+	ignore = dirty

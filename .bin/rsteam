@@ -4,6 +4,9 @@
 # use alsa for sound
 export SDL_AUDIODRIVER=ALSA
 
+# locale fix
+export LOCALE=C
+
 if [ "$(uname -n)" = "am" ]
 then
 	export MESA_EXTENSION_OVERRIDE='GL_EXT_texture_filter_anisotropic'

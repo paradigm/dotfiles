@@ -7,13 +7,13 @@ then
 fi
 
 CODE=$(cat ~/.metar)
-if [ -w /dev/shm/ ]
+if [ -w "$XDG_RUNTIME_DIR" ]
 then
-	TMP=/dev/shm/
+	TMP="$XDG_RUNTIME_DIR"
 else
 	TMP=/tmp/
 fi
-CACHE=$TMP/.metar-$CODE-$(id -u)
+CACHE=$TMP/metar-$CODE-$(id -u)
 
 if ! [ -e $CACHE ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y $CACHE) + 3600) ]
 then

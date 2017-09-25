@@ -1,6 +1,6 @@
 .PHONY: all clean install_debian_dependencies
 
-local: dwm dwmstatus dmenu xcape sxiv paraPDF vim swarp
+local: dwm dwmstatus dmenu crond xcape sxiv paraPDF vim swarp
 root: slock disable_at_services
 all: local root
 
@@ -19,10 +19,11 @@ clean:
 	- rm ~/.bin/dmenu
 	- rm ~/.bin/dmenu_run
 	- rm ~/.bin/stest
+	- rm ~/.bin/crond
 	- rm -r ~/.opt/
 
 install_debian_dependencies:
-	sudo apt-get install libgtk2.0-dev libncurses5 libncurses5-dev libpango1.0-dev libx11-dev libxft-dev libxt-dev libxtst-dev ncurses-dev python-dev libimlib2-dev libjbig2dec0-dev libopenjpeg-dev
+	sudo apt-get install libgtk2.0-dev libncurses5 libncurses5-dev libpango1.0-dev libx11-dev libxft-dev libxt-dev libxtst-dev ncurses-dev python-dev libimlib2-dev libjbig2dec0-dev
 
 disable_at_services:
 	- cd /usr/share/dbus-1/services/ && \
@@ -58,6 +59,12 @@ $(HOME)/.bin/dmenu: dmenu/*.c dmenu/*.h
 	cp dmenu/dmenu ~/.bin/dmenu
 	cp dmenu/dmenu_run ~/.bin/dmenu_run
 	cp dmenu/stest ~/.bin/stest
+
+crond: $(HOME)/.bin/crond
+$(HOME)/.bin/crond: scron/*.c scron/*.h
+	cd scron && make clean && make
+	mkdir -p ~/.bin/
+	cp scron/crond ~/.bin/crond
 
 xcape: $(HOME)/.bin/xcape
 $(HOME)/.bin/xcape: xcape/*.c

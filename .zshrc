@@ -167,15 +167,56 @@ export MAIL="~/.mail"
 
 # Use gpg-agent if available
 export GPG_TTY="$(tty)"
-export GPG_AGENT_INFO="$HOME/.gnupg/S.gpg-agent::1"
 
-# Use ssh-agent if available
-export SSH_AUTH_SOCK="$HOME/.ssh/S.ssh-agent"
+# ------------------------------------------------------------------------------
+# - runtime_(environmental_variables)                                          -
+# ------------------------------------------------------------------------------
 
-# Specify a location for dbus
-# If this is not used, various programs will spawn a dbus-daemon each instead
-# of sharing one.
-export DBUS_SESSION_BUS_ADDRESS="unix:path=$HOME/.dbus/session-bus/connate"
+# Some programs are awkward to configure for things like socket location.
+# Instead of fighting this, point them to a expected position then symlink the
+# position to a desired area.
+export XDG_RUNTIME_DIR="$HOME/.run"
+(
+	if [ -d /dev/shm/ ] && [ -w /dev/shm/ ] && [ -k /dev/shm/ ]
+	then
+		dir="/dev/shm/.$(id -un)"
+	elif [ -d /tmp/ ] && [ -w /tmp/ ] && [ -k /dev/shm/ ]
+	then
+		dir="/tmp/.$(id -un)"
+	else
+		dir="$HOME/.cache/"
+	fi
+
+	umask 077
+	if ! [ -d "$dir" ]
+	then
+		mkdir -p "$dir"
+	fi
+	if ! [ -h "$XDG_RUNTIME_DIR" ]
+	then
+		ln -fs "$dir/" "$XDG_RUNTIME_DIR"
+	fi
+)
+
+# requires ~/.gnupg/S.gpg-agent contains:
+#
+#     %Assuan
+#     socket=/path/to/socket
+#
+# and gnupg v2.1.1 or above for gpg-agent to create the socket in the specified
+# location.
+#
+# GPG_AGENT_INFO is only respected by gpg-agent-connect.
+export GPG_AGENT_INFO="$XDG_RUNTIME_DIR/S.gpg-agent::1"
+
+# specify socket path with -a flag
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/S.ssh-agent"
+
+# dbus reads and uses this variable
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/S.dbus"
+
+# pulseaudio creates socket at ${XDG_RUNTIME_DIR}/pulse/native
+export PULSE_SERVER="unix:$XDG_RUNTIME_DIR/pulse/native"
 
 # ------------------------------------------------------------------------------
 # - theme_(environmental_variables)                                            -
@@ -229,7 +270,7 @@ fi
 # Zsh's completion can benefit from caching.  Set the directory in which to
 # load/store the caches.
 CACHEDIR="$HOME/.zsh/$(uname -n)"
-# If on Bedrock Linux, separate out caches by client.
+# If on Bedrock Linux, separate out caches by strata.
 if type brw >/dev/null 2>&1
 then
 	CACHEDIR="$CACHEDIR-$(brw)"
@@ -911,7 +952,7 @@ fi
 alias gg="git grep --color"
 alias ga="git add"
 alias gc="git commit -v"
-alias gcd="git commit -a -v -m \"\$(date)\""
+alias gcd='([ -r "$(git rev-parse --show-toplevel)/.git/lazycommit" ] || (echo "non-lazy repo, aborting"; false )) && git commit -a -v -m "$(date)"'
 alias gb="git branch"
 alias gf="git fetch"
 alias gl="git log"
@@ -928,9 +969,10 @@ alias gusu='git submodule foreach git pull origin master'
 alias gdh='git diff HEAD'
 alias gt="git rev-parse --show-toplevel"
 alias gT='cd "$(git rev-parse --show-toplevel)"'
+alias gsync='gcd ; gull && guss'
 
 # ------------------------------------------------------------------------------
-# - bedrock_clients_(aliases)                                                  -
+# - bedrock_strata_(aliases)                                                   -
 # ------------------------------------------------------------------------------
 
 if type brc >/dev/null 2>&1

@@ -11,11 +11,13 @@ populate_wininfo() {
 }
 
 run_in_window() {
+	eval $(xdotool getmouselocation --shell)
 	xdotool mousemove --window "$initwinid" 0 0
 	xdotool mousemove --window "$winid" 0 0
 	eval "$@"
 	xdotool mousemove --window "$winid" 0 0
 	xdotool mousemove --window "$initwinid" 0 0
+	xdotool mousemove "$X" "$Y"
 }
 
 if ps -e -o comm | grep -q '^mpd$'

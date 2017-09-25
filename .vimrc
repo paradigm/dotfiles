@@ -58,6 +58,7 @@ set runtimepath+=~/.vim/local/line
 set runtimepath+=~/.vim/local/edit
 set runtimepath+=~/.vim/local/tagcallgraph
 set runtimepath+=~/.vim/local/general_increment
+set runtimepath+=~/.vim/local/abook
 
 set runtimepath+=~/.vim/remote/AnsiEsc.vim
 set runtimepath+=~/.vim/remote/clang_complete
@@ -73,6 +74,7 @@ set runtimepath+=~/.vim/remote/visincr
 set runtimepath+=~/.vim/remote/wmgraphviz.vim
 set runtimepath+=~/.vim/remote/vim-ledger
 set runtimepath+=~/.vim/remote/idris-vim
+set runtimepath+=~/.vim/remote/vim-go
 " set runtimepath+=~/.vim/remote/rust.vim
 " set runtimepath+=~/.vim/remote/vim-racer
 " set runtimepath+=~/.vim/remote/multicursor
