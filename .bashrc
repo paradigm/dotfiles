@@ -756,7 +756,7 @@ fi
 # ==============================================================================
 
 export CONNATE_FIFO="$HOME/.connate";
-if ! conctl P >/dev/null 2>&1
+if type conctl >/dev/null 2>&1 && ! conctl P >/dev/null 2>&1
 then
 	if ! [ -e "$CONNATE_FIFO" ]
 	then

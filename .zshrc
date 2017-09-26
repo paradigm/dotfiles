@@ -204,7 +204,9 @@ export XDG_RUNTIME_DIR="$HOME/.run"
 #     socket=/path/to/socket
 #
 # and gnupg v2.1.1 or above for gpg-agent to create the socket in the specified
-# location.
+# location
+#
+# *and* that /run/user isn't available
 #
 # GPG_AGENT_INFO is only respected by gpg-agent-connect.
 export GPG_AGENT_INFO="$XDG_RUNTIME_DIR/S.gpg-agent::1"
@@ -901,7 +903,8 @@ alias s="sudo"
 alias sd="sudo poweroff"
 alias sr="sudo reboot"
 alias ss="sudo pm-suspend"
-alias sx="conctl u gui-session & exit"
+#alias sx="conctl u gui-session & exit"
+alias sx="conctl u gui-session"
 alias ta="tmux attach"
 alias v="vim"
 alias vs="vim --servername vim"
@@ -1205,7 +1208,7 @@ fi
 # ==============================================================================
 
 export CONNATE_FIFO="$HOME/.connate";
-if ! conctl P >/dev/null 2>&1
+if type conctl >/dev/null 2>&1 && ! conctl P >/dev/null 2>&1
 then
 	if ! [ -e "$CONNATE_FIFO" ]
 	then
@@ -1213,6 +1216,8 @@ then
 	fi
 	printf "Staring Connate: "
 	connate >/dev/null 2>&1 &
+	sleep 0.25
+	conctl R user-session
 fi
 
 # ==============================================================================

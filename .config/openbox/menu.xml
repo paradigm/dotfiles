@@ -6,8 +6,8 @@
                 file:///usr/share/openbox/menu.xsd">
 
 <menu id="root-menu" label="Openbox 3">
-  <item label="uxterm">
-    <action name="Execute"><execute>uxterm</execute></action>
+  <item label="xterm">
+    <action name="Execute"><execute>xterm</execute></action>
   </item>
   <item label="firefox">
     <action name="Execute"><execute>firefox</execute></action>

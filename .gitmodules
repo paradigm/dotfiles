@@ -115,5 +115,5 @@
 	ignore = dirty
 [submodule ".src/scron"]
 	path = .src/scron
-	url = https://git.2f30.org/git/scron.git
+	url = git://git.2f30.org/scron.git
 	ignore = dirty

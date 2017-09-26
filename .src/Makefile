@@ -1,6 +1,6 @@
 .PHONY: all clean install_debian_dependencies
 
-local: dwm dwmstatus dmenu crond xcape sxiv paraPDF vim swarp
+local: dwm dwmstatus dmenu crond xcape sxiv vim swarp
 root: slock disable_at_services
 all: local root
 
@@ -22,8 +22,11 @@ clean:
 	- rm ~/.bin/crond
 	- rm -r ~/.opt/
 
-install_debian_dependencies:
-	sudo apt-get install libgtk2.0-dev libncurses5 libncurses5-dev libpango1.0-dev libx11-dev libxft-dev libxt-dev libxtst-dev ncurses-dev python-dev libimlib2-dev libjbig2dec0-dev
+install_apt_dependencies:
+	sudo apt-get install libgtk2.0-dev libncurses5 libncurses5-dev libpango1.0-dev libx11-dev libxft-dev libxt-dev libxtst-dev ncurses-dev python-dev libimlib2-dev libjbig2dec0-dev libopenjpeg-dev
+
+install_yum_dependencies:
+	sudo yum install libX11-devel libXft-devel libXinerama-devel libXtst-devel imlib2-devel libjpeg-turbo-devel jbig2dec-devel openjpeg-devel ncurses-devel libSM-devel libXt-devel
 
 disable_at_services:
 	- cd /usr/share/dbus-1/services/ && \
@@ -68,7 +71,8 @@ $(HOME)/.bin/crond: scron/*.c scron/*.h
 
 xcape: $(HOME)/.bin/xcape
 $(HOME)/.bin/xcape: xcape/*.c
-	cd xcape && make clean && make
+	- cd xcape && make clean
+	- cd xcape && make
 	mkdir -p ~/.bin/
 	- [ -e ~/.bin/xcape ] && mv ~/.bin/xcape /tmp/running-xcape
 	cp xcape/xcape ~/.bin/xcape
@@ -81,7 +85,7 @@ $(HOME)/.bin/sxiv: sxiv/*.c
 
 paraPDF: $(HOME)/.bin/mupdf
 $(HOME)/.bin/mupdf:
-	cd paraPDF && make build=release
+	cd paraPDF && make build=release CFLAGS='-DJBIG_NO_MEMENTO'
 	mkdir -p ~/.bin/ && cp paraPDF/build/release/mupdf ~/.bin/mupdf
 
 vim: $(HOME)/.bin/vim
