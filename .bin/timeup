@@ -10,11 +10,11 @@ fi
 if ! timew stop >/dev/null 2>&1
 then
 	# there is no currently open interval
-	timew start "$1" >/dev/null 2>&1
+	timew start "$@" >/dev/null 2>&1
 else
 	# split the current
 	timew continue >/dev/null 2>&1
-	timew tag @1 "$1"
+	timew tag @1 $@
 	# probably unnecessary given how close stop/continue will be
 	timew lengthen @2 :fill >/dev/null 2>&1
 fi

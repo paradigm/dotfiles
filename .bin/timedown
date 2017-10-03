@@ -11,7 +11,7 @@ if timew stop >/dev/null 2>&1
 then
 	# split the current
 	timew continue >/dev/null 2>&1
-	timew untag @1 "$1"
+	timew untag @1 $@
 	# probably unnecessary given how close stop/continue will be
 	timew lengthen @2 :fill >/dev/null 2>&1
 fi
