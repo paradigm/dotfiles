@@ -107,4 +107,4 @@ gawk '
 		before_previous = previous
 		previous = $0
 	}
-' $CACHE
+' "$CACHE"
