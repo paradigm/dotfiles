@@ -765,3 +765,5 @@ then
 	printf "Staring Connate: "
 	connate >/dev/null 2>&1 &
 fi
+
+source ~/.bash-local

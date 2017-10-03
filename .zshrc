@@ -1407,3 +1407,5 @@ _insert_dynamic_named_directories() {
 	zle .accept-line
 }
 zle -N accept-line _insert_dynamic_named_directories
+
+source ~/.zsh-local
