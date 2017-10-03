@@ -1,0 +1,49 @@
+#!/bin/sh
+# Wrapper for timew that adds a single tag to the currently tracked tag set
+
+if [ -z "$1" ]
+then
+	echo "No tag provided"
+	exit 1
+fi
+
+if echo "$1" | grep -q "['\"\\]"
+then
+	echo "Quote detected specified tag, aborting"
+	exit 1
+fi
+
+if timew | grep -q '^There is no'
+then
+	echo "\$ timew start \"$1\""
+	timew start "$1"
+	pkill -HUP dwmstatus
+	exit 0
+fi
+
+if timew export | jq -r 'map(select(has("end") == false))[0].tags[]' | grep -q "['\"\\]"
+then
+	echo "Quote detected in tag set, aborting"
+	exit 1
+fi
+
+found=false
+IFS="
+"
+for tag in $(timew export | jq -r 'map(select(has("end") == false))[0].tags[]')
+do
+	if [ "$tag" = "$1" ]
+	then
+		found=true
+	fi
+done
+
+if "$found"
+then
+	echo "ERROR: Specified tag already in tag set"
+	exit 1
+fi
+
+echo "\$ timew start $(timew export | jq -c 'map(select(has("end") == false))[0].tags[]' | tr '\n' ' ') '$1'"
+sh -c "timew start $(timew export | jq -c 'map(select(has("end") == false))[0].tags[]' | tr '\n' ' ') '$1'"
+pkill -HUP dwmstatus
