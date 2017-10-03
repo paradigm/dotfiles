@@ -1,6 +1,6 @@
 .PHONY: all clean install_debian_dependencies
 
-local: dwm dwmstatus dmenu crond xcape sxiv vim swarp
+local: dwm dwmstatus dmenu scron xcape sxiv vim swarp
 root: slock disable_at_services
 all: local root
 
@@ -19,7 +19,7 @@ clean:
 	- rm ~/.bin/dmenu
 	- rm ~/.bin/dmenu_run
 	- rm ~/.bin/stest
-	- rm ~/.bin/crond
+	- rm ~/.bin/scron
 	- rm -r ~/.opt/
 
 install_apt_dependencies:
@@ -63,11 +63,11 @@ $(HOME)/.bin/dmenu: dmenu/*.c dmenu/*.h
 	cp dmenu/dmenu_run ~/.bin/dmenu_run
 	cp dmenu/stest ~/.bin/stest
 
-crond: $(HOME)/.bin/crond
-$(HOME)/.bin/crond: scron/*.c scron/*.h
+scron: $(HOME)/.bin/scron
+$(HOME)/.bin/scron: scron/*.c scron/*.h
 	cd scron && make clean && make
 	mkdir -p ~/.bin/
-	cp scron/crond ~/.bin/crond
+	cp scron/crond ~/.bin/scron
 
 xcape: $(HOME)/.bin/xcape
 $(HOME)/.bin/xcape: xcape/*.c
