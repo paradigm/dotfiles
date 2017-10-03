@@ -7,43 +7,17 @@ then
 	exit 1
 fi
 
-if echo "$1" | grep -q "['\"\\]"
+if ! timew stop >/dev/null 2>&1
 then
-	echo "Quote detected specified tag, aborting"
-	exit 1
+	# there is no currently open interval
+	timew start "$1" >/dev/null 2>&1
+else
+	# split the current
+	timew continue >/dev/null 2>&1
+	timew tag @1 "$1"
+	# probably unnecessary given how close stop/continue will be
+	timew lengthen @2 :fill >/dev/null 2>&1
 fi
 
-if timew | grep -q '^There is no'
-then
-	echo "\$ timew start \"$1\""
-	timew start "$1"
-	pkill -HUP dwmstatus
-	exit 0
-fi
-
-if timew export | jq -r 'map(select(has("end") == false))[0].tags[]' | grep -q "['\"\\]"
-then
-	echo "Quote detected in tag set, aborting"
-	exit 1
-fi
-
-found=false
-IFS="
-"
-for tag in $(timew export | jq -r 'map(select(has("end") == false))[0].tags[]')
-do
-	if [ "$tag" = "$1" ]
-	then
-		found=true
-	fi
-done
-
-if "$found"
-then
-	echo "ERROR: Specified tag already in tag set"
-	exit 1
-fi
-
-echo "\$ timew start $(timew export | jq -c 'map(select(has("end") == false))[0].tags[]' | tr '\n' ' ') '$1'"
-sh -c "timew start $(timew export | jq -c 'map(select(has("end") == false))[0].tags[]' | tr '\n' ' ') '$1'"
 pkill -HUP dwmstatus
+timew

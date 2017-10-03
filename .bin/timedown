@@ -7,51 +7,21 @@ then
 	exit 1
 fi
 
-if echo "$1" | grep -q "['\"\\]"
+if timew stop >/dev/null 2>&1
 then
-	echo "Quote detected specified tag, aborting"
-	exit 1
+	# split the current
+	timew continue >/dev/null 2>&1
+	timew untag @1 "$1"
+	# probably unnecessary given how close stop/continue will be
+	timew lengthen @2 :fill >/dev/null 2>&1
 fi
 
-if timew | grep -q '^There is no'
+# if there are no tags, stop
+if timew | head -n1 | grep -q "^Tracking *$"
 then
-	echo "ERROR: Tag not found"
-	exit 1
+	timew stop >/dev/null 2>&1
+	timew delete @1 >/dev/null 2>&1
 fi
 
-if timew export | jq -r 'map(select(has("end") == false))[0].tags[]' | grep -q "['\"\\]"
-then
-	echo "Quote detected in tag set, aborting"
-	exit 1
-fi
-
-found=false
-IFS="
-"
-for tag in $(timew export | jq -r 'map(select(has("end") == false))[0].tags[]')
-do
-	if [ "$tag" = "$1" ]
-	then
-		found=true
-	fi
-done
-
-
-if ! "$found"
-then
-	echo "ERROR: Specified tag not in tag set"
-	exit 1
-fi
-
-if [ "$(timew export | jq -r 'map(select(has("end") == false))[0].tags | length')" -eq 1 ]
-then
-	echo "\$ timew stop"
-	timew stop
-	pkill -HUP dwmstatus
-	exit 0
-fi
-
-
-echo "\$ timew start $(timew export | jq -c 'map(select(has("end") == false))[0].tags | map(select(.!= "'"$1"'"))[]' | tr '\n' ' ')"
-sh -c "timew start $(timew export | jq -c 'map(select(has("end") == false))[0].tags | map(select(.!= "'"$1"'"))[]' | tr '\n' ' ')"
 pkill -HUP dwmstatus
+timew
