@@ -9,6 +9,14 @@
 # either in part or in full.
 
 # ==============================================================================
+# = machine_local                                                              =
+# ==============================================================================
+#
+# Source machine local settings
+
+source ~/.zsh-local
+
+# ==============================================================================
 # = general_settings                                                           =
 # ==============================================================================
 #
@@ -1407,5 +1415,3 @@ _insert_dynamic_named_directories() {
 	zle .accept-line
 }
 zle -N accept-line _insert_dynamic_named_directories
-
-source ~/.zsh-local
