@@ -34,10 +34,6 @@
 	path = .vim/remote/skybison
 	url = https://github.com/paradigm/SkyBison.git
 	ignore = dirty
-[submodule ".vim/remote/languagetool"]
-	path = .vim/remote/languagetool
-	url = https://github.com/vim-scripts/LanguageTool.git
-	ignore = dirty
 [submodule ".vim/remote/latexbox"]
 	path = .vim/remote/latexbox
 	url = https://github.com/LaTeX-Box-Team/LaTeX-Box.git

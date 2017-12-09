@@ -1,1 +1,2 @@
-/data/data/com.termux/files/usr/bin/termux-chroot
+#!/data/data/com.termux/files/usr/bin/sh
+exec termux-chroot zsh
