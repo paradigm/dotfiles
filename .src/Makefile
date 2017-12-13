@@ -97,6 +97,7 @@ $(HOME)/.bin/vim:
 	ln -sf $(HOME)/.opt/vim/bin/vim ~/.bin/vim
 	ln -sf $(HOME)/.opt/vim/bin/vim ~/.bin/vi
 	ln -sf $(HOME)/.opt/vim/bin/vim ~/.bin/vimdiff
+	ln -sf $(HOME)/.opt/vim/bin/vim ~/.bin/ex
 
 swarp: $(HOME)/.bin/swarp
 $(HOME)/.bin/swarp:
