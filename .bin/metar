@@ -15,7 +15,7 @@ else
 fi
 CACHE=$TMP/metar-$CODE-$(id -u)
 
-if ! [ -e $CACHE ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y $CACHE) + 3600) ]
+if ! [ -e $CACHE ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y $CACHE) + 900) ]
 then
 	printf "\n$CODE\nX\n" | nc -w 2 rainmaker.wunderground.com 23 > "$CACHE"
 	if [ $? -ne 0 ]
