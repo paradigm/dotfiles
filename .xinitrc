@@ -53,6 +53,7 @@ else
 	get-pid crond || (crond &)
 	xterm &
 fi
+xterm
 
 # Do not close X11 automatically when the window manager closes.
 while :; do sleep infinity; done

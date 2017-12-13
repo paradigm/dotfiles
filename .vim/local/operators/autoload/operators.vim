@@ -97,22 +97,37 @@ function! operators#toggle_comment(type)
 	if c ==# "/**/"
 		let c = "//"
 	endif
-	if c =~ ' $'
-		let c = substitute(c, '\v +$', '', '')
+
+	if c =~ "," || c =~ "\\"
+		echoerr "comment operator confused by comment character(s): " . c
 	endif
 
 	let toggle_on = 0
+	let col = -1
+	let indent = ""
 	for linenr in range(line(quotestart), line(quoteend))
-		if getline(linenr) !~ "^" . c
+		if getline(linenr) !~ "^\\s*" . c
 			let toggle_on = 1
-			break
+		endif
+		if indent(".") < col || col == -1
+			let col = indent(".")
+			let indent = substitute(getline("."), "^\\s*\\zs.*", "", "")
 		endif
 	endfor
+	let col += 1
 
 	if toggle_on
-		execute 'silent 'quotestart . "," . quoteend . "s,^," . c . " ,"
+		" ensure white-space only and blank lines have desired indent
+		execute 'silent 'quotestart . "," . quoteend . "s,^\\s*$," . indent . ",e"
+		" add comment characters at desired indent
+		execute 'silent 'quotestart . "," . quoteend . "s,\\V\\%" . col . "v," . c . " ,"
+		" remove trailing whitespace
+		execute 'silent 'quotestart . "," . quoteend . "s,\\V\\(\\%" . col . "v" . c . "\\) \\$,\\1,e"
 	else
-		execute 'silent 'quotestart . "," . quoteend . "s,^" . c . " ,,e"
+		" remove empty comments, including their indent whitespace
+		execute 'silent 'quotestart . "," . quoteend . "s,^\\s*" . c . "\\s*$,,e"
+		" remove comments with conent
+		execute 'silent 'quotestart . "," . quoteend . "s,^\\(\\s*\\)" . c . " \\?,\\1,e"
 	endif
 	nohlsearch
 endfunction

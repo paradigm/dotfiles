@@ -20,17 +20,11 @@ let g:clang_complete_auto = 0
 " choices.  Do it directly in the .vimrc file.
 let g:clang_make_default_keymappings = 0
 
-" Indicate where the LanguageTool jar is located
-let g:languagetool_jar='/opt/languagetool/languagetool-commandline.jar'
-
 " disable automatic linting on write
 "call manually with: call eclim#lang#UpdateSrcFile('java',1)
 let g:EclimJavaValidate = 0
 " With JavaSearch/JavaSearchContextalways jump to definition in current window
 let g:EclimJavaSearchSingleResult = 'edit'
-
-" Run grammar check on buffer
-nnoremap <space>L :LanguageToolCheck<cr>
 
 let g:ale_sign_error = 'EE'
 let g:ale_sign_warning = 'WW'

@@ -6,7 +6,10 @@
 
 function! registers#add(keys, expression)
 	execute 'nnoremap "'          . a:keys . ' "='          . a:expression . "\<cr>"
-	execute 'nnoremap @'          . a:keys . ' @='          . a:expression . "\<cr>"
+	" don't overwrite @@
+	if a:keys != "@"
+		execute 'nnoremap @'          . a:keys . ' @='          . a:expression . "\<cr>"
+	endif
 	execute 'inoremap <c-r>'      . a:keys . ' <c-r>='      . a:expression . "\<cr>"
 	execute 'inoremap <c-r><c-r>' . a:keys . ' <c-r><c-r>=' . a:expression . "\<cr>"
 	execute 'inoremap <c-r><c-o>' . a:keys . ' <c-r><c-o>=' . a:expression . "\<cr>"
