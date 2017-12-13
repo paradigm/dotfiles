@@ -12,7 +12,7 @@ CACHE=$TMP/gcaltoday-$(id -u)
 
 # gcalcli is slow, so cache its output and run off of the cache
 # it shouldn't update overly often
-if ! [ -e $CACHE ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y $CACHE) + 3600) ]
+if ! [ -e "$CACHE" ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y "$CACHE") + 900) ]
 then
 	gcalcli --nocolor --nostarted agenda "$(date --iso)" "$(date --iso -dtomorrow)" > "$CACHE"
 	if [ $? -ne 0 ]
@@ -43,12 +43,14 @@ BEGIN {
 	hours=int(diff/60)
 	minutes=diff - (hours * 60)
 
-	$1=$2=""
-	sub(/^ */, "")
-	printf "%s ", $0
-	if (hours > 0) {
-		printf "%sh", hours
+	if (diff >= 0) {
+		$1=$2=""
+		sub(/^ */, "")
+		printf "%s ", $0
+		if (hours > 0) {
+			printf "%sh", hours
+		}
+		printf "%sm\n", minutes
 	}
-	printf "%sm\n", minutes
 }
 ' "$CACHE"
