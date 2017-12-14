@@ -1,4 +1,3 @@
 #!/bin/sh
 amixer set Master 0 >/dev/null
 amixer set Master mute >/dev/null
-kill -HUP $(get-pid dwmstatus) >/dev/null 2>&1
