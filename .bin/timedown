@@ -23,5 +23,4 @@ then
 	timew delete @1 >/dev/null 2>&1
 fi
 
-pkill -HUP dwmstatus
 timew

@@ -19,5 +19,4 @@ else
 	timew lengthen @2 :fill >/dev/null 2>&1
 fi
 
-pkill -HUP dwmstatus
 timew
