@@ -1,0 +1,9 @@
+[user]
+	name = 
+	email = 
+[init]
+	templatedir = ~/.gittemplate
+[alias]
+	ctags = !.git/hooks/ctags
+	hide = update-index --assume-unchanged
+	show = update-index --no-assume-unchanged

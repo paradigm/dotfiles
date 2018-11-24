@@ -1,0 +1,22 @@
+#!/bin/sh
+# Wrapper for timew that adds a single tag to the currently tracked tag set
+
+if [ -z "$1" ]
+then
+	echo "No tag provided"
+	exit 1
+fi
+
+if ! timew stop >/dev/null 2>&1
+then
+	# there is no currently open interval
+	timew start "$@" >/dev/null 2>&1
+else
+	# split the current
+	timew continue >/dev/null 2>&1
+	timew tag @1 $@
+	# probably unnecessary given how close stop/continue will be
+	timew lengthen @2 :fill >/dev/null 2>&1
+fi
+
+timew

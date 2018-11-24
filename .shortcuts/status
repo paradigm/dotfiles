@@ -1,0 +1,14 @@
+#!/data/data/com.termux/files/usr/bin/sh
+
+if [ -n "$(task top prio=H)" ]
+then
+	busybox printf '\e[41m'
+	task top prio=H | awk 'NR>=4 && $0 == "" {sawblank=1} NR>=4 && NR<= 6 && !sawblank'
+	busybox printf '\e[0m'
+	echo ""
+fi
+
+task top prio!=H prio!=L | awk 'NR>=4 && $0 == "" {sawblank=1} NR>=4 && NR<=6 && NR && !sawblank'
+echo ""
+
+remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$' | awk 'NR>2'

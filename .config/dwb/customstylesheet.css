@@ -1,0 +1,28 @@
+a:link {
+	color:            #555555 !important; /* link fg */
+	background-color: #000000 !important; /* link bg  */
+}
+* {
+	background-color: #000000 !important; /* all bg */
+	background-image: none !important;
+	color:            #ffffff !important; /* all fg */
+	border-color:     #ffffff !important; /* all border */
+	font-family:      "Terminus" !important;
+	line-height:      1.0 !important;
+}
+input {
+	border: 1px solid #ffffff !important; /* input border  */
+	color:  #ffffff !important; /* input fg */
+}
+
+.dwb_hint {
+	border:           1px solid #000000 !important; /* hint border */
+	background-color: #ffffff !important; /* hint bg */
+	color:            #000000 !important; /* hint fg */
+}
+
+.dwb_overlay_normal {
+	border:           2px solid #ffffff !important; /* overlay border  */
+	background-color: rgba(255,0,0,0.0) !important; /* overlay bg */
+	color:            #ffffff !important; /* overlay fg */
+}

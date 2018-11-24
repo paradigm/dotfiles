@@ -1,0 +1,1130 @@
+# ==============================================================================
+# = paradigm's bash/zsh shell configuration                                    =
+# ==============================================================================
+
+cmd="$(basename $(readlink /proc/$$/exe))"
+is_bash=false
+is_zsh=false
+if [ "${cmd}" = "bash" ]; then
+	is_bash=true
+elif [ "${cmd}" = "zsh" ]; then
+	is_zsh=true
+fi
+
+in_path() {
+	type -p "${1}" >/dev/null 2>&1
+}
+
+if ! in_path tput || ! colors="$(tput colors 2>/dev/null)"; then
+	colors=16
+fi
+
+# ==============================================================================
+# = general-settings                                                           =
+# ==============================================================================
+
+umask 022
+
+# None of the lines following this point are useful for non-interactive
+# instances of this shell.  If the the prompt variable does not exist, this
+# instances of the shell is non-interactive, so exit the rc file.
+[ -z "${PS1}" ] && [ -z "${PROMPT}" ] && return
+
+# Disable flow control.  Specifically, ensure that ctrl-s does not stop
+# terminal flow so that it can be used in other programs (such as Vim).
+stty -ixon
+
+if "${is_bash}"; then
+	# Update $LINES and $COLUMNS when terminal size changes.
+	shopt -s checkwinsize
+	# Enable extended globbing functionality.
+	shopt -s extglob
+elif "${is_zsh}"; then
+	# Enable extended globbing functionality.
+	setopt extendedglob
+	# Do not record repeated lines in history.  Note that this line is
+	# largely non-functional in this .zshrc as history has not been
+	# enabled.
+	setopt histignoredups
+	# If non-ambiguous, allow changing into a directory just by typing its
+	# name (ie, make "cd" optional)
+	setopt autocd
+	# Detect and prompt to correct typos in commands.  Note there is a
+	# "correctall" variant which also prompts to correct arguments to
+	# commands, but this ends up being more troublesome than useful.
+	setopt correct
+	# Disables the beep zsh would otherwise make when giving invalid input
+	# (such as hitting backspace on an empty command line).
+	setopt nobeep
+	# Do not change the nice (ie, scheduling priority) of backgrounded
+	# commands.
+	setopt nobgnice
+	# Do not kill background processes when closing the shell.
+	setopt nohup
+	# Do not warn about closing the shell with background jobs running.
+	setopt nocheckjobs
+	# Allow comments on the command line.  Without this comments are only
+	# allowed in scripts.
+	setopt interactivecomments
+	# Automatically run pushd after every cd
+	# this allows for tab-completion on "cd -<tab>"
+	setopt autopushd
+fi
+
+# ==============================================================================
+# = general-envvars                                                            =
+# ==============================================================================
+
+if ! echo "${PATH}" | grep -q '\(:\|^\)'"${HOME}/.bin"'\(:\|$\)'; then
+	export PATH="${HOME}/.bin:${PATH}"
+fi
+
+if uname -a | grep -qi "cygwin"; then
+	for app in /cygdrive/c/apps/*; do
+		if ! echo "${PATH}" | grep -q '\(:\|^\)'"${app}"'\(:\|$\)'; then
+			export PATH="${PATH}:${app}"
+		fi
+	done
+fi
+
+if in_path "vim"; then
+	export MANPAGER="vim --cmd 'set modelines=0' -c 'set filetype=man nomod nolist foldlevel=999' -"
+	export GIT_PAGER="vim --cmd 'set modelines=0' -c 'set filetype=git nomod nolist foldlevel=999' -"
+	export EDITOR="vim"
+fi
+
+if [ -n "$DISPLAY" ] && in_path "firefox"; then
+	export BROWSER="firefox"
+elif [ -z "$DISPLAY" ] && in_path "elinks"; then
+	export BROWSER="elinks"
+fi
+if in_path "mupdf"; then
+	export PDFREADER="mupdf"
+	export PDFVIEWER="mupdf"
+fi
+if in_path "sxiv"; then
+	export IMAGEVIEWER="sxiv"
+fi
+
+if [ "${colors}" = "256" ] && [ "$TERM" = "xterm" ]; then
+	export TERM="xterm-256color"
+elif [ "${colors}" = "256" ] && [ "$TERM" = "screen" ]; then
+	export TERM="screen-256color"
+fi
+
+export MAIL="~/.mail"
+
+# Use gpg-agent if available
+export GPG_TTY="$(tty)"
+
+if "${is_bash}"; then
+	# Disable history.
+	export HISTFILE=""
+elif "${is_zsh}"; then
+	# When offering typo corrections, do not propose anything which starts
+	# with an underscore (such as many of zsh's shell functions).
+	export CORRECT_IGNORE='_*'
+
+	# Do not consider "/" a word character.  One benefit of this is that
+	# when hitting ctrl-w in insert mode (which deletes the word before the
+	# cursor) just before a filesystem path, it only removes the last item
+	# of the path and not the entire thing.
+	export WORDCHARS=${WORDCHARS//\/}
+fi
+
+# ==============================================================================
+# = runtime-directory                                                          =
+# ==============================================================================
+
+# Some programs are awkward to configure for things like socket location.
+# Instead of fighting this, point them to a expected position then symlink the
+# position to a desired area.
+export XDG_RUNTIME_DIR="${HOME}/.run"
+(
+	if [ -d /dev/shm/ ] && [ -w /dev/shm/ ] && [ -k /dev/shm/ ]
+	then
+		dir="/dev/shm/.$(id -un)"
+	elif [ -d /tmp/ ] && [ -w /tmp/ ] && [ -k /dev/shm/ ]
+	then
+		dir="/tmp/.$(id -un)"
+	else
+		dir="${HOME}/.cache/"
+	fi
+
+	umask 077
+	if ! [ -d "${dir}" ]
+	then
+		mkdir -p "${dir}"
+	fi
+	if ! [ -h "${XDG_RUNTIME_DIR}" ]
+	then
+		ln -fs "${dir}" "${XDG_RUNTIME_DIR}"
+	fi
+)
+
+# requires ~/.gnupg/S.gpg-agent contains:
+#
+#     %Assuan
+#     socket=/path/to/socket
+#
+# and gnupg v2.1.1 or above for gpg-agent to create the socket in the specified
+# location
+#
+# *and* that /run/user isn't available
+#
+# GPG_AGENT_INFO is only respected by gpg-agent-connect.
+export GPG_AGENT_INFO="${XDG_RUNTIME_DIR}/S.gpg-agent::1"
+
+# specify socket path with -a flag
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/S.ssh-agent"
+
+# dbus reads and uses this variable
+export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/S.dbus"
+
+# pulseaudio creates socket at ${XDG_RUNTIME_DIR}/pulse/native
+export PULSE_SERVER="unix:${XDG_RUNTIME_DIR}/pulse/native"
+
+# ==============================================================================
+# = theme                                                                      =
+# ==============================================================================
+
+if [ "${colors}" = "256" ] && [ -r ~/.themes/current/terminal/256-theme ]; then
+	source ~/.themes/current/terminal/256-theme
+
+	if [ "${EUID}" -eq "0" ]
+	then
+		"${is_bash}" && export PS1="\[\e[38;5;${ERROR_FOREGROUND}m\e[48;5;${ERROR_BACKGROUND}m#\e[0m\]\] "
+		"${is_zsh}" && export PROMPT="%F{$ERROR_FOREGROUND}%K{$ERROR_BACKGROUND}#%f%k "
+	elif [ -n "${SSH_CLIENT}" ] || [ -n "${SSH_TTY}" ]
+	then
+		"${is_bash}" && export PS1="\[\e[38;5;${MISCELLANEOUS_FOREGROUND}m\e[48;5;${MISCELLANEOUS_BACKGROUND}m$\e[0m\]\] "
+		"${is_zsh}" && export PROMPT="%F{$MISCELLANEOUS_FOREGROUND}%K{$MISCELLANEOUS_BACKGROUND}$%f%k "
+	else
+		"${is_bash}" && export PS1="\[\e[38;5;${HIGHLIGHT_FOREGROUND}m\e[48;5;${HIGHLIGHT_BACKGROUND}m$\e[0m\]\] "
+		"${is_zsh}" && export PROMPT="%F{$HIGHLIGHT_FOREGROUND}%K{$HIGHLIGHT_BACKGROUND}$%f%k "
+	fi
+
+	# set the colors ls --color uses, if available
+	export LS_COLORS="\
+di=38;5;${MISCELLANEOUS_FOREGROUND};48;5;${MISCELLANEOUS_BACKGROUND}:\
+ex=38;5;${HIGHLIGHT_FOREGROUND};48;5;${HIGHLIGHT_BACKGROUND}:\
+ln=04:\
+mi=38;5;${ERROR_FOREGROUND};48;5;${ERROR_BACKGROUND}:\
+su=38;5;${ERROR2_FOREGROUND};48;5;${ERROR2_BACKGROUND}:\
+sg=38;5;${ERROR2_FOREGROUND};48;5;${ERROR2_BACKGROUND}:\
+"
+
+	export GTK2_RC_FILES="${HOME}/.gtkrc-2.0"
+fi
+
+# ==============================================================================
+# = aliases                                                                    =
+# ==============================================================================
+
+# Take ownership of file or directory
+alias mine="sudo chown -R $(whoami):$(whoami)"
+
+# allow others to read/execute
+alias yours="sudo find . -perm -u+x -exec chmod a+x {} \; && sudo find . -perm -u+r -exec chmod a+r {} \;"
+
+alias ..="cd .."
+alias :q="exit"
+alias :wq="exit"
+alias s="sudo"
+alias sd="sudo poweroff"
+alias sr="sudo reboot"
+alias ss="sudo pm-suspend"
+alias sx="conctl u gui-session & exit"
+alias ta="tmux attach"
+alias v="vim"
+alias vs="vim --servername vim"
+if [ -d "/dev/shm/" ]; then
+	export vv="/dev/shm/"
+elif [ -d "/storage/emulated/0" ]; then
+	export vv="/storage/emulated/0"
+fi
+alias vv="${vv}"
+
+alias 2pdf="libreoffice --headless --invisible --convert-to pdf"
+alias df="df -h"
+alias du="du -hs"
+alias greps="grep -IR --color=yes -D skip --exclude-dir=.git"
+alias la="ls -A --color=auto -h"
+alias ll="ls -lA --color=auto -h"
+alias ls="ls --color=auto -h"
+alias octave="octave --silent"
+alias xpdfr="xpdf -remote 127.0.0.1"
+alias xpdfv="xpdf -rv"
+alias rem="remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$'"
+alias remn="remind -n -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$' | sort"
+alias remcal="remind -c1 -g -q ~/.reminders"
+alias remyear="remind -c12 -g -q ~/.reminders"
+alias balance='ledger balance'
+alias register='ledger register'
+alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
+
+alias gg="git grep --color"
+alias ga="git add"
+alias gc="git commit -v"
+alias gcd='([ -r "$(git rev-parse --show-toplevel)/.git/lazycommit" ] || (echo "non-lazy repo, aborting"; false )) && git commit -a -v -m "$(date)"'
+alias gb="git branch"
+alias gf="git fetch"
+alias gl="git log"
+alias gr="git reset --hard HEAD"
+alias gs="git status"
+alias gw="git show"
+alias gco="git checkout"
+alias gm="git merge"
+alias gus="git push"
+alias guss='git push origin $(git branch | awk '\''/^\*/{print$2}'\'')'
+alias gul="git pull"
+alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
+alias gusu='git submodule foreach git pull origin master'
+alias gdh='git diff HEAD'
+alias gt="git rev-parse --show-toplevel"
+alias gT='cd "$(git rev-parse --show-toplevel)"'
+alias gsync='gcd ; gull && guss'
+
+if [ -r "~/.mozilla/firefox/profiles.ini" ]; then
+	for profile in $(awk -F= '/^Name=/{print$2}' "~/.mozilla/firefox/profiles.ini")
+	do
+		alias "fx-${profile}"="firefox -P $profile -no-remote"
+	done
+fi
+
+if [ -x /bedrock/bin/brl ]; then
+	for stratum in $(brl list -aA)
+	do
+		alias "${stratum}"="strat ${stratum}"
+		alias "r${stratum}"="strat -r ${stratum}"
+		alias "s${stratum}"="sudo strat ${stratum}"
+		hash -d "${stratum}"="/bedrock/strata/${stratum}"
+	done
+fi
+
+if "${is_zsh}"; then
+	alias -g L="|less"
+	alias -g G="|grep"
+	alias -g B="&exit"
+	alias -g H="|head"
+	alias -g T="|tail"
+	alias -g C="|column -t"
+	alias -g V="|vim -m -c 'set nomod' -"
+	alias -g Q=">/dev/null 2>&1"
+
+	alias -s html=$BROWSER
+	alias -s htm=$BROWSER
+	alias -s org=$BROWSER
+	alias -s php=$BROWSER
+	alias -s com=$BROWSER
+	alias -s edu=$BROWSER
+	alias -s txt=$EDITOR
+	alias -s tex=$EDITOR
+	alias -s pdf=$PDFREADER
+	alias -s gz=tar -xzvf
+	alias -s bz2=tar -xjvf
+
+	alias mkdir="nocorrect mkdir"
+	alias cp="nocorrect cp"
+	alias mv="nocorrect mv"
+	alias ln="nocorrect ln"
+fi
+
+# ==============================================================================
+# = completion                                                                 =
+# ==============================================================================
+
+if "${is_zsh}"; then
+	if [ -x /bedrock/bin/brl ]; then
+		zcachedir="${HOME}/.zsh/$(hostname)-$(brl which -c)"
+	else
+		zcachedir="${HOME}/.zsh/$(hostname)"
+	fi
+	if ! [ -d "${CACHEDIR}" ]; then
+		mkdir -p "${zcachedir}"
+	fi
+
+	# Use completion functionality.
+	autoload -U compinit
+	compinit -d "${zcachedir}/zcompdump" 2>/dev/null
+
+	# Set the cache location.
+	zstyle ':completion:*' cache-path "${zcachedir}/cache"
+
+	# Use cache to speed completion up.
+	zstyle ':completion:*' use-cache on
+
+	# Do not require running "rehash" manually
+	zstyle ':completion:*' rehash true
+
+	# If the <tab> key is pressed with multiple possible options, print the
+	# options.  If the options are printed, begin cycling through them.
+	zstyle ':completion:*' menu select
+
+	# Print the categories the completion options fit into.
+	zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
+
+	# Organize into groups
+        zstyle ':completion:*' group-name ''
+
+	# Set format for warnings
+	zstyle ':completion:*:warnings' format 'No matches for: %d%b'
+
+	# Use colors when outputting file names for completion options.
+	zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+
+	# Do not prompt to cd into current directory.
+	# For example, cd ../<tab> should not prompt current directory.
+	zstyle ':completion:*:cd:*' ignore-parents parent pwd
+
+	# When using history-complete-(newer/older), complete with the first item on
+	# the first request (as opposed to 'menu select' which only shows the menu on
+	# the first request)
+	zstyle ':completion:history-words:*' menu yes
+
+	# Have zsh treat "mosh" like "ssh"
+	compdef mosh=ssh
+fi
+
+# ==============================================================================
+# = cwd-functions                                                              =
+# ==============================================================================
+#
+# This is a family of functions for improved navigation the filesystem,
+# superseding `cd` in specific situations.
+#
+# d(), u() and h() all take an argument which should be a substring of the
+# desired filepath.  To anchor the substring to the start or the end of the
+# target directory name, put a "/" on the desired anchor point.  Also supports
+# using "/" as part of the substring to specify a parent directory.
+#
+# d() searches _d_ownward for the specified directory.  It returns the match
+# closest to the pwd (i.e. does a breadth-first search).  If there is only one
+# downward directory, it will go to it without any argument.
+#
+# u() searches _u_pward for the specified directory.  It returns the match
+# closest to the pwd (i.e. the deepest directory which matches).
+# Alternatively, it could take a number which indicates the number of
+# directories to go up.
+#
+# h() searches the directory stack for the specified directory.  It returns the
+# match closest to a previous pwd that is the most recent.  This is most useful
+# when paired with zsh's autopushd or equivalent.
+#
+# t() _t_ags the current pwd into a list of tagged directories.  The first
+# argument specifies the desired tag name.  If no argument is used, it defaults
+# to the basename.
+#
+# r() _r_estores the pwd to the most recent match from the tagged directories.
+# Can use "/" as anchors for consistency with d(), u() and h().  No argument
+# dumps the tagged directory list.
+#
+# Careful with special characters; globbing and regex are used under-the-hood.
+
+d() {
+	# no arg.  If there is a single downward directory, go to it.
+	if [ -z "${1}" ]; then
+		[ "$(ls -lA | grep -c '^d')" -eq 1 ] && cd "$(ls -lA | awk '/^d/{print$NF}')"
+		pwd
+		return
+	fi
+
+	# get argument for `find`
+	# -> last directory with "*" set for globbing on non-anchored sides
+	findarg="$(echo "${1}" | awk -F/ 'BEGIN{l="*";r="*"}$NF==""{NF--;r=""}{x=$NF}NF>1{l=""}END{print l""x""r}')"
+	# get argument for `grep`
+	# -> replace right anchor with "$"
+	greparg="$(echo "${1}" | sed 's/\/$/$/')"
+	# starting and ending depth.  Gives up after maxdepth.
+	depth=1
+	maxdepth=10
+
+	# Find target directory.
+	#
+	# If there's no "/" other than trailing anchor and GNU find is
+	# available,
+	# use slightly faster version.
+	target=""
+	if ! echo "${greparg}" | grep -q "/" && find --version 2>&1| grep -q "GNU"; then
+		target="$(
+		while [ "${depth}" != "${maxdepth}" ] && ! find -mindepth "${depth}" -maxdepth "${depth}" -type d -name "${findarg}" -print -quit 2>/dev/null | grep "."; do
+			((depth++))
+		done
+		)"
+	else
+		# slightly slower version due to non-trailing-anchor "/" or
+		# find without -quit
+		target="$(
+		while [ "${depth}" != "${maxdepth}" ] && ! find -mindepth "${depth}" -maxdepth "${depth}" -type d -name "${findarg}" -print 2>/dev/null | grep "${greparg}"; do
+			((depth++))
+		done | head -n1
+		)"
+	fi
+	[ -n "${target}" ] && cd "${target}"
+	pwd
+}
+
+u() {
+	if [ -z "${1}" ]; then
+		# no argument, just act like `cd ..`
+		cd ..
+	elif [ "${1}" = "/" ]; then
+		# This is fairly meaningless in normal context.  Treat as `cd /`
+		cd /
+	elif echo "${1}" | grep -q '[0-9]\+'; then
+		# `cd ..` the specified number of directories
+		cd "$(pwd | awk 'BEGIN{FS=OFS="/"}NF>'"${1}"'{NF-='"${1}"'}NF==1{print"/"}NF>1')"
+	else
+		# Go to matching parent directory
+		p="$(pwd)/"
+		if echo "${1}" | grep -q "/$"
+		then
+			# Ends in a slash, anchor right.  Just cut out the fields we don't want.
+			cd "${p%"${1}"*}$1"
+		else
+			# Does not end in a slash, we need to expand the last directory.
+			# Use parameter expansion to cut out the part we don't want, then
+			# count the number of fields that exist with the remaining part.
+			fields="$(echo "${p%${1}*}$1" | awk -F/ '{print NF}')"
+			# Have awk simply print the desired number of fields
+			cd "$(pwd | awk -F/ 'BEGIN{IFS=OFS="/"}{NF='"${fields}"'}1')"
+		fi
+	fi
+	pwd
+}
+
+h() {
+	if [ -z "${1}" ]; then
+		# if no argument is specified, list the history
+		dirs -l -p
+		return
+	fi
+	if [ "${1}" = "/" ]; then
+		# This is fairly meaningless in normal context.  Treat as `cd /`
+		cd /
+		return
+	fi
+
+	# iterate over lines in history
+	# append a "/" so the trailing anchor will match
+	target="$(dirs -l -p | sed 's/$/\//' | awk -v"pat=${1}" '
+	BEGIN {
+		OFS=FS="/"
+		# due to how awk fields work, at one point we do not want to consider
+		# trailing slash in pattern
+		if (pat ~ "/$") {
+			patx = substr(pat,1,length(pat)-1)
+		} else {
+			patx = pat
+		}
+	}
+	$0 ~ pat {
+		# strip away all the fields from the left that we can without breaking
+		# the pattern to ensure we have the right-most match.
+		line=$0
+		while ($0 ~ pat) {
+			pre_last=$0
+			# strip field from left
+			$0=substr($0,2)
+			$1=""
+		}
+		# strip away fields from the right to count how far from pwd the match
+		# is
+		$0=pre_last
+		rank=0
+		while ($0 ~ patx) {
+			NF--;
+			rank++;
+		}
+		# compare to current best
+		if (rank > bestrank) {
+			$0 = line
+			NF -= rank-1
+			bestrank = rank
+			bestline = $0
+		}
+	}
+	END {
+		print bestline
+	}
+	')"
+	[ -n "${target}" ] && cd "${target}"
+	pwd
+}
+
+t() {
+	if [ -z "${1}" ]; then
+		# if no argument is specified, use base name as tag
+		tag="$(basename $(pwd))"
+	else
+		tag="${1}"
+	fi
+	echo "${tag} $(pwd) >> ~/.dirtags"
+	echo "${tag} $(pwd)" >> ~/.dirtags
+}
+
+r() {
+	if [ -z "${1}" ]; then
+		# if no argument is specified, dump tags
+		column -t ~/.dirtags
+		return
+	fi
+	pat="$(echo "${1}" | sed 's/\/$/$/' | sed 's/^\//^/')"
+	target="$(awk -v"pat=${pat}" '$1 ~ pat{$1="";print substr($0,2);exit}' ~/.dirtags)"
+	[ -n "${target}" ] && cd "${target}"
+	pwd
+}
+
+# ==============================================================================
+# = misc-functions                                                             =
+# ==============================================================================
+
+# use vim ex commands in a UNIX pipe
+vp() {
+	vim - -u NONE -es '+1' "+$*" '+%print' '+:qa!' | tail -n +2
+}
+
+# use vim normal mode commands in a UNIX pipe
+vn() {
+	vim - -u NONE -es '+1' "+normal $*" '+%print' '+:qa!' | tail -n +2
+}
+
+if "${is_bash}"; then
+	# implement zsh's autopushd
+	cd() {
+		if [ -z "${1}" ]; then
+			dir="${HOME}"
+		else
+			dir="${1}"
+		fi
+		builtin pushd "${dir}" >/dev/null
+	}
+fi
+
+# ==============================================================================
+# = key-bindings                                                               =
+# ==============================================================================
+#
+
+if "${is_bash}"; then
+	# Note that bash uses readline, and thus further bindings can be placed
+	# in
+	# ~/.inputrc
+	#
+	# Use vi-like insert/normal mode functionality at the command line.
+	# Bash's vi-mode is not sufficiently extendable, so this remains
+	# disabled.
+	#set -o vi
+
+	# By default, ctrl-w will delete the word before the cursor.  This
+	# considers "/" a word-character which makes fixing typos in filesystem
+	# paths a pain.  Meta-backspace acts as desired, but doesn't fit my
+	# muscle memory.  This is a work around to make ctrl-w work like
+	# meta-backspace.
+	bind '"":""'
+elif "${is_zsh}"; then
+	# Prepend "sudo" to the command line if it is not already there.
+	prepend-sudo() {
+		if ! echo "$BUFFER" | grep -q "^sudo "
+		then
+			BUFFER="sudo $BUFFER"
+			CURSOR+=5
+		fi
+	}
+	zle -N prepend-sudo
+
+	# Prepend "vim" to the command line if it is not already there.
+	prepend-vim() {
+		if ! echo "$BUFFER" | grep -q "^vim "
+		then
+			BUFFER="vim $BUFFER"
+			CURSOR+=5
+		fi
+	}
+	zle -N prepend-vim
+
+	# Delete all characters between a pair of characters.  Mimics Vim's
+	# "di" text object functionality.
+	delete-in() {
+		# Create locally-scoped variables we'll need
+		local CHAR LCHAR RCHAR LSEARCH RSEARCH COUNT
+		# Read the character to indicate which text object we're deleting.
+		read -k CHAR
+		if [ "$CHAR" = "w" ]
+		then # diw, delete the word.
+			# find the beginning of the word under the cursor
+			zle vi-backward-word
+			# set the left side of the delete region at this point
+			LSEARCH=$CURSOR
+			# find the end of the word under the cursor
+			zle vi-forward-word
+			# set the right side of the delete region at this point
+			RSEARCH=$CURSOR
+			# Set the BUFFER to everything except the word we are removing.
+			RBUFFER="$BUFFER[$RSEARCH+1,${#BUFFER}]"
+			LBUFFER="$LBUFFER[1,$LSEARCH]"
+			return
+		# diw was unique.  For everything else, we just have to define the
+		# characters to the left and right of the cursor to be removed
+		elif [ "$CHAR" = "(" ] || [ "$CHAR" = ")" ] || [ "$CHAR" = "b" ]
+		then # di), delete inside of a pair of parenthesis
+			LCHAR="("
+			RCHAR=")"
+		elif [ "$CHAR" = "[" ] || [ "$CHAR" = "]" ]
+		then # di], delete inside of a pair of square brackets
+			LCHAR="["
+			RCHAR="]"
+		elif [ $CHAR = "{" ] || [ $CHAR = "}" ] || [ "$CHAR" = "B" ]
+		then # di], delete inside of a pair of braces
+			LCHAR="{"
+			RCHAR="}"
+		else
+			# The character entered does not have a special definition.
+			# Simply find the first instance to the left and right of the
+			# cursor.
+			LCHAR="$CHAR"
+			RCHAR="$CHAR"
+		fi
+		# Find the first instance of LCHAR to the left of the cursor and the
+		# first instance of RCHAR to the right of the cursor, and remove
+		# everything in between.
+		# Begin the search for the left-sided character directly the
+		# left of the cursor.
+		LSEARCH=${#LBUFFER}
+		# Keep going left until we find the character or hit the
+		# beginning of the buffer.
+		while [ "$LSEARCH" -gt 0 ] && [ "$LBUFFER[$LSEARCH]" != "$LCHAR" ]; do
+			LSEARCH=$(expr $LSEARCH - 1)
+		done
+		# If we hit the beginning of the command line without finding
+		# the character, abort.
+		if [ "$LBUFFER[$LSEARCH]" != "$LCHAR" ]
+		then
+			return
+		fi
+		# start the search directly to the right of the cursor
+		RSEARCH=0
+		# Keep going right until we find the character or hit the end
+		# of the buffer.
+		while [ "$RSEARCH" -lt $(expr ${#RBUFFER} + 1 ) ] && [ "$RBUFFER[$RSEARCH]" != "$RCHAR" ]; do
+			RSEARCH=$(expr $RSEARCH + 1)
+		done
+		# If we hit the end of the command line without finding the
+		# character, abort.
+		if [ "$RBUFFER[$RSEARCH]" != "$RCHAR" ]
+		then
+			return
+		fi
+		# Set the BUFFER to everything except the text we are removing.
+		RBUFFER="$RBUFFER[$RSEARCH,${#RBUFFER}]"
+		LBUFFER="$LBUFFER[1,$LSEARCH]"
+	}
+	zle -N delete-in
+
+
+	# Delete all characters between a pair of characters and then go to
+	# insert mode.  Mimics Vim's "ci" text object functionality.
+	change-in() {
+		zle delete-in
+		zle vi-insert
+	}
+	zle -N change-in
+
+	# Delete all characters between a pair of characters as well as the
+	# surrounding characters themselves.  Mimics Vim's "da" text object
+	# functionality.
+	delete-around() {
+		zle delete-in
+		zle vi-backward-char
+		zle vi-delete-char
+		zle vi-delete-char
+	}
+	zle -N delete-around
+
+	# Delete all characters between a pair of characters as well as the
+	# surrounding characters themselves and then go into insert mode
+	# Mimics Vim's "ca" text object functionality.
+	change-around() {
+		zle delete-in
+		zle vi-backward-char
+		zle vi-delete-char
+		zle vi-delete-char
+		zle vi-insert
+	}
+	zle -N change-around
+
+	# Increment the number under the cursor, or find the next number to the
+	# right of the cursor and increment that number.  Emulate vim's ctrl-a
+	# functionality.  This code is not my style at all; presumably I found
+	# it somewhere online, but I no longer remember the source to cite or
+	# credit.
+	increment-number() {
+		emulate -L zsh
+		setopt extendedglob
+		local pos num newnum sign buf
+		if [[ $BUFFER[$((CURSOR + 1))] = [0-9] ]]; then
+			pos=$((${#LBUFFER%%[0-9]##} + 1))
+		else
+			pos=$(($CURSOR + ${#RBUFFER%%[0-9]*} + 1))
+		fi
+		(($pos <= ${#BUFFER})) || return
+		num=${${BUFFER[$pos,-1]}%%[^0-9]*}
+		if ((pos > 0)) && [[ $BUFFER[$((pos - 1))] = '-' ]]; then
+			num=$((0 - num))
+			((pos--))
+		fi
+		newnum=$((num + ${NUMERIC:-${incarg:-1}}))
+		if ((pos > 1)); then
+			buf=${BUFFER[0,$((pos - 1))]}${BUFFER[$pos,-1]/$num/$newnum}
+		else
+			buf=${BUFFER/$num/$newnum}
+		fi
+		BUFFER=$buf
+		CURSOR=$((pos + $#newnum - 2))
+	}
+	zle -N increment-number
+
+	# Decrement the number under the cursor, or find the next number to the
+	# right of the cursor and increment that number.  Emulate vim's ctrl-x
+	# functionality.  This code is not my style at all; presumably I found
+	# it somewhere online, but I no longer remember the source to cite or
+	# credit.
+	decrement-number() {
+		emulate -L zsh
+		setopt extendedglob
+		local pos num newnum sign buf
+		if [[ $BUFFER[$((CURSOR + 1))] = [0-9] ]]; then
+			pos=$((${#LBUFFER%%[0-9]##} + 1))
+		else
+			pos=$(($CURSOR + ${#RBUFFER%%[0-9]*} + 1))
+		fi
+		(($pos <= ${#BUFFER})) || return
+		num=${${BUFFER[$pos,-1]}%%[^0-9]*}
+		if ((pos > 0)) && [[ $BUFFER[$((pos - 1))] = '-' ]]; then
+			num=$((0 - num))
+			((pos--))
+		fi
+		newnum=$((num - ${NUMERIC:-${incarg:-1}}))
+		if ((pos > 1)); then
+			buf=${BUFFER[0,$((pos - 1))]}${BUFFER[$pos,-1]/$num/$newnum}
+		else
+			buf=${BUFFER/$num/$newnum}
+		fi
+		BUFFER=$buf
+		CURSOR=$((pos + $#newnum - 2))
+	}
+	zle -N decrement-number
+
+	# Zsh's history-beginning-search-backward is very close to Vim's
+	# i_ctrl-x_ctrl-l; however, with Vim, it leaves you in insert mode with
+	# the cursor at the end of the line.  Surprisingly, there was nothing
+	# closer to Vim in Zsh by default.  This creates something closer to
+	# Vim's i_ctrl-x_ctrl-l.
+	history-beginning-search-backward-then-append() {
+		zle history-beginning-search-backward
+		zle vi-add-eol
+	}
+	zle -N history-beginning-search-backward-then-append
+
+	# Use vi-style keybindings
+	bindkey -v
+
+	# Minimize escape sequence detection delay
+	export KEYTIMEOUT=1
+
+	# Completely remove escape key detection delay.  Disabled because this
+	# breaks bracketed paste detection.
+	#
+	## Remove escape timeout in insert mode
+	#bindkey -rpM viins '^['
+	#
+	## Remove escape timeout in normal mode
+	#bindkey -rpM vicmd '^['
+
+	# Have i_backspace work as it does in Vim.
+	bindkey -M viins "^?" backward-delete-char
+
+	# Have i_ctrl-a work as it does in Vim.
+	bindkey -M viins "^A" beginning-of-line
+
+	# Have i_ctrl-p work as c_ctrl-p does in Vim.
+	bindkey -M viins "^P" up-line-or-history
+
+	# Have i_ctrl-e work as it does in Vim.
+	bindkey -M viins "^E" end-of-line
+
+	# Have i_ctrl-n work as c_ctrl-n does in Vim.
+	bindkey -M viins "^N" down-line-or-history
+
+	# Have i_ctrl-h work as it does in Vim.
+	bindkey -M viins "^H" backward-delete-char
+
+	# Have i_ctrl-b work as i_ctrl-p does in Vim.
+	bindkey -M viins "^B" _history-complete-newer
+
+	# Have i_ctrl-f work as i_ctrl-n does in Vim.
+	bindkey -M viins "^F" _history-complete-older
+
+	# Prepend "sudo ".  This does not have a Vim parallel.
+	bindkey "^S" prepend-sudo
+
+	# Prepend "vim ".  This does not have a Vim parallel.
+	bindkey "^V" prepend-vim
+
+	# Have i_ctrl-u work as it does in Vim.
+	bindkey -M viins "^U" backward-kill-line
+
+	# Have i_ctrl-w work as it does in Vim.
+	bindkey -M viins "^W" backward-kill-word
+
+	# Have i_ctrl-x_i_ctrl-l work as it does in Vim.
+	bindkey -M viins "^X^L" history-beginning-search-backward-then-append
+
+	# Display _completion_help for creating completion functions.  This
+	# does not have a Vim parallel.
+	bindkey -M viins "^X^H" _complete_help
+
+	# attempt to complete line based on history, roughly as i_ctrl-x_ctrl-l
+	# does in Vim.
+	bindkey -M viins "^X^L" history-incremental-search-backward
+
+	# Cut the contents of the line and paste immediately when the next
+	# prompt appears.  This does not have a clean Vim parallel.
+	bindkey -M viins "^Y" push-line
+
+	# Have ctrl-a work as it does in Vim.
+	bindkey -M vicmd "^A" increment-number
+
+	# Mimics Vim's "ca" text object functionality.
+	bindkey -M vicmd "ca" change-around
+
+	# Mimics Vim's "ci" text object functionality.
+	bindkey -M vicmd "ci" change-in
+
+	# If not explicitly set, above ca/ci bindings will cause a delay
+	bindkey -M vicmd "cc" vi-change-whole-line
+
+	# Mimic Vim's da text-object functionality.
+	bindkey -M vicmd "da" delete-around
+
+	# Mimic Vim's di text-object functionality.
+	bindkey -M vicmd "di" delete-in
+	#
+	# If not explicitly set, above da/di bindings will cause a delay
+	bindkey -M vicmd "dd" kill-whole-line
+
+	# Have ctrl-e work as it does in Vim.
+	bindkey -M vicmd "^E" vi-add-eol
+
+	# Have g~ work as it does in Vim.
+	bindkey -M vicmd "g~" vi-oper-swap-case
+
+	# Have ga work as it does in Vim.
+	bindkey -M vicmd "ga" what-cursor-position
+
+	# Have gg work as it does in Vim.
+	bindkey -M vicmd "gg" beginning-of-history
+
+	# Have G work as it does in Vim.
+	bindkey -M vicmd "G" end-of-history
+
+	# Have ctrl-r work as it does in Vim.
+	bindkey -M vicmd "^R" redo
+
+	# Editing the line in Vim proper.
+	autoload edit-command-line
+	zle -N edit-command-line
+	bindkey -M vicmd "^V" edit-command-line
+	bindkey -M vicmd v edit-command-line
+
+	# Have ctrl-a work as it does in Vim.
+	bindkey -M vicmd "^X" decrement-number
+
+	# Finds via breadth-first search file or directory in pwd that matches
+	# the provided
+	#
+	# first arg is file type as is interpreted by `find -type`
+	#
+	# second arg is pattern for which to search
+	# - pattern is a substring of target file/filepath
+	# - a leading or trailing slash can be used as an anchor
+	#   - a starting slash indicates a file path separator and should make
+	#   intuitive sense
+	#   - cannot end a file/directory name on the filesystem with a slash,
+	#   so the trailing one can't conflict with anything and is easier to
+	#   type than, say, "$" on US-qwerty keyboards.  If you want to select
+	#   any file in a directory, use "/*"
+	# - "/" can be used mid-pattern to indicate a file path separator to, for
+	# example, describe the parent directory of the target file.
+	# - a "*" can match any number of non-"/" characters
+	# - a "**" can match any number of any character
+	#
+	expand_fuzz() {
+		# ensure there's something for which to search
+		[ -z "${2}" ] && return
+
+		# get argument for `find`
+		# find only cares about the very last field; grep will check
+		# the other fields.
+		# find uses globbing so non-anchored points should have a "*"
+		# "**" could match a slash so cut after that point
+		findarg="$(echo "${2}" | sed 's,^.*\*\*,,g' | awk -F/ '
+		BEGIN {
+			l="*";r="*"
+		}
+		$NF=="" { # trailing slash, anchor right
+			NF--;r=""
+		}
+		{
+			x=$NF
+		}
+		NF>1 { # leading slash, anchor left
+			l=""
+		}
+		END {
+			print l""x""r
+		}
+		')"
+
+		# get argument for `grep`
+		# leading slash anchor "just works" but need to set trailing slash
+		# need to expand "*" into "[^/]*" and "**" into ".*" for regex
+		greparg="$(echo "${2}" | sed -e 's/\/$/$/' -e 's,\*\*,.*,g' -e 's,\(^\|[^.]\)\*,\1[^/]*,')"
+
+		# starting and ending depth.  Gives up after maxdepth.
+		depth=1
+		maxdepth=10
+
+		while [ "${depth}" != "${maxdepth}" ] && ! find -L -type "${1}" -mindepth "${depth}" -maxdepth "${depth}" -name "${findarg}" -print 2>/dev/null | grep "${greparg}"; do
+			((depth++))
+		done | head -n1
+	}
+
+	# Finds via breadth-first search file or directory in the git
+	# repository that matches the provided pattern.  This gives the full
+	# path independent of pwd.
+	#
+	# - pattern is a substring of target file/filepath
+	# - a leading or trailing slash can be used as an anchor
+	#   - a starting slash indicates a file path separator and should make
+	#   intuitive sense
+	#   - cannot end a file/directory name on the filesystem with a slash,
+	#   so the trailing one can't conflict with anything and is easier to
+	#   type than, say, "$" on US-qwerty keyboards.  If you want to select
+	#   any file in a directory, use "/*"
+	# - "/" can be used mid-pattern to indicate a file path separator to, for
+	# example, describe the parent directory of the target file.
+	# - a "*" can match any number of non-"/" characters
+	# - a "**" can match any number of any character
+	expand_git_fuzz() {
+		[ -z "${1}" ] && return
+
+		# get argument for `grep`
+		# leading slash anchor "just works" but need to set trailing slash
+		# need to expand "*" into "[^/]*" and "**" into ".*" for regex
+		greparg="$(echo "${1}" | sed -e 's/\/$/$/' -e 's,\*\*,.*,g' -e 's,\(^\|[^.]\)\*,\1[^/]*,')"
+
+		git_top=$(git rev-parse --show-toplevel)
+		(
+			cd "${git_top}"
+			depth=1
+			maxdepth=10
+			while [ "${depth}" != "${maxdepth}" ] && ! git ls-files | cut -d/ -f1-"${depth}" | grep "${greparg}"; do
+				((depth++))
+			done | awk -v"git_top=${git_top}" '/./{print git_top"/"$0;exit}'
+		)
+	}
+
+	# Expands ~[...] inputs
+	#
+	#     ~[d:...] -> subdirectory of cwd
+	#     ~[f:...] -> file in cwd tree
+	#     ~[v:...] -> file in vcs tree (only supports git)
+	zsh_directory_name() {
+		local pattern="${2[3,${#2}]}"
+		local type="${2[1]}"
+		local result
+		if [ "${type}" = "d" ] || [ "${type}" = "f" ]; then
+			result="$(expand_fuzz "${type}" "${pattern}")"
+		elif [ "${type}" = "v" ]; then
+			result="$(expand_git_fuzz "${pattern}")"
+		else
+			return 1
+		fi
+		if [ "${result}" != "" ]; then
+			reply=("${result}")
+			echo '~['"${2}"'] -> '"${result}" >&2
+			return 0
+		else
+			return 1
+		fi
+	}
+
+	# Makes substitutes in the BUFFER just before zsh parses it.  This
+	# allows for some slightly shorter inputs at the cost of breaking zsh's
+	# input namespace.
+	#
+	# This parser is not smart enough to do things like withhold
+	# substitution in a string.  It'd sure be nice.
+	#
+	# To make this easily disable/bypass-able per entry, it must follow a
+	# space.  Thus, things like `echo '@word'` won't trigger the
+	# substitution because the "@" follows a quote, not a space.  To
+	# disable for an extended session, unset ENABLE_FUZZ_BUFFER.
+	#
+	#    " @word" -> " ~[d:word]"
+	#    " #word" -> " ~[f:word]"
+	#    " !word" -> " ~[v:word]"
+	#
+	ENABLE_FUZZ_BUFFER=1
+	_insert_dynamic_named_directories() {
+		if [ -z "${ENABLE_FUZZ_BUFFER}" ]; then
+			zle .accept-line
+			return
+		fi
+
+		local RETRY PREFIX BODY PAIR
+
+		RETRY=1
+		while [ -n "${RETRY}" ]; do
+			RETRY=""
+			for PAIR in "@d" "#f" "!v"; do
+				if [[ "${BUFFER}" =~ " ${PAIR[1]}" ]]; then
+					PREFIX="${BUFFER[1,MEND-1]}"
+					BODY="${BUFFER[MEND+1,-1]}"
+					if [[ "${BODY}" =~ '[a-zA-Z0-9_/.*]+' ]]; then
+						BUFFER="${PREFIX}~[${PAIR[2]}:${BODY[MEGIN,MEND]}]${BODY[MEND+1,-1]}"
+					fi
+				fi
+			done
+		done
+		zle .accept-line
+	}
+	zle -N accept-line _insert_dynamic_named_directories
+fi
+
+# ==============================================================================
+# = run_tmux                                                                   =
+# ==============================================================================
+#
+# if we're on a remote machine and tmux is running ensure we're in tmux
+
+if [ -n "${SSH_CLIENT}" ] || [ -n "${SSH_TTY}" ] &&\
+	[ -z "${TMUX}" ] && in_path "tmux" && tmux ls | grep -q '.'
+then
+	exec tmux attach -d
+fi
+
+# ==============================================================================
+# = connate                                                                    =
+# ==============================================================================
+
+export CONNATE_FIFO="${HOME}/.connate";
+if in_path conctl && ! conctl P >/dev/null 2>&1; then
+	if ! [ -e "${CONNATE_FIFO}" ]; then
+		mkdir -p "$(dirname "${CONNATE_FIFO}")"
+		mkfifo "${CONNATE_FIFO}"
+	fi
+	printf "Staring Connate: "
+	connate >/dev/null 2>&1 &
+fi

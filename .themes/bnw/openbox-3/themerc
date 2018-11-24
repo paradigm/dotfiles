@@ -1,0 +1,72 @@
+# ==============================================================================
+# = paradigm's openbox theme                                                   =
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# - geometry/layout values                                                     -
+# ------------------------------------------------------------------------------
+
+# window geometry/layout
+padding.width:                 0
+padding.height:                0
+border.width:                  1
+window.client.padding.width:   0
+window.client.padding.height:  0
+window.handle.width:           0
+window.label.text.justify:     Left
+
+# menu geometry/layout
+menu.border.width:             1
+menu.overlap.x:                0
+menu.overlap.y:                0
+menu.separator.width:          1
+menu.separator.padding.width:  5
+menu.separator.padding.height: 3
+menu.title.text.justify:       Left
+
+# osd
+osd.border.width:              1
+
+# ------------------------------------------------------------------------------
+# - colors                                                                     -
+# ------------------------------------------------------------------------------
+
+# active border
+window.active.border.color:                   #ffffff
+
+# active title
+window.active.label.text.color:               #000000
+window.active.label.bg:                       solid flat
+window.active.label.bg.color:                 #ffffff
+window.active.title.bg:                       solid flat
+window.active.title.bg.color:                 #ffffff
+window.active.button.unpressed.image.color:   #000000
+window.active.button.unpressed.bg:            solid flat
+window.active.button.unpressed.bg.color:      #ffffff
+window.active.button.pressed.image.color:     #000000
+window.active.button.pressed.bg:              solid flat
+window.active.button.pressed.bg.color:        #000000
+
+# inactive border
+window.inactive.border.color:                 #ffffff
+
+# inactive title
+window.inactive.label.text.color:             #ffffff
+window.inactive.label.bg:                     solid flat
+window.inactive.label.bg.color:               #000000
+window.inactive.title.bg:                     solid flat
+window.inactive.title.bg.color:               #000000
+window.inactive.button.unpressed.image.color: #ffffff
+window.inactive.button.unpressed.bg:          solid flat
+window.inactive.button.unpressed.bg.color:    #000000
+window.inactive.button.pressed.bg:            solid flat
+window.inactive.button.pressed.bg.color:      #ffffff
+window.inactive.button.pressed.image.color:   #ffffff
+
+# menu
+menu.title.text.color:                        #ffffff
+menu.items.text.color:                        #ffffff
+menu.items.disabled.text.color:               #999999
+menu.items.active.text.color:                 #000000
+menu.items.active.bg:                         solid flat
+menu.items.active.bg.color:                   #ffffff

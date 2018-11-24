@@ -1,0 +1,42 @@
+# This configuration file provides color values for terminals, to be parsed by
+# programs to set colors.  This file specifically is for terminals that support
+# 256 colors.
+
+# This theme is grayscale.  It is white-on-black where it can be, and uses
+# shades of gray where further variation is necessary 
+
+# normal - white on black
+NORMAL_FOREGROUND=231 # white
+NORMAL_BACKGROUND=0   # black
+
+# highlight/selected - invert colors
+HIGHLIGHT_FOREGROUND=0   # black
+HIGHLIGHT_BACKGROUND=231 # white
+
+# insensitive (for things like UI chrome if applicable)
+INSENSITIVE_FOREGROUND=244 # gray50
+INSENSITIVE_BACKGROUND=0   # black
+
+# miscellaneous
+MISCELLANEOUS_FOREGROUND=250 # gray74
+MISCELLANEOUS_BACKGROUND=0   # black
+
+# more miscellaneous
+MISCELLANEOUS2_FOREGROUND=248 # gray66
+MISCELLANEOUS2_BACKGROUND=0   # black
+
+# even more miscellaneous
+MISCELLANEOUS3_FOREGROUND=244 # gray50
+MISCELLANEOUS3_BACKGROUND=0   # black
+
+# even more miscellaneous
+MISCELLANEOUS4_FOREGROUND=257 # gray82
+MISCELLANEOUS4_BACKGROUND=0   # black
+
+# error - red on black
+ERROR_FOREGROUND=196 # red
+ERROR_BACKGROUND=0   # black
+
+# error2 - white on red
+ERROR2_FOREGROUND=231 # white
+ERROR2_BACKGROUND=196 # red

@@ -1,0 +1,4 @@
+#!/bin/sh
+pid="$(get-pid xinit)"
+[ "$(echo "$pid" | wc -l)" -ne 1 ] && return 1
+cat "/proc/$pid/cmdline" | tr '\0' '\n' | grep '^:[0-9]'

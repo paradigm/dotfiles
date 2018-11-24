@@ -1,0 +1,56 @@
+#!/bin/sh
+# Wrapper for gcalcli that outputs in time remaining today
+# Also adds caching for faster responses
+
+if [ -w "$XDG_RUNTIME_DIR" ]
+then
+	TMP="$XDG_RUNTIME_DIR"
+else
+	TMP=/tmp/
+fi
+CACHE=$TMP/gcaltoday-$(id -u)
+
+# gcalcli is slow, so cache its output and run off of the cache
+# it shouldn't update overly often
+if ! [ -e "$CACHE" ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y "$CACHE") + 900) ]
+then
+	gcalcli --nocolor --nostarted agenda "$(date --iso)" "$(date --iso -dtomorrow)" > "$CACHE"
+	if [ $? -ne 0 ]
+	then
+		rm "$CACHE"
+	fi
+fi
+
+awk -v"now=$(date +"%H %M")" '
+BEGIN {
+	split(now, a)
+	now_mins = a[1] * 60 + a[2]
+}
+/^No Events Found.../ {
+	exit
+}
+/./{
+	# clear date prefix - we already know this is for today
+	if ($0 !~ "^ ") {
+		$1=$2=$3=""
+	}
+
+	# split hours/minutes
+	sub(/:/, " ")
+
+	task_mins = $1 * 60 + $2
+	diff=int(task_mins - now_mins)
+	hours=int(diff/60)
+	minutes=diff - (hours * 60)
+
+	if (diff >= 0) {
+		$1=$2=""
+		sub(/^ */, "")
+		printf "%s ", $0
+		if (hours > 0) {
+			printf "%sh", hours
+		}
+		printf "%sm\n", minutes
+	}
+}
+' "$CACHE"
