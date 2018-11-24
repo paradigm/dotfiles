@@ -1,0 +1,16 @@
+#!/bin/sh
+
+PRICEDB=~/.priv/pricedb
+
+set -eu
+[ -n "$1" ]
+STOCK="$1"
+
+DATE="$(curl -s "http://download.finance.yahoo.com/d/quotes.csv?s=${STOCK}&f=d1" | awk -F'["/]' '{printf "%4d-%02d-%02d\n", $4, $2, $3}')"
+TIME="$(curl -s "http://download.finance.yahoo.com/d/quotes.csv?s=${STOCK}&f=t1" | awk -F'[":a-z]' '/pm/{printf "%02d:%02d:%02d\n",($2+12), $3, 0}')"
+LASTTRADE="$(curl -s "http://download.finance.yahoo.com/d/quotes.csv?s=${STOCK}&f=l1" | sed 's/^/$/')"
+
+echo "$DATE $TIME $STOCK $LASTTRADE"
+echo "P $DATE $TIME $STOCK $LASTTRADE" >> "$PRICEDB"
+sort -u "${PRICEDB}" >> "${PRICEDB}-new"
+mv "${PRICEDB}-new" "$PRICEDB"

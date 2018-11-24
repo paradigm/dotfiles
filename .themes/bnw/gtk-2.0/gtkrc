@@ -1,0 +1,119 @@
+# ==============================================================================
+# = paradigm's gtk theme                                                       =
+# ==============================================================================
+#
+#  Hard white-on-black where applicable, with shades of gray where difficulties
+#  to make a hard white-on-black arise.
+#
+
+style "default"
+{
+# ------------------------------------------------------------------------------
+# - non-text foreground                                                        -
+# ------------------------------------------------------------------------------
+fg[NORMAL] = "#ffffff"         # selected tab, other fg
+fg[ACTIVE] = "#ffffff"         # deselected tabs fg
+fg[PRELIGHT] = "#000000"       # hover, progress in progress bar fg
+fg[SELECTED] = "#000000"       # selected outline fg
+fg[INSENSITIVE] = "#888888"    # inaccessible option, like scroll bars
+
+# ------------------------------------------------------------------------------
+# - non-text background                                                        -
+# ------------------------------------------------------------------------------
+bg[NORMAL] = "#000000"         # selected tab, other bg
+bg[ACTIVE] = "#000000"         # deselected tabs bg
+bg[PRELIGHT] = "#ffffff"       # hover, progress in progress bar bg
+bg[SELECTED] = "#ffffff"       # selected icon bg?
+bg[INSENSITIVE] = "#000000"    # unavailable (eg: max'd scroll bar button)
+
+# ------------------------------------------------------------------------------
+# - text foreground                                                            -
+# ------------------------------------------------------------------------------
+text[NORMAL] = "#ffffff"       # normal, unselected text fg
+text[ACTIVE] = "#000000"       # selected text fg, unfocused window
+text[PRELIGHT] = "#000000"     # mouse hover dropdown-box
+text[SELECTED] = "#000000"     # selected text fg, focused window
+text[INSENSITIVE] = "#000000"  # mouse hover checkboxes
+
+# ------------------------------------------------------------------------------
+#  text background
+# ------------------------------------------------------------------------------
+base[NORMAL] = "#000000"       # normal bg
+base[ACTIVE] = "#ffffff"       # selected text bg, unfocused window
+base[PRELIGHT] = "#ffffff"     # mouse hover dropdown-box
+base[SELECTED] = "#ffffff"     # selected text bg, focused window
+base[INSENSITIVE] = "#ffffff"  # mouse hover checkboxes
+
+# ------------------------------------------------------------------------------
+#  cursor
+# ------------------------------------------------------------------------------
+GtkWidget::cursor_color           = "#ffffff"
+GtkWidget::secondary_cursor_color = "#ffffff"
+
+# ------------------------------------------------------------------------------
+#  engine
+# ------------------------------------------------------------------------------
+engine "industrial" {}  # fastest engine with the features I want
+
+GtkRange::slider_width = 15
+GtkRange::stepper_size = 15
+
+# ------------------------------------------------------------------------------
+#  thin decorations
+# ------------------------------------------------------------------------------
+GtkScrollbar::min_slider_length = 15
+GtkScrollbar::slider-width = 5
+GtkCheckButton::indicator_size=10
+GtkCheckMenuItem::indicator_size=10
+GtkRadioButton::indicator_size=12
+GtkNotebook::tab_vborder = 1
+GtkNotebook::tab_hborder = 1
+xthickness = 1
+ythickness = 1
+
+
+# ------------------------------------------------------------------------------
+#  no unnecessary items
+# ------------------------------------------------------------------------------
+	GtkButton::default_border={0,0,0,0}
+	GtkButton::default_outside_border={0,0,0,0}
+	GtkButtonBox::child_min_width=0
+	GtkButtonBox::child_min_height=0
+	GtkButtonBox::child_internal_pad_x=0
+	GtkButtonBox::child_internal_pad_y=0
+	GtkCheckButton::inidicator_spacing=0
+	GtkMenu::vertical_padding=0
+	GtkMenu::horizontal_padding=0
+	GtkMenuBar::internal_padding=0
+	GtkMenuItem::vertical_padding=0
+	GtkMenuItem::horizontal_padding=3
+	GtkOptionMenu::indicator_size=0
+	GtkOptionMenu::indicator_spacing=0
+	GtkPaned::handle_size=4
+	GtkRange::trough_border=0
+	GtkRange::stepper_spacing=0
+	GtkScale::value_spacing=0
+	GtkScrolledWindow::scrollbar_spacing=0
+	GtkExpander::expander_size=10
+	GtkExpander::expander_spacing=0
+	GtkTreeView::vertical_separator=0
+	GtkTreeView::horizontal_separator=0
+	GtkWidget::focus_padding=0
+}
+
+# ------------------------------------------------------------------------------
+#  icons
+# ------------------------------------------------------------------------------
+gtk-icon-sizes = "gtk-large-toolbar=16,16:panel-menu=16,16:gtk-button=16,16:gtk-dialog=16,16:gtk-menu=16,16" 
+gtk-icon-theme-name="gnome"
+# ------------------------------------------------------------------------------
+#  font
+# ------------------------------------------------------------------------------
+gtk-font-name="Terminus 10"
+
+gtk-toolbar-style=0
+
+# ------------------------------------------------------------------------------
+#  use the theme described above
+# ------------------------------------------------------------------------------
+class "*" style "default"

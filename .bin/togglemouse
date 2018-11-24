@@ -1,0 +1,14 @@
+#!/bin/sh
+width="$(xrandr | head -n1 | sed 's/, /\n/g' | awk '$1 == "current" {print$2}')"
+height="$(xrandr | head -n1 | sed 's/, /\n/g' | awk '$1 == "current" {print$4}')"
+device=$(xinput list | awk -F= '/Mouse/||/Synaptics/||/<default pointer>/{print$2;exit}' | cut -d'	' -f1)
+PROP=$(xinput list-props $device | awk '/Device Enabled/{print$3}' | sed 's/^.\(.*\)):$/\1/')
+status=$(xinput list-props $device | awk '/Device Enabled/{print$4}')
+if [ "$status" -eq 1 ]
+then
+	swarp $width $height
+	xinput set-prop $device $PROP 0
+else
+	swarp $(expr $width / 2 ) $(expr $height / 2 )
+	xinput set-prop $device $PROP 1
+fi

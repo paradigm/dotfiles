@@ -1,0 +1,110 @@
+#!/bin/sh
+
+if ! [ -e ~/.metar ]
+then
+	echo "No ~/.metar file" >&2
+	exit 1
+fi
+
+CODE=$(cat ~/.metar)
+if [ -w "$XDG_RUNTIME_DIR" ]
+then
+	TMP="$XDG_RUNTIME_DIR"
+else
+	TMP=/tmp/
+fi
+CACHE=$TMP/metar-$CODE-$(id -u)
+
+if ! [ -e $CACHE ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y $CACHE) + 900) ]
+then
+	printf "\n$CODE\nX\n" | nc -w 2 rainmaker.wunderground.com 23 > "$CACHE"
+	if [ $? -ne 0 ]
+	then
+		rm "$CACHE"
+	fi
+fi
+
+gawk '
+	BEGIN {
+		RS = "\n\r"
+		FS = "   *"
+		s = "[ \n\r\t][\n\r\t]*"
+	}
+
+	# current conditions
+	previous == "========================================================================" {
+		temperature = $2
+		humidity = $3
+		winds = $4
+		pressure = $5
+		sky = $6
+		gsub(s, "-", sky)
+		print "Now: "sky" "temperature
+		temperature = ""
+		humidity = ""
+		winds = ""
+		pressure = ""
+		sky = ""
+
+		RS = "\n\r[.]"
+		FS = "."
+		in_forecast = 1
+	}
+
+	# forecasting too far out; summary here only cares about rest of day
+	in_forecast && /^(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)[.][.][.]/ {
+		exit
+	}
+
+	# upcoming forecast
+	in_forecast && /^[a-zA-Z ]*[.][.][.]/ {
+		time = $1
+		sky = $4
+		gsub(" with"s"a"s".*$", "", sky)
+		gsub(s, "-", sky)
+		for (i = 1; i < NF; i++) {
+			if ($i ~ /[Hh]ighs|[Ll]ows/ ) {
+				temperature = $i
+				sub("^.*([Hh]ighs|[Ll]ows)"s, "", temperature)
+				sub("in"s"the"s, "", temperature)
+				sub("[.]", "", temperature)
+				sub("upper"s, "^", temperature)
+				sub("lower"s, "v", temperature)
+				sub("mid"s, "-", temperature)
+				sub("around"s, "~", temperature)
+				gsub(s, "-", temperature)
+			}
+			if ($i ~ "[Cc]hance"s"of"s".*[0-9][0-9]*"s"percent") {
+				precipitation = $i
+				sub(s"?[Cc]hance"s"of"s, "", precipitation)
+				j = match(precipitation, "[0-9][0-9]*"s"percent")
+				odds = substr(precipitation, j)
+				sub(s"percent.*$", "%", odds)
+				precipitation = substr(precipitation, 1, j-2)
+				sub(s"$", "", precipitation)
+			}
+			if ($i ~ "[0-9][0-9]*"s"percent"s"chance"s"of"s) {
+				odds = substr($i, match($i, "[0-9][0-9]*"s"percent"s"chance"s"of"s))
+				sub(s"percent.*$", "%", odds)
+				precipitation = $i
+				sub(".*percent"s"chance"s"of"s, "", precipitation)
+			}
+		}
+		printf "%s: %s", time, sky
+		if (precipitation != "") {
+			printf " %s-%s", odds, precipitation
+			precipitation = ""
+			odds = ""
+		}
+		if (temperature != "") {
+			printf " %s", temperature
+			temperature = ""
+		}
+		printf "\n"
+	}
+
+	{
+		before_previous = previous
+		previous = $0
+	}
+' "$CACHE"

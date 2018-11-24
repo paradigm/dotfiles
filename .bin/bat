@@ -1,0 +1,59 @@
+#!/bin/sh
+
+if ! [ -d /sys/class/power_supply/BAT0/ ]
+then
+	echo "No battery found" >&2
+	return 1
+fi
+
+cd /sys/class/power_supply/BAT0/
+
+if [ -e energy_now ]
+then
+	ENERGY_NOW=$(cat energy_now)
+	ENERGY_FULL=$(cat energy_full)
+	POWER_NOW=$(cat power_now)
+	STATUS=$(cat status)
+
+	if [ $STATUS = "Discharging" ]; then
+		P=$(expr 100 \* $ENERGY_NOW / $ENERGY_FULL)
+		H=$(expr $ENERGY_NOW / $POWER_NOW)
+		M=$(expr 60 \* $ENERGY_NOW / $POWER_NOW - 60 \* $H)
+		W1=$(expr $POWER_NOW / 1000000)
+		W2=$(expr $POWER_NOW / 10000 - $W1 \* 100)
+		echo "-$P% $H""h$M""m $W1.$W2""W"
+	else
+		P=$(expr 100 \* $ENERGY_NOW / $ENERGY_FULL)
+		if [ "$POWER_NOW" != "0" ]; then
+			H=$(expr $(expr $ENERGY_FULL - $ENERGY_NOW) / $POWER_NOW)
+			M=$(expr 60 \* $(expr $ENERGY_FULL - $ENERGY_NOW) / $POWER_NOW - 60 \* $H)
+		else
+			H="INF"
+			M="INF"
+		fi
+		W1=$(expr $POWER_NOW / 1000000)
+		W2=$(expr $POWER_NOW / 10000 - $W1 \* 100)
+		echo "+$P% $H""h$M""m $W1.$W2""W"
+	fi
+else
+	if [ `cat status` = "Discharging" ]
+	then
+		W1=$(expr `cat voltage_now` \* `cat current_now` / 1000000000000)
+		W2=$(expr `cat voltage_now` \* `cat current_now` / 10000000000 - $W1 \* 100)
+		P=$(expr 100 \* `cat charge_now` / `cat charge_full`)
+		H=$(expr `cat charge_now` / `cat current_now`)
+		M=$(expr $(expr 100 \* `cat charge_now` / `cat current_now` - 100 \* $H) \* 60 / 100)
+		echo "-"$P"% "$H"h"$M"m "$W1"."$W2"W"
+	else
+		P=$(expr 100 \* `cat charge_now` / `cat charge_full`)
+		if [ `cat current_now` == 0 ]
+		then
+			H="INF"
+			M="INF"
+		else
+			H=$(expr $(expr `cat charge_full` - `cat charge_now`) / `cat current_now`)
+			M=$(expr $(expr 100 \* $(expr `cat charge_full` - `cat charge_now`) / `cat current_now` - 100 \* $H) \* 60 / 100)
+		fi
+		echo "+"$P"% "$H"h"$M"m"
+	fi
+fi

@@ -1,0 +1,51 @@
+--c-kinds=+p
+
+--langmap=sh:+.bashrc
+--langmap=sh:+.zshrc
+--langmap=vim:+.vimperatorrc
+--langmap=vim:+.pentadactylrc
+
+--langdef=latex
+--langmap=latex:.tex,latex:.sty
+--regex-latex=/\\label\{([^}]*)\}/\1/l,label/
+--regex-latex=/\\section\{([^}]*)\}/\1/s,section/
+--regex-latex=/\\subsection\{([^}]*)\}/\1/t,subsection/
+--regex-latex=/\\subsubsection\{([^}]*)\}/\1/u,subsubsection/
+--regex-latex=/\\section\*\{([^}]*)\}/\1/s,section/
+--regex-latex=/\\subsection\*\{([^}]*)\}/\1/t,subsection/
+--regex-latex=/\\subsubsection\*\{([^}]*)\}/\1/u,subsubsection/
+--regex-latex=/\\newcommand\{\\([^}]*)\}/\1/c,command/
+--regex-latex=/\\DeclareRobustCommand\{\\([^}]*)\}/\1/c,command/
+--regex-latex=/\\newenvironment\{([^}]*)\}/\1/e,environment/
+--regex-latex=/\\begin\{definition\}\[([^]]*)\]/\1/d,definition/
+
+--regex-vim=/^" = (.*) +=$/\1/h,heading/
+--regex-vim=/^" - (.*) +-$/\1/s,subheading/
+--regex-vim=/^" ~ (.*) +~$/\1/S,subsubheading/
+
+--regex-sh=/^# = (.*) +=$/\1/h,heading/
+--regex-sh=/^# - (.*) +-$/\1/s,subheading/
+--regex-sh=/^# ~ (.*) +~$/\1/S,subsubheading/
+
+--langdef=conf
+--regex-conf=/^# = (.*) +=$/\1/h,heading/
+--regex-conf=/^# - (.*) +-$/\1/s,subheading/
+--regex-conf=/^# ~ (.*) +~$/\1/S,subsubheading/
+
+--regex-vhdl=/^-- = (.*) +=$/\1/h,heading/
+--regex-vhdl=/^-- - (.*) +-$/\1/s,subheading/
+--regex-vhdl=/^-- ~ (.*) +~$/\1/S,subsubheading/
+
+--langdef=markdown
+--langmap=markdown:.md
+--regex-markdown=/^#[ \t]+(\{.*\}[ \t]*)(.*)/\2/h,heading/
+--regex-markdown=/^##[ \t]+(\{.*\}[ \t]*)(.*)/\2/s,subheading/
+--regex-markdown=/^###[ \t]+(\{.*\}[ \t]*)(.*)/\2/S,subsubheading/
+
+--langdef=asm68k
+--langmap=asm68k:.x68
+--regex-asm68k=/^([^ \t*:]+)/\1/l,label/
+
+--langdef=rust
+--langdef=rust:.rs
+--regex-rust=/(^|[ \t])fn[ \t]+([a-zA-Z0-9_]+)/\2/f,function/
