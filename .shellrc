@@ -262,7 +262,7 @@ alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
 alias gg="git grep --color"
 alias ga="git add"
 alias gc="git commit -v"
-alias gcd='([ -r "$(git rev-parse --show-toplevel)/.git/lazycommit" ] || (echo "non-lazy repo, aborting"; false )) && git commit -a -v -m "$(date)"'
+alias gcd='([ -r "$(git rev-parse --git-dir)/lazycommit" ] || (echo "non-lazy repo, aborting"; false )) && git commit -a -v -m "$(date)"'
 alias gb="git branch"
 alias gf="git fetch"
 alias gl="git log"
