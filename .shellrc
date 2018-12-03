@@ -936,8 +936,8 @@ elif "${is_zsh}"; then
 	# Have ctrl-a work as it does in Vim.
 	bindkey -M vicmd "^X" decrement-number
 
-	# Finds via breadth-first search file or directory in pwd that matches
-	# the provided
+	# Breadth-first search for file or directory in pwd that matches the
+	# provided pattern.
 	#
 	# first arg is file type as is interpreted by `find -type`
 	#
@@ -1088,7 +1088,7 @@ elif "${is_zsh}"; then
 				if [[ "${BUFFER}" =~ " ${PAIR[1]}" ]]; then
 					PREFIX="${BUFFER[1,MEND-1]}"
 					BODY="${BUFFER[MEND+1,-1]}"
-					if [[ "${BODY}" =~ '[a-zA-Z0-9_/.*]+' ]]; then
+					if [[ "${BODY}" =~ '[a-zA-Z0-9_-/.*]+' ]]; then
 						BUFFER="${PREFIX}~[${PAIR[2]}:${BODY[MEGIN,MEND]}]${BODY[MEND+1,-1]}"
 					fi
 				fi
