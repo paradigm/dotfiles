@@ -1090,6 +1090,7 @@ elif "${is_zsh}"; then
 					BODY="${BUFFER[MEND+1,-1]}"
 					if [[ "${BODY}" =~ '[a-zA-Z0-9_-/.*]+' ]]; then
 						BUFFER="${PREFIX}~[${PAIR[2]}:${BODY[MEGIN,MEND]}]${BODY[MEND+1,-1]}"
+						RETRY=1
 					fi
 				fi
 			done
