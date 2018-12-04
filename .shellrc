@@ -184,7 +184,7 @@ export PULSE_SERVER="unix:${XDG_RUNTIME_DIR}/pulse/native"
 # = theme                                                                      =
 # ==============================================================================
 
-if [ -n "${DISPLAY}" ] && [ -r ~/.themes/current/terminal/256-theme ]; then
+if [ -r ~/.themes/current/terminal/256-theme ] && [ -n "${DISPLAY}" ] || [ "$TERM" = "xterm-256color" ]; then
 	source ~/.themes/current/terminal/256-theme
 
 	if [ "${EUID}" -eq "0" ]
