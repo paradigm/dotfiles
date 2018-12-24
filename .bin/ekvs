@@ -6,7 +6,7 @@
 # modify it under the terms of the GNU General Public License
 # version 2 as published by the Free Software Foundation.
 #
-# Copyright (c) 2014-2016 Daniel Thau <paradigm@bedrocklinux.org>
+# Copyright (c) 2014-2018 Daniel Thau <danthau@gmail.com>
 #
 # Encrypted Key Value Store
 #
@@ -77,46 +77,21 @@ populate_gpg_id() {
 	gpg_id=$(gpg --verify "${store_file}" 2>&1 | awk '/using RSA key/{print$NF}')
 }
 
-populate_fingerprint() {
-	# No need to repopulate fingerprint
-	[ -n "${fingerprint:-""}" ] && return
+populate_keygrip() {
+	# No need to repopulate keygrip
+	[ -n "${keygrip:-""}" ] && return
+
 	populate_gpg_id
-	fingerprint=$(gpg --fingerprint "${gpg_id}" | sed -e 's/Key fingerprint =//' -e 's/ //g' | awk 'NR==2')
+	keygrip="$(gpg --list-secret-keys --with-keygrip | awk -v"gpgid=${gpg_id}" 'x {print$NF;exit} $0 ~ gpgid {x=1}')"
 }
 
-populate_password() {
-	# No need to repopulate
-	[ -n "${password:-""}" ] && return
-	populate_fingerprint
-
+populate_agent() {
 	# Try to get pinentry to populate gpg-agent if needed.
-	echo "test input" | gpg --use-agent --batch -as --no-tty >/dev/null 2>&1 || true
+	"${quiet}" || echo "test input" | gpg --use-agent --batch -as --no-tty >/dev/null 2>&1 || true
 
-	# Attempt to get password from gpg-agent
-	if type gpg-connect-agent >/dev/null 2>&1
-	then
-		gpg_agent_output=$(echo "GET_PASSPHRASE --data --no-ask ${fingerprint} - - -" | gpg-connect-agent | head -n1) 2>/dev/null
-	fi
-
-	# If we got password from gpg-agent, store it.  Otherwise, ask user for password.
-	if [ "$(echo "${gpg_agent_output}" | cut -d' ' -f1 )" = "D" ]
-	then
-		password="$(echo "${gpg_agent_output}" | cut -d' ' -f2)"
-	elif ! "${quiet}"
-	then
-		# get password without echoing back to terminal
-		out "Enter PASSWORD: "
-		stty -echo
-		read -r password || true
-		stty echo
-		outln ""
-	fi
-
-	# test password against gpg
-	(
-		echo "${password}"
-		echo "test input"
-	) | gpg -r "${fingerprint}" --batch --sign --no-tty --passphrase-fd 0 -o /dev/null >/dev/null 2>&1 || abort "Bad password, aborting."
+	# check if gpg-agent has passphrase
+	populate_keygrip
+	echo "KEYINFO --no-ask ${keygrip} - - -" | gpg-connect-agent | awk '{exit $7!=1}' || abort "passphrase not cached"
 }
 
 
@@ -125,18 +100,12 @@ populate_password() {
 # ------------------------------------------------------------------------------
 
 encrypt_and_sign() {
-	(
-		echo "${password}"
-		gpg -r "${gpg_id}" --armor --encrypt
-	) | gpg --no-tty --quiet -r "${gpg_id}" --passphrase-fd 0 -o "${store_tmp}" --clearsign
+	gpg -r "${gpg_id}" --armor --encrypt | gpg --no-tty --quiet -r "${gpg_id}" -o "${store_tmp}" --clearsign
 	mv "${store_tmp}" "${store_file}"
 }
 
 decrypt() {
-	(
-		echo "${password}"
-		gpg --quiet --decrypt "${store_file}" 2>/dev/null
-	) | gpg --no-tty --quiet --passphrase-fd 0 --decrypt
+	gpg --quiet --decrypt "${store_file}" 2>/dev/null | gpg --no-tty --quiet --decrypt
 }
 
 verify() {
@@ -236,6 +205,7 @@ abort_if_no_matches() {
 warn_if_multiple_matches() {
 	if [ "$(match_count "${key_re}")" -gt 1 ]
 	then
+		"${quiet}" && abort ""
 		out "Warning: Multiple matches. Continue? (y/N) "
 		read -r YN || true
 		[ "${YN}" = "y" ] || abort "Did not accept multiple matches with 'y', aborting."
@@ -263,8 +233,7 @@ cmd_store() {
 	# current gpg key information should be cleared to be repopulated for any
 	# upcoming command which requires it.
 	unset gpg_id
-	unset fingerprint
-	unset password
+	unset keygrip
 }
 
 cmd_init() {
@@ -375,20 +344,8 @@ cmd_urandom() {
 }
 
 cmd_test() {
-	populate_fingerprint
-
-	# Attempt to get password from gpg-agent
-	gpg_agent_output=$(echo "GET_PASSPHRASE --data --no-ask ${fingerprint} - - -" | gpg-connect-agent | head -n1) 2>/dev/null
-	possible_password="$(echo "${gpg_agent_output}" | cut -d' ' -f2)"
-
-	# test password against gpg
-	(
-		echo "${possible_password}"
-		echo "test input"
-	) | gpg -r "${fingerprint}" --batch --sign --no-tty --passphrase-fd 0 -o /dev/null >/dev/null 2>&1 || abort "Either no password or bad password cached by gpg-agent"
-
-	outln "password is cached by gpg-agent"
-	exit 0
+	populate_keygrip
+	echo "KEYINFO --no-ask ${keygrip} - - -" | gpg-connect-agent | awk '{exit $7!=1}' || abort "passphrase not cached"
 }
 
 cmd_help() {
@@ -514,9 +471,8 @@ IFS="
 # Clear/default variables
 unset store_file
 unset store_tmp
-unset password
 unset gpg_id
-unset fingerprint
+unset keygrip
 quiet=/bin/false
 
 # Get initial store_file
@@ -703,7 +659,7 @@ do
 			;;
 		"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump")
 			# these commands operate on the store and need a password set
-			populate_password
+			populate_agent
 			;;
 		"*")
 			abort "ERROR: should never get to this part of the code"
