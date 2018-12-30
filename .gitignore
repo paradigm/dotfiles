@@ -1,5 +1,7 @@
+.cache
 .dirtags
 .mail
 .run
+.vim/undo
 .viminfo
 .zsh
