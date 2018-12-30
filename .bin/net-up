@@ -1,0 +1,123 @@
+#!/bin/sh
+
+# Ensure built-in to avoid sensitive material showing up in /proc
+if ! type echo | grep -q '^echo is a shell builtin$'
+then
+	echo '`echo` is not a shell builtin, aborting' >&2
+	exit 1
+fi
+if ! type printf | grep -q '^printf is a shell builtin$'
+then
+	echo '`printf` is not a shell builtin, aborting' >&2
+	exit 1
+fi
+
+connect_ethernet() {
+	printf "Running DHCP client... "
+	pkill dhclient >/dev/null 2>&1
+	dhclient "${1}"
+	echo "done"
+}
+
+connect_wifi() {
+	printf "Preparing wifi card... "
+	ip link set "${1}" down
+	pkill wpa_supplicant >/dev/null 2>&1
+	pkill dhclient >/dev/null 2>&1
+	if lsmod | grep -q iwlwifi; then
+		rmmod iwldvm >/dev/null 2>&1
+		rmmod iwlwifi >/dev/null 2>&1
+		modprobe iwldvm >/dev/null 2>&1
+		modprobe iwlwifi >/dev/null 2>&1
+	fi
+	ip link set "${1}" up
+	echo "done"
+
+	printf "Determining wifi network... "
+	network_and_pass="$(iwlist "${1}" scan | awk -F'[=:"/]' -v"n=${HOME}/.networks" '
+	BEGIN {
+		while (getline < n) {
+			split($0,a,"\t")
+			if (a[1] != "") {
+				saved[a[1]] = a[2]
+			}
+		}
+	}
+	/Quality/ {
+		quality=$2
+	}
+	/ESSID/ {
+		if ($3 in saved) {
+			print quality"\t"$3"\t"saved[$3]
+		}
+	}
+	' | sort | cut -d'	' -f2- | tail -n1 2>/dev/null)"
+	network="$(echo "${network_and_pass}" | cut -d'	' -f1)"
+	pass="$(echo "${network_and_pass}" | cut -d'	' -f2-)"
+	echo "${network}"
+
+
+	if [ -n "${pass}" ]; then
+		printf "Performing WPA handshake... "
+		tmp_conf="/dev/shm/net-up-${$}.conf"
+		tmp_log="/dev/shm/net-up-${$}.log"
+
+		printf 'network={\n\tssid="%s"\n\tpsk="%s"\n}\n' "${network}" "${pass}" > "${tmp_conf}"
+		wpa_supplicant -Dwext -i"${1}" -c"${tmp_conf}" -B -f"${tmp_log}"
+		rm "${tmp_conf}"
+
+		timeout=20
+		start=$(date +%s)
+		while ! grep -q 'Associated with' "${tmp_log}" && \
+			[ "$(expr "$(date +%s)" - "${start}")" -lt "${timeout}" ]; do
+			sleep .25s
+		done
+
+		if grep -q 'Associated with' "${tmp_log}"; then
+			rm "${tmp_log}"
+			echo "done"
+		else
+			rm "${tmp_log}"
+			echo "FAILED!"
+			exit 1
+		fi
+	fi
+
+	printf "Running DHCP client... "
+	dhclient "${1}"
+	echo "done"
+}
+
+test_connection() {
+	printf "Testing connnection... "
+	if ping -c1 www.example.com >/dev/null 2>&1; then
+		echo "done"
+		return 0
+	else
+		echo "FAILED!"
+		return 1
+	fi
+}
+
+printf "Determining network interface... "
+netif=""
+if eth_if="$(basename /sys/class/net/e* 2>/dev/null | head -n1)"; then
+	ip link set "${eth_if}" up
+	sleep 0.25
+	if grep -q "1" "/sys/class/net/${eth_if}/carrier"; then
+		echo "${eth_if}"
+		connect_ethernet "${eth_if}"
+		test_connection
+		exit "${?}"
+	fi
+fi
+
+if wifi_if="$(basename /sys/class/net/w* 2>/dev/null | head -n1)"; then
+	echo "${wifi_if}"
+	connect_wifi "${wifi_if}"
+	test_connection
+	exit "${?}"
+fi
+
+echo "FAILED!"
+exit 1
