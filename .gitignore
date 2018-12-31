@@ -4,6 +4,7 @@
 .config/Trolltech.conf
 .config/htop
 .dirtags
+.local/share
 .mail
 .metar
 .mpd
