@@ -4,23 +4,31 @@
 # use alsa for sound
 export SDL_AUDIODRIVER=ALSA
 
-# locale fix
+# fix locale
 export LOCALE=C
 
+# fix friends UI
+export TZ="$(readlink -f /etc/localtime | grep -o '(?<=/zoneinfo/).*$' -P)"
+
+# fix for intel graphics
 if [ "$(uname -n)" = "am" ]
 then
 	export MESA_EXTENSION_OVERRIDE='GL_EXT_texture_filter_anisotropic'
 fi
 
+# disable xcape in games
 init_xcape_status="$(conctl s xcape | awk -F'[ ,]' '{print$5}')"
 conctl d xcape
-steam
+
+strat -r ubuntu /usr/games/steam
 
 # restore cursor
 xsetroot -cursor_name left_ptr
 
-rm /dev/shm/org.chromium.Chromium.shmem.libcef_*
-rm /dev/shm/$(whoami)-Shm_*
-rm /dev/shm/$(whoami)-ValveIPCSharedObjects*
+# restore xcape
+conctl "${init_xcape_status}" xcape
 
-conctl "$init_xcape_status" xcape
+# remove steam-created temp files
+rm -f /dev/shm/org.chromium.Chromium.shmem.libcef_*
+rm -f /dev/shm/$(id -un)-Shm_*
+rm -f /dev/shm/$(id -un)-ValveIPCSharedObjects*
