@@ -1,4 +1,6 @@
 .Xauthority
+.bin/conctl
+.bin/connate
 .cache
 .config/QtProject.conf
 .config/Trolltech.conf
