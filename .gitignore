@@ -14,6 +14,7 @@
 .mpd
 .run
 .src
+.steam*
 .vim/swap
 .vim/tags
 .vim/undo
