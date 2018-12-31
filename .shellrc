@@ -22,7 +22,7 @@ in_path() {
 umask 022
 
 # None of the lines following this point are useful for non-interactive
-# instances of this shell.  If the the prompt variable does not exist, this
+# instances of this shell.  If the prompt variable does not exist, this
 # instances of the shell is non-interactive, so exit the rc file.
 [ -z "${PS1}" ] && [ -z "${PROMPT}" ] && return
 
