@@ -18,5 +18,7 @@
 .vim/swap
 .vim/tags
 .vim/undo
+.vim/spell
 .viminfo
 .zsh
+.pulse*
