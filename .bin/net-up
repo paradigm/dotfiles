@@ -34,7 +34,8 @@ connect_wifi() {
 	echo "done"
 
 	printf "Determining wifi network... "
-	network_and_pass="$(iwlist "${1}" scan | awk -F'[=:"/]' -v"n=${HOME}/.networks" '
+	saved="$(grep "^$(id -un):" /etc/passwd | awk -F: '{print$6}')/.networks"
+	network_and_pass="$(iwlist "${1}" scan | awk -F'[=:"/]' -v"n=${saved}" '
 	BEGIN {
 		while (getline < n) {
 			split($0,a,"\t")
