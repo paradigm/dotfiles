@@ -1,4 +1,5 @@
 .cache
+.config/htop
 .dirtags
 .mail
 .run
