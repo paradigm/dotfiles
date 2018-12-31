@@ -27,8 +27,18 @@ connect_wifi() {
 	if lsmod | grep -q iwlwifi; then
 		rmmod iwldvm >/dev/null 2>&1
 		rmmod iwlwifi >/dev/null 2>&1
-		modprobe iwldvm >/dev/null 2>&1
 		modprobe iwlwifi >/dev/null 2>&1
+		modprobe iwldvm >/dev/null 2>&1
+	fi
+	if lsmod | grep -q rtlwifi; then
+		rmmod rtl8192cu >/dev/null 2>&1
+		rmmod rtl_usb >/dev/null 2>&1
+		rmmod rtl8192c_common >/dev/null 2>&1
+		rmmod rtlwifi >/dev/null 2>&1
+		modprobe rtlwifi >/dev/null 2>&1
+		modprobe rtl8192c_common >/dev/null 2>&1
+		modprobe rtl_usb >/dev/null 2>&1
+		modprobe rtl8192cu >/dev/null 2>&1
 	fi
 	ip link set "${1}" up
 	echo "done"
@@ -37,7 +47,7 @@ connect_wifi() {
 	saved="$(grep "^$(id -un):" /etc/passwd | awk -F: '{print$6}')/.networks"
 	network_and_pass="$(iwlist "${1}" scan | awk -F'[=:"/]' -v"n=${saved}" '
 	BEGIN {
-		while (getline < n) {
+		while ((getline < n) > 0) {
 			split($0,a,"\t")
 			if (a[1] != "") {
 				saved[a[1]] = a[2]
@@ -55,6 +65,10 @@ connect_wifi() {
 	' | sort | cut -d'	' -f2- | tail -n1 2>/dev/null)"
 	network="$(echo "${network_and_pass}" | cut -d'	' -f1)"
 	pass="$(echo "${network_and_pass}" | cut -d'	' -f2-)"
+	if [ -z "${network}" ]; then
+		echo "FAILED!"
+		exit 1
+	fi
 	echo "${network}"
 
 
