@@ -1,8 +1,16 @@
+.Xauthority
 .cache
+.config/QtProject.conf
+.config/Trolltech.conf
 .config/htop
 .dirtags
 .mail
+.metar
+.mpd
 .run
+.src
+.vim/swap
+.vim/tags
 .vim/undo
 .viminfo
 .zsh
