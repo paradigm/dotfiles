@@ -110,6 +110,9 @@ fi
 
 export MAIL="~/.mail"
 
+# needed for /bedrock repo
+export GIT_DISCOVERY_ACROSS_FILESYSTEM=1
+
 # Use gpg-agent if available
 export GPG_TTY="$(tty)"
 
