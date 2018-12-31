@@ -1,4 +1,27 @@
 [submodule ".priv"]
 	path = .priv
 	url = ssh://git@mycroft:666/home/git/priv.git
-	branch = master
+	ignore = dirty
+[submodule ".vim/remote/vim-ledger"]
+	path = .vim/remote/vim-ledger
+	url = https://github.com/ledger/vim-ledger.git
+	ignore = dirty
+[submodule ".vim/remote/vim-fugitive"]
+	path = .vim/remote/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive.git
+	ignore = dirty
+[submodule ".vim/remote/AnsiEsc.vim"]
+	path = .vim/remote/AnsiEsc.vim
+	url = https://github.com/vim-scripts/AnsiEsc.vim.git
+	ignore = dirty
+[submodule ".vim/remote/clang_complete"]
+	path = .vim/remote/clang_complete
+	url = https://github.com/Rip-Rip/clang_complete.git
+	ignore = dirty
+[submodule ".vim/remote/vim-zsh-completion"]
+	path = .vim/remote/vim-zsh-completion
+	url = https://github.com/Valodim/vim-zsh-completion.git
+	ignore = dirty
+[submodule ".vim/remote/vim-go"]
+	path = .vim/remote/vim-go
+	url = https://github.com/fatih/vim-go.git
