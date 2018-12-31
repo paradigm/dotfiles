@@ -1,0 +1,109 @@
+[
+	{
+		"installDate": 1531841588374,
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"name": "bnw-general",
+		"sections": [
+			{
+				"code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}\n\n/* google weather */\ndiv#wob_temp.ksb,\ndiv#wob_rain.ksb,\ndiv#wob_wind.ksb,\n/* misc google */\n.gb_Eb,\n/* github */\n.btn {\n\tbackground-image: none !important;\n}",
+				"urls": [],
+				"urlPrefixes": [],
+				"domains": [],
+				"regexps": [
+					"(http|https|file|moz-extension)://(?!((.*[.])?reddit.com|(.*[.])?slack.com|(.*[.])?discordapp.com|(.*[.])?twitch.tv|www.google.com/maps/|www.netflix.com|www.amazon.com/gp/video/)).*"
+				]
+			}
+		],
+		"id": 26
+	},
+	{
+		"installDate": 1531845876663,
+		"enabled": true,
+		"updateUrl": "https://userstyles.org/styles/chrome/129171.json???",
+		"md5Url": "https://update.userstyles.org/129171.md5",
+		"url": "http://userstyles.org/styles/129171",
+		"originalMd5": "31714e5cd86955598c257e5a984fb71e",
+		"sections": [
+			{
+				"code": "::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n\n.infobar {\n    display: none !important;\n}\n.fancy-toggle-button .add,\n.fancy-toggle-button .active,\n.fancy-toggle-button .remove {\n    background-image: none !important;\n}\ninput[type=checkbox] {\n    background-color: #f00 !important;\n}\n.linkflairlabel {\n    border: solid 1px #fff !important;\n}\n.prev-button,\n.next-button {\n    border: 1px solid #fff !important;\n}\n.reddit-video-player-root > div {\n    background-color: transparent !important;\n}\n\n.child,\n.md {\n    margin-top: 0px !important;\n    margin-bottom: 0px !important;\n}\np {\n    line-height: 14px !important;\n}\n\n/* Hide subreddits top bar */\n\n/* Hide annoying stuff */\n.give-gold-button,\n.goldvertisement,\n.embed-comment,\n.nub {\n    display: none !important;\n}\n\n/* Reset */\n*,\n*:before,\n*:after {\n    font-family: \"Terminus (TTF)\" !important;\n    font-size: 9pt !important;\n    line-height: 14px;\n    background-color: #000 !important;\n    border: none !important;\n    color: #fff !important;\n}\n\n/* Default links */\na {\n    color: #aaa !important;\n}\na:visited {\n    color: #aaa !important;\n}\na:hover {\n    color: #aaa !important;\n}\n\n/* Background */\nhtml,\nbody,\n#sr-more-link {\n    background-color: #000 !important;\n}\n\n/* Top bar */\n#mail,\n#modmail,\n#chat,\n.sidebox.create .spacer a {\n    filter: invert(80%) hue-rotate(180deg) !important;\n    background-color: #fff !important;\n}\n#header-img {\n    display: none !important;\n}\n.drop-choices,\n.hover-bubble,\n.modal-dialog {\n    background: #000 !important;\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n.tabmenu .selected a {\n    color: #999 !important;\n}\n\n/* Side bar */\n.listing-chooser-collapsed .grippy {\n    width: 1px !important;\n}\n.listing-chooser-collapsed .listing-chooser {\n    padding-right: 1px !important;\n}\n.listing-chooser li.selected {\n    box-shadow: none !important;\n}\n.grippy:after {\n    display: none !important;\n}\n\n/* Inputs and buttons */\ninput,\ntextarea,\n.linkinfo .shortlink input,\n.new-comment .usertext-body,\n.morelink a,\n.morelink:hover a,\n.fancy-toggle-button a,\n.usertext button {\n    font-weight: normal !important;\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n\n/* Listing */\n.thing .title {\n    color: #aaa !important;\n}\n.title:visited {\n    color: #777 !important;\n}\n.thing .title:hover {\n    color: #ccc !important;\n}\n.arrow {\n    filter: brightness(45%);\n}\n.arrow.upmod,\n.arrow.downmod {\n    filter: brightness(50%) contrast(120%);\n}\n.link .score.likes {\n    color: #b3684d !important;\n}\n.link .score.dislikes {\n    color: #7070c2 !important;\n}\n.expando-button {\n    filter: brightness(45%) contrast(180%);\n    background-color: transparent !important;\n}\n.moderator,\n.green {\n    color: #3a3 !important;\n}\n.admin,\n.nsfw-stamp * {\n    color: #a66 !important;\n}\n.pagename a,\n.trophy-name {\n    color: #999 !important;\n}\n.buttons li {\n    padding: 0 !important;\n}\n.buttons a {\n    margin-right: 8px !important;\n    color: #888 !important;\n}\n.buttons a:visited {\n    color: #666 !important;\n}\n.buttons a:hover {\n    color: #aaa !important;\n}\n.pagename,\n.tabmenu li,\n.link .midcol,\n.buttons a,\n.subreddit {\n    font-weight: normal !important;\n}\n.search-expando.collapsed:before,\n.comment-fade {\n    display: none !important;\n}\n.recommended-link {\n    border-color: #333 !important;\n}\n\n/* Comments */\n.link .usertext .md,\nblockquote,\npre,\ncode,\n.gold-accent {\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n.md blockquote {\n    border-left: solid 4px #fff !important;\n}\n.md td {\n    border: solid 1px #333 !important;\n}\nhr {\n    border-bottom: solid 1px #333 !important;\n}\n.comment .author,\n.morecomments a {\n    font-weight: normal !important;\n}\n\n/* RES */\n.guider,\n.guiders_button,\n.res-fancy-toggle-button,\n#RESConsoleContainer,\n#RESShortcutsAddFormContainer {\n    background: #f00 !important;\n}\n.RESDialogSmall,\n.RESDropdownOptions,\n.RESNotification,\n#alert_message {\n    background: #f00 !important;\n}\n.RES-keyNav-activeElement,\n.RES-keyNav-activeElement .md-container {\n    background: #f00 !important;\n}\n.res-nightmode .arrow {\n    filter: none !important;\n}\n\n/* new.reddit.com */\n#header,\n#lightbox,\n#hamburgers,\nbody > div,\ndiv[style^=\"left:\"] div[role=\"button\"] {\n    background-color: #000 !important;\n}\n#header svg {\n    filter: invert(90%) hue-rotate(180deg);\n}\ndiv[contenteditable=\"true\"] {\n    background: #0f0 !important;\n}\n#overlayFixedContent + div {\n    background: rgba(0, 0, 0, 0.7) !important;\n}\ndiv[data-slot] {\n    display: none !important;\n}\n.icon,\n.icon:before {\n    color: inherit !important;\n}\na[data-click-id=\"timestamp\"] {\n    color: #777 !important;\n}\na[data-click-id=\"body\"] h2 {\n    color: #aaa !important;\n}\na[data-click-id=\"body\"]:visited h2 {\n    color: #777 !important;\n}\n.scrollerItem {\n    box-shadow: none !important;\n}\n",
+				"urls": [],
+				"urlPrefixes": [],
+				"domains": [
+					"reddit.com"
+				],
+				"regexps": []
+			}
+		],
+		"name": "bnw-reddit",
+		"originalDigest": "5f05530a5560fb36aa50710f40957f3ab0447648",
+		"id": 30
+	},
+	{
+		"installDate": 1531850428578,
+		"enabled": true,
+		"updateUrl": "https://userstyles.org/styles/chrome/127836.json",
+		"md5Url": "https://update.userstyles.org/127836.md5",
+		"url": "http://userstyles.org/styles/127836",
+		"originalMd5": "010980211723d255e163a0918031c639",
+		"sections": [
+			{
+				"code": "html, html * {\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tborder-color: #ffffff !important;\n\tfont-family:\"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n\n.c-message_list__day_divider__label__pill,\n.p-channel_sidebar__channel--selected,\n.p-message_pane__top_banners {\n\tborder: solid 1px #fff !important;\n\tborder-style: solid none solid none !important;\n}\n\n.channel_header {\n\tborder: solid 1px #fff !important;\n\tborder-style: none none solid none !important;\n}\n\n#col_channels {\n\tmax-width: 75px !important;\n}\n.client_channels_list_container {\n\tborder-right: solid 1px #fff !important;\n\tmax-width: 75px !important;\n}\n\n#client_header {\n\tflex-basis: 0px !important;\n}\n\n.p-channel_sidebar__link--all-threads,\n.p-channel_sidebar__link--all-unreads,\n.p-channel_sidebar__jumper,\n.c-message_attachment,\n.c-message--last,\n.channel_header {\n\tpadding: 0 0 0 0 !important;\n}\n\n.p-notification_bar {\n    margin-left: 1px !important;\n}\n\n.p-channel_sidebar__link,\n.p-channel_sidebar__jumper,\n.p-channel_sidebar__section_heading,\n.flex_header,\n.p-channel_sidebar__static_list > div,\n.p-channel_sidebar__static_list,\n.p-channel_sidebar__channel {\n\theight: 16px !important;\n\tpadding: 0 0 0 0 !important;\n    margin: 0 0 0 0 !important;\n}\n\n.ReactModal__Overlay {\n\tbackground-color: transparent !important;\n}\n\n.p-channel_sidebar__name {\n\tcolor: #aaa !important;\n}\n.p-channel_sidebar__name > span {\n\tcolor: #aaa !important;\n}\n.p-channel_sidebar__channel--unread:not(.p-channel_sidebar__channel--muted) .p-channel_sidebar__name {\n\tcolor: #fff !important;\n}\n.p-channel_sidebar__channel--unread:not(.p-channel_sidebar__channel--muted) > span {\n\tcolor: #fff !important;\n}\n\n.emoji,\n.emoji-sizer,\n.emoji-picker-yes {\n\tline-height: 12px !important;\n\tfont-size: 22px !important;\n}\n\n#client_body,\n#client_body::before,\n.c-scrollbar__hider::before {\n\tbackground-color: #000 !important;\n}\n\n.p-message_pane__limited_history_foreword {\n\tbackground-image: none !important;\n}\n\n.p-channel_sidebar__banner--unreads {\n\tborder: solid 1px #fff !important;\n}\n\n.candy_red_bg {\n\tbackground-color: #000 !important;\n}\n\n#header_search_form,\n#msg_input {\n\tborder: solid 1px #fff !important;\n\tborder-style: solid none solid none !important;\n\tborder-radius: 0px !important;\n\tpadding: 0px 0px 0px 0px !important;\n\tmax-height: none !important;\n\tmin-height: 16px !important;\n}\n\n#footer {\n\tbackground-image: none !important;\n}\n\n.c-message__body,\n.c-message__content_header,\n#msg_form {\n\tmargin: 0px !important;\n}\n\nheader,\nbutton.channel_header_icon,\n#flex_menu_toggle,\n#stars_toggle,\n#recent_mentions_toggle,\n#channel_name_container,\n.c-scrollbar__track,\n#primary_file_button,\n#main_emo_menu,\n.p-message_pane__top_banners,\nbutton.btn_unstyle.msg_mentions_button,\n.c-message_list__unread_divider__separator,\n.c-scrollbar__hider::before {\n\tdisplay: none !important;\n}\n\n.search_form,\n.ql-editor {\n\theight: auto !important;\n\tmin-height: 16px !important;\n\tpadding-left: 1px !important;\n\tpadding-right: 1px !important;\n\tpadding-top: 0px !important;\n\tpadding-bottom: 0px !important;\n}\n\n.ql-placeholder {\n\tleft: 0px !important;\n\tright: 0px !important;\n\tpadding-left: 1px !important;\n\tpadding-right: 1px !important;\n\tpadding-top: 0px !important;\n\tpadding-bottom: 0px !important;\n}\n\nspan.c-custom_status span span.emoji.emoji-sizer.stop_animations,\nspan.emoji-outer.emoji-sizer {\n    max-height: 16px !important;\n    max-width: 16px !important;\n}\n",
+				"urls": [],
+				"urlPrefixes": [],
+				"domains": [],
+				"regexps": [
+					"https://.*.slack.com/.*"
+				]
+			}
+		],
+		"name": "bnw-slack",
+		"originalDigest": "1b69089f831862981a5a744a0366ab29fcd0cd18",
+		"id": 35
+	},
+	{
+		"installDate": 1531854106589,
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"name": "bnw-discordapp",
+		"sections": [
+			{
+				"code": "html, html * {\n\tfont-family:\"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}",
+				"urls": [],
+				"urlPrefixes": [],
+				"domains": [
+					"discordapp.com"
+				],
+				"regexps": []
+			}
+		],
+		"id": 36
+	},
+	{
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"installDate": 1533213753703,
+		"name": "bnw-youtube",
+		"sections": [
+			{
+				"code": "html,\nhtml * {\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tborder-color: #ffffff !important;\n\tfont-family: \"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n\tletter-spacing: normal !important;\n\t-moz-appearance: none !important;\n\t-moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n\n\ndiv#container.style-scope.ytd-searchbox {\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tbox-shadow: none !important;\n}\n.ytd-searchbox-spt {\n\tbackground-color: transparent !important;\n}\n\n#player.style-scope.ytd-watch-flexy {\n\tborder-bottom: 1px solid #fff !important;\n\tborder-top: 1px solid #fff !important;\n}\n\ndiv#container.style-scope.ytd-masthead {\n\tpadding: 0px !important;\n\tmargin: 0px !important;\n\theight: 100% !important;\n}\n\ndiv#title.style-scope.ytd-comments-header-renderer,\nytd-video-secondary-info-renderer.style-scope.ytd-watch-flexy,\ndiv#top-row.style-scope.ytd-video-secondary-info-renderer,\nytd-video-primary-info-renderer.style-scope.ytd-watch-flexy,\ninput#search.ytd-searchbox,\nytd-searchbox#search.style-scope.ytd-masthead,\n#page-manager.style-scope.ytd-app,\n.ytp-gradient-bottom,\n.ytp-chrome-controls,\n#primary.style-scope.ytd-watch-flexy,\n#secondary.style-scope.ytd-watch-flexy {\n\tpadding: 0px !important;\n\tmargin: 0px !important;\n}\n\ndiv.ytp-progress-bar-container {\n\tmargin: 1px !important;\n\tborder-bottom: 1px solid #fff !important;\n}\n\ndiv#secondary.style-scope.ytd-watch-flexy {\n\tborder: 1px solid #fff !important;\n}\n\ndiv.ytp-gradient-top,\napp-drawer#guide.style-scope.ytd-app,\ndiv#subscribe-button.style-scope.ytd-video-secondary-info-renderer,\ndiv#menu-container.style-scope.ytd-video-primary-info-renderer,\nytd-sentiment-bar-renderer#sentiment.style-scope.ytd-video-primary-info-renderer,\nyt-icon-button#guide-button.style-scope.ytd-masthead,\n#logo.style-scope.ytd-masthead,\n#end.style-scope.ytd-masthead {\n\tdisplay: none !important;\n}\n\nform#search-form.style-scope.ytd-searchbox {\n\tmax-width: 100% !important;\n}\n\ndiv.ytp-load-progress {\n\tbackground-color: #fff !important;\n\ttop: 5px !important;\n}\ndiv.ytp-hover-progress.ytp-hover-progress-light {\n\tbackground-color: #fff !important;\n\ttop: 3px !important;\n}\n\n.ytp-scrubber-container {\n\tborder: 1px solid #fff !important;\n\ttop: -2px !important;\n}\n\ndiv#container.style-scope.ytd-searchbox {\n\tpadding: 3px !important;\n\tmargin: 0px !important;\n}\n\nytd-playlist-panel-renderer#playlist.style-scope.ytd-watch-flexy,\nbutton#search-icon-legacy.style-scope.ytd-searchbox,\ndiv#container.style-scope.ytd-searchbox {\n\tborder: none !important;\n\tborder-bottom: 1px solid #fff !important;\n\tmargin: 0px !important;\n}\n\nyt-formatted-string.less-button.style-scope.ytd-video-secondary-info-renderer,\nyt-formatted-string.more-button.style-scope.ytd-video-secondary-info-renderer {\n\tborder: 1px solid #fff !important;\n\tpadding: 1px !important;\n}\n",
+				"urls": [],
+				"urlPrefixes": [],
+				"domains": [
+					"youtube.com"
+				],
+				"regexps": []
+			}
+		],
+		"id": 46
+	}
+]
