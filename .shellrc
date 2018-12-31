@@ -129,13 +129,26 @@ elif "${is_zsh}"; then
 fi
 
 # ==============================================================================
+# = XDG                                                                        =
+# ==============================================================================
+
+export XDG_DESKTOP_DIR="${HOME}"
+export XDG_DOCUMENTS_DIR="${HOME}"
+export XDG_DOWNLOAD_DIR="${HOME}"
+export XDG_MUSIC_DIR="${HOME}/.music"
+export XDG_PICTURES_DIR="${HOME}"
+export XDG_PUBLICSHARE_DIR="$HOME/public"
+export XDG_RUNTIME_DIR="${HOME}/.run"
+export XDG_TEMPLATES_DIR="${HOME}"
+export XDG_VIDEOS_DIR="${HOME}"
+
+# ==============================================================================
 # = runtime-directory                                                          =
 # ==============================================================================
 
 # Some programs are awkward to configure for things like socket location.
 # Instead of fighting this, point them to a expected position then symlink the
 # position to a desired area.
-export XDG_RUNTIME_DIR="${HOME}/.run"
 (
 	if [ -d /dev/shm/ ] && [ -w /dev/shm/ ] && [ -k /dev/shm/ ]
 	then
