@@ -3,6 +3,7 @@
 .config/QtProject.conf
 .config/Trolltech.conf
 .config/htop
+.config/pulse/cookie
 .dirtags
 .local/share
 .mail
