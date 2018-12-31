@@ -19,7 +19,8 @@ user_pref("browser.download.lastDir", "/dev/shm");
 user_pref("general.autoScroll", true);
 user_pref("general.smoothScroll", false);
 
-user_pref("network.cookie.lifetimePolicy", 2);
+user_pref("network.cookie.cookieBehavior", 1);
+user_pref("network.cookie.lifetimePolicy", 1);
 user_pref("places.history.enabled", false);
 user_pref("privacy.donottrackheader.enabled", true);
 user_pref("privacy.donottrackheader.enabled", true);
