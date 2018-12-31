@@ -281,8 +281,8 @@ alias gt="git rev-parse --show-toplevel"
 alias gT='cd "$(git rev-parse --show-toplevel)"'
 alias gsync='gcd ; gull && guss'
 
-if [ -r "~/.mozilla/firefox/profiles.ini" ]; then
-	for profile in $(awk -F= '/^Name=/{print$2}' "~/.mozilla/firefox/profiles.ini")
+if [ -r ~/.mozilla/firefox/profiles.ini ]; then
+	for profile in $(awk -F= '/^Name=/{print$2}' ~/.mozilla/firefox/profiles.ini)
 	do
 		alias "fx-${profile}"="firefox -P $profile -no-remote"
 	done
