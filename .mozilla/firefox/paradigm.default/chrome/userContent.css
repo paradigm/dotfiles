@@ -1,0 +1,123 @@
+/*
+@namespace url(http://www.w3.org/1999/xhtml);
+*/
+
+@-moz-document regexp("about:blank") {
+	* {
+		background-color: #000000 !important;
+		color: #ffffff !important;
+	}
+}
+@-moz-document regexp("about:downloads") {
+	* {
+		background-color: #000000 !important;
+		color: #ffffff !important;
+	}
+}
+
+:root {
+	--tridactyl-font-family: "terminus (ttf)" !important;
+	--tridactyl-font-family-sans: "terminus (ttf)" !important;
+	--tridactyl-font-size: 9pt !important;
+	--tridactyl-cmdl-font-family: "terminus (ttf)" !important;
+	--tridactyl-cmdl-font-family-sans: "terminus (ttf)" !important;
+	--tridactyl-cmdl-font-size: 9pt !important;
+	--tridactyl-hintspan-font-family: "terminus (ttf)" !important;
+	--tridactyl-hintspan-font-family-sans: "terminus (ttf)" !important;
+	--tridactyl-hintspan-font-size: 9pt !important;
+	--tridactyl-hintspan-font-weight: normal !important;
+	--tridactyl-header-font-family: "terminus (ttf)" !important;
+	--tridactyl-header-font-family-sans: "terminus (ttf)" !important;
+	--tridactyl-header-font-size: 9pt !important;
+	--tridactyl-header-font-weight: normal !important;
+	--tridactyl-cmplt-font-family: "terminus (ttf)" !important;
+	--tridactyl-cmplt-font-family-sans: "terminus (ttf)" !important;
+	--tridactyl-cmplt-font-size: 9pt !important;
+	--tridactyl-cmplt-font-weight: normal !important;
+
+	--tridactyl-fg: #fff !important;
+	--tridactyl-bg: #000 !important;
+	--tridactyl-cmdl-fg: #fff !important;
+	--tridactyl-cmdl-bg: #000 !important;
+	--tridactyl-hintspan-fg: #fff !important;
+	--tridactyl-hintspan-bg: #000 !important;
+	--tridactyl-hint-fg: #fff !important;
+	--tridactyl-hint-bg: #000 !important;
+	--tridactyl-hint-active-fg: #fff !important;
+	--tridactyl-hint-active-bg: #000 !important;
+	--tridactyl-hint-active-outline: 1px solid #aaa !important;
+	--tridactyl-header-first-bg: #000 !important;
+	--tridactyl-header-second-bg: #000 !important;
+	--tridactyl-header-third-bg: #000 !important;
+
+	--tridactyl-status-border: 1px #fff solid !important;
+	--tridactyl-status-border-radius: 0px !important;
+	--tridactyl-hintspan-border-color: #bbb !important;
+	--tridactyl-hintspan-border-radius: 0px !important;
+	--tridactyl-hintspan-border-style: solid !important;
+	--tridactyl-hintspan-border-width: 1px !important;
+	--tridactyl-hintspan-border: 1px #fff solid !important;
+
+	--tridactyl-cmplt-border-top: 1px solid #fff !important;
+	--tridactyl-header-border-bottom: 1px solid #fff !important;
+
+	--tridactyl-cmdl-line-height: 0px !important;
+	--tridactyl-cmplt-option-height: 0px !important;
+}
+
+/*
+html, html * {
+	background-color: #000000 !important;
+	color: #ffffff !important;
+	border-color: #ffffff !important;
+	font-family:"terminus (ttf)" !important;
+	font-size: 9pt !important;
+	background-image: none !important;
+	-moz-appearance: none !important;
+	-moz-border-image: none !important;
+}
+
+::-moz-selection {
+	background-color: #ffffff !important;
+	color: #000000 !important;
+	border-color: #ffffff !important;
+	font-family:"terminus (ttf)" !important;
+	font-size: 9pt !important;
+	background-image: none !important;
+	-moz-appearance: none !important;
+	-moz-border-image: none !important;
+}
+
+a:link {
+	background-color: #000000 !important;
+	color: #aaaaaa !important;
+	font-family:"terminus (ttf)" !important;
+	font-size: 9pt !important;
+	background-image: none !important;
+	-moz-appearance: none !important;
+	-moz-border-image: none !important;
+}
+
+input {
+	background-color: #000000 !important;
+	color: #ffffff !important;
+	border-stye: solid !important;
+	border-width: 1px !important;
+	border-color: #ffffff !important;
+	font-family:"terminus (ttf)" !important;
+	font-size: 9pt !important;
+	background-image: none !important;
+	-moz-appearance: none !important;
+	-moz-border-image: none !important;
+	border: 1px solid !important;
+}
+
+#newtab-customize-button {
+	display: none !important
+}
+
+#siteTable::before {
+	background-color: #000000 !important;
+	color: #ffffff !important;
+}
+*/

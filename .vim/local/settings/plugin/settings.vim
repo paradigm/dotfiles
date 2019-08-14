@@ -86,6 +86,9 @@ set undodir=~/.vim/undo
 set path=
 " Clear default tags
 set tags=
+" Disable modeline.  Historically it has caused a number of security
+" vulnerabilities.
+set nomodeline
 
 " Set thesaurus file location
 execute "set thesaurus=" . $HOME . '/.vim/thesaurus'

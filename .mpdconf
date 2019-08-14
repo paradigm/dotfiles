@@ -9,7 +9,7 @@ music_directory		"~/.music/"
 playlist_directory	"~/.mpd/playlists"
 db_file			"~/.mpd/db"
 log_file		"~/.mpd/log"
-error_file		"~/.mpd/error"
+#error_file		"~/.mpd/error"
 pid_file		"~/.mpd/pid"
 ################################################################
 
@@ -229,7 +229,7 @@ filesystem_charset              "UTF-8"
 #
 # The encoding that ID3v1 tags should be converted from.
 #
-id3v1_encoding                  "UTF-8"
+#id3v1_encoding                  "UTF-8"
 #
 ################################################################
 

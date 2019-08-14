@@ -19,6 +19,8 @@ let g:clang_complete_auto = 0
 " do not have the clang plugin set mappings, as it makes some disagreeable
 " choices.  Do it directly in the .vimrc file.
 let g:clang_make_default_keymappings = 0
+" libclang location for clang_complete to utilize
+let g:clang_library_path = "/usr/lib/llvm-6.0/lib/"
 
 " disable automatic linting on write
 "call manually with: call eclim#lang#UpdateSrcFile('java',1)
