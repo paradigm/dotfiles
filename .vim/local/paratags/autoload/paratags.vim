@@ -268,6 +268,8 @@ function! s:GetCtagsFiletype(vimfiletype)
 		return("tcl")
 	elseif a:vimfiletype == "fortran"
 		return("fortran")
+	elseif a:vimfiletype == "go"
+		return("go")
 	elseif a:vimfiletype == "html"
 		return("html")
 	elseif a:vimfiletype == "java"

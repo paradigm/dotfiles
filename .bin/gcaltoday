@@ -2,22 +2,18 @@
 # Wrapper for gcalcli that outputs in time remaining today
 # Also adds caching for faster responses
 
-if [ -w "$XDG_RUNTIME_DIR" ]
-then
-	TMP="$XDG_RUNTIME_DIR"
+if [ -w "${XDG_RUNTIME_DIR}" ]; then
+	cache="${XDG_RUNTIME_DIR}/gcaltoday-$(id -u)"
 else
-	TMP=/tmp/
+	cache="/tmp/.gcaltoday-$(id -u)"
 fi
-CACHE=$TMP/gcaltoday-$(id -u)
 
 # gcalcli is slow, so cache its output and run off of the cache
 # it shouldn't update overly often
-if ! [ -e "$CACHE" ] || [ "$(date +%s)" -gt $(expr $(stat -c %Y "$CACHE") + 900) ]
-then
-	gcalcli --nocolor --nostarted agenda "$(date --iso)" "$(date --iso -dtomorrow)" > "$CACHE"
-	if [ $? -ne 0 ]
-	then
-		rm "$CACHE"
+cache_timeout_sec=900
+if ! [ -e "${cache}" ] || [ "$(date +%s)" -gt "$(expr $(stat -c %Y "${cache}") + "${cache_timeout_sec}")" ]; then
+	if ! gcalcli --nocolor --nostarted agenda "$(date --iso)" "$(date --iso -dtomorrow)" > "${cache}"; then
+		rm "${cache}"
 	fi
 fi
 
@@ -53,4 +49,4 @@ BEGIN {
 		printf "%sm\n", minutes
 	}
 }
-' "$CACHE"
+' "${cache}"

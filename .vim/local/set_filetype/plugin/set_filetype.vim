@@ -7,4 +7,5 @@ autocmd BufNewFile,BufRead *.md           setlocal filetype=markdown
 autocmd BufNewFile,BufRead *.gv           setlocal filetype=dot
 autocmd BufNewFile,BufRead ledger         setlocal filetype=ledger
 autocmd BufNewFile,BufRead .ledger        setlocal filetype=ledger
+autocmd BufNewFile,BufRead .crontab       setlocal filetype=crontab
 autocmd BufRead *                         if getline(1) =~ '\v^#!.*busybox sh$' | setlocal filetype=sh | endif

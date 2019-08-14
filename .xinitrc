@@ -14,6 +14,9 @@ xmodmap -e "clear Lock"
 xmodmap -e "keycode 0x42 = Control_L"
 xmodmap -e "add Control = Control_L"
 
+# switch language with alt-shift
+#setxkbmap -option grp:switch,grp:alt_shift_toggle,grp_led:scroll us,il
+
 # Disable the system beep.
 xset s off
 
@@ -43,6 +46,4 @@ fi
 xterm &
 
 # Do not close X11 automatically when the window manager closes.
-while true; do
-	sleep infinity
-done
+tail -f /dev/null

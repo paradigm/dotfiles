@@ -2,7 +2,7 @@ user_pref("browser.newtab.preload", false);
 user_pref("browser.newtabpage.enabled", false);
 user_pref("browser.newtabpage.enhanced", false);
 user_pref("browser.showQuitWarning", true);
-user_pref("browser.startup.homepage", "file:///home/paradigm/.tridactylrc");
+user_pref("browser.startup.homepage", "file:///home/paradigm/.blank");
 user_pref("browser.tabs.closeWindowWithLastTab", false);
 
 user_pref("browser.formfill.enable", false);
@@ -23,9 +23,7 @@ user_pref("network.cookie.cookieBehavior", 1);
 user_pref("network.cookie.lifetimePolicy", 1);
 user_pref("places.history.enabled", false);
 user_pref("privacy.donottrackheader.enabled", true);
-user_pref("privacy.donottrackheader.enabled", true);
 user_pref("privacy.history.custom", true);
-user_pref("privacy.sanitize.pending", "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"history\",\"formdata\",\"downloads\",\"sessions\"],\"options\":{}}]");
 user_pref("privacy.trackingprotection.enabled", true);
 user_pref("signon.rememberSignons", false);
 

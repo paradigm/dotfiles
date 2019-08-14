@@ -48,7 +48,7 @@ connect_wifi() {
 	network_and_pass="$(iwlist "${1}" scan | awk -F'[=:"/]' -v"n=${saved}" '
 	BEGIN {
 		while ((getline < n) > 0) {
-			split($0,a,"\t")
+			split($0,a,"\t\t*")
 			if (a[1] != "") {
 				saved[a[1]] = a[2]
 			}

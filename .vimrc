@@ -67,6 +67,7 @@ set runtimepath+=~/.vim/remote/vim-fugitive/
 set runtimepath+=~/.vim/remote/vim-go/
 set runtimepath+=~/.vim/remote/vim-ledger/
 set runtimepath+=~/.vim/remote/vim-zsh-completion/
+set runtimepath+=~/.vim/remote/LanguageTool/
 
 " scripts bundled with vim
 set runtimepath+=$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after

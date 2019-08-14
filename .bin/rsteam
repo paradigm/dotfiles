@@ -1,14 +1,14 @@
 #!/bin/sh
 # wrapper for steam to fix minor annoyances
 
-# use alsa for sound
-export SDL_AUDIODRIVER=ALSA
+## use alsa for sound
+#export SDL_AUDIODRIVER=ALSA
 
 # fix locale
-export LOCALE=C
+#export LOCALE=C
 
-# fix friends UI
-export TZ="$(readlink -f /etc/localtime | grep -o '(?<=/zoneinfo/).*$' -P)"
+# fix supreme commander
+#export PROTON_NO_ESYNC=1
 
 # fix for intel graphics
 if [ "$(uname -n)" = "am" ]
@@ -29,6 +29,5 @@ xsetroot -cursor_name left_ptr
 conctl "${init_xcape_status}" xcape
 
 # remove steam-created temp files
-rm -f /dev/shm/org.chromium.Chromium.shmem.libcef_*
-rm -f /dev/shm/$(id -un)-Shm_*
-rm -f /dev/shm/$(id -un)-ValveIPCSharedObjects*
+rm -f /dev/shm/u$(id -u)-Shm_*
+rm -f /dev/shm/u$(id -u)-Valve*

@@ -71,9 +71,11 @@ fi
 # = general-envvars                                                            =
 # ==============================================================================
 
-if ! echo "${PATH}" | grep -q '\(:\|^\)'"${HOME}/.bin"'\(:\|$\)'; then
-	export PATH="${HOME}/.bin:${PATH}"
-fi
+for dir in .bin .priv .go/bin; do
+	if ! echo "${PATH}" | grep -q "\(:\|^\)${HOME}/${dir}\(:\|$\)"; then
+		export PATH="${HOME}/${dir}:${PATH}"
+	fi
+done
 
 if uname -a | grep -qi "cygwin"; then
 	for app in /cygdrive/c/apps/*; do
@@ -115,6 +117,8 @@ export GIT_DISCOVERY_ACROSS_FILESYSTEM=1
 
 # Use gpg-agent if available
 export GPG_TTY="$(tty)"
+
+export GOPATH="${HOME}/.go"
 
 if "${is_bash}"; then
 	# Disable history.
@@ -174,18 +178,24 @@ export XDG_VIDEOS_DIR="${HOME}"
 	fi
 )
 
-# requires ~/.gnupg/S.gpg-agent contains:
-#
-#     %Assuan
-#     socket=/path/to/socket
-#
-# and gnupg v2.1.1 or above for gpg-agent to create the socket in the specified
-# location
-#
-# *and* that /run/user isn't available
-#
-# GPG_AGENT_INFO is only respected by gpg-agent-connect.
-export GPG_AGENT_INFO="${XDG_RUNTIME_DIR}/S.gpg-agent::1"
+if ! [ -d "/run/user/$(id -u)" ]; then
+	# requires ~/.gnupg/S.gpg-agent contains:
+	#
+	#     %Assuan
+	#     socket=/path/to/socket
+	#
+	# and gnupg v2.1.1 or above for gpg-agent to create the socket in the specified
+	# location
+	#
+	# *and* that /run/user isn't available
+	#
+	# GPG_AGENT_INFO is only respected by gpg-agent-connect.
+	export GPG_AGENT_INFO="${XDG_RUNTIME_DIR}/S.gpg-agent::1"
+else
+	# if /run/user/$(id -u) is available, newer versions of gpg use it,
+	# ignoring any other configuration.
+	export GPG_AGENT_INFO="/run/user/$(id -u)/gnupg/S.gpg-agent::1"
+fi
 
 # specify socket path with -a flag
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/S.ssh-agent"
@@ -227,6 +237,8 @@ sg=38;5;${ERROR2_FOREGROUND};48;5;${ERROR2_BACKGROUND}:\
 "
 
 	export GTK2_RC_FILES="${HOME}/.gtkrc-2.0"
+	export GTK_THEME="current"
+	export QT_STYLE_OVERRIDE=GTK+
 fi
 
 # ==============================================================================
@@ -281,7 +293,7 @@ alias gc="git commit -v"
 alias gcd='([ -r "$(git rev-parse --git-dir)/lazycommit" ] || (echo "non-lazy repo, aborting"; false )) && git commit -a -v -m "$(date)"'
 alias gb="git branch"
 alias gf="git fetch"
-alias gl="git log"
+alias gl="git log --no-merges"
 alias gr="git reset --hard HEAD"
 alias gs="git status"
 alias gw="git show"
@@ -294,7 +306,7 @@ alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
 alias gusu='git submodule foreach git pull origin master'
 alias gdh='git diff HEAD'
 alias gt="git rev-parse --show-toplevel"
-alias gT='cd "$(git rev-parse --show-toplevel)"'
+alias gT='cd "$(git rev-parse --show-toplevel)"; pwd'
 alias gsync='gcd ; gull && guss'
 
 if [ -r ~/.mozilla/firefox/profiles.ini ]; then
@@ -307,8 +319,10 @@ fi
 if [ -x /bedrock/bin/brl ]; then
 	for stratum in $(brl list -aA)
 	do
+		[ "${stratum}" = "local" ] && continue
 		alias "${stratum}"="strat ${stratum}"
 		alias "r${stratum}"="strat -r ${stratum}"
+		alias "u${stratum}"="strat -u ${stratum}"
 		alias "s${stratum}"="sudo strat ${stratum}"
 		hash -d "${stratum}"="/bedrock/strata/${stratum}"
 	done

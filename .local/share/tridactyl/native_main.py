@@ -1,4 +1,4 @@
-#!/usr/bin/env /bedrock/cross/bin/python3
+#!/usr/bin/env /usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import json

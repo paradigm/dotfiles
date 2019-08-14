@@ -25,8 +25,8 @@ autocmd DocEnd about:blank hint -;
 " support tridactyl on pages that otherwise disable it?
 "set csp clobber
 
-bind xm set modeindicator false
-bind xM set modeindicator true
+" bind xm set modeindicator false
+" bind xM set modeindicator true
 
 bind Q composite sanitize tridactyllocal tridactylsync | source
 bind e hint -c [data-event-action="comments"]
@@ -34,11 +34,11 @@ bind E hint -b [data-event-action="comments"]
 
 bind > tabnext_gt
 bind < tabprev
-bind <c-n> tabnext_gt "firefox disallows this from working
-bind <c-p> tabprev
+" bind <c-n> tabnext_gt "firefox disallows this from working
+" bind <c-p> tabprev
 
 quickmark b https://bedrocklinux.org
-quickmark B https://www.google.com/search?q="bedrocklinux"+OR+"bedrock+linux"&tbs=qdr:w&filter=0&cad=h
+quickmark B https://www.google.com/search?q=%22bedrock+linux%22+-%22elementaryOS%22&tbs=qdr:w&filter=0&biw=2560&bih=1384
 quickmark g https://google.com
 quickmark r https://old.reddit.com
 quickmark d about:downloads
