@@ -1,6 +1,13 @@
 #!/bin/sh
 # wrapper for steam to fix minor annoyances
 
+cd /
+
+# max memory limit in kilobytes
+ulimit -m "$(expr 1024 \* 1024 \* 12)"
+# virtual limit in kilobytes
+ulimit -v "$(expr 1024 \* 1024 \* 12)"
+
 ## use alsa for sound
 #export SDL_AUDIODRIVER=ALSA
 
@@ -20,7 +27,10 @@ fi
 init_xcape_status="$(conctl s xcape | awk -F'[ ,]' '{print$5}')"
 conctl d xcape
 
-strat -r ubuntu /usr/games/steam
+# restrict
+export PATH="/home/paradigm/.go/bin:/home/paradigm/.priv:/home/paradigm/.bin:/bedrock/cross/pin/bin:/bedrock/bin:/usr/local/bin:/usr/local/sbin:/opt/bin:/opt/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/snap/bin:/bedrock/cross/bin"
+
+/bedrock/cross/bin/sudo -u "$(whoami)-steam" /bedrock/cross/bin/steam "${@}"
 
 # restore cursor
 xsetroot -cursor_name left_ptr

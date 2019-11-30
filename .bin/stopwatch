@@ -1,0 +1,7 @@
+#!/bin/sh
+start="$(date +%s)"sec
+
+while true; do
+	printf "\r%s" "$(TZ=UTC date --date "now-${start}" "+%H:%M:%S")"
+	sleep .1
+done

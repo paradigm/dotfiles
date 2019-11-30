@@ -1,8 +1,11 @@
+/* enable userChrome.css */
+user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
+
 user_pref("browser.newtab.preload", false);
 user_pref("browser.newtabpage.enabled", false);
 user_pref("browser.newtabpage.enhanced", false);
 user_pref("browser.showQuitWarning", true);
-user_pref("browser.startup.homepage", "file:///home/paradigm/.blank");
+user_pref("browser.startup.homepage", "file:///home/paradigm-firefox/.blank");
 user_pref("browser.tabs.closeWindowWithLastTab", false);
 
 user_pref("browser.formfill.enable", false);
