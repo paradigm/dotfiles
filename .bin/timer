@@ -1,0 +1,9 @@
+#!/bin/sh
+time="${1}"
+shift
+if [ -z "${1:-}" ]; then
+	msg="timer expired"
+else
+	msg="${@}"
+fi
+sleep "${time}" && notify-send -u critical "${msg}"

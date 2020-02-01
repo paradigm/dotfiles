@@ -1,0 +1,3 @@
+#!/bin/sh
+PATH="/usr/bin"
+exec /bedrock/cross/bin/sudo -u $(whoami)-firefox /bedrock/cross/bin/firefox "${@}"
