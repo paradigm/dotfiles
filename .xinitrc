@@ -14,8 +14,9 @@ xmodmap -e "clear Lock"
 xmodmap -e "keycode 0x42 = Control_L"
 xmodmap -e "add Control = Control_L"
 
-# switch language with alt-shift
-#setxkbmap -option grp:switch,grp:alt_shift_toggle,grp_led:scroll us,il
+for user in web games misc fin; do
+	xhost +local:$(hostname):${user}
+done
 
 # Disable the system beep.
 xset s off
