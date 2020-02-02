@@ -10,7 +10,7 @@ set modeindicator false
 set hintfiltermode vimperator-reflow
 set hintchars 1234567890
 
-set editor xterm -e vim
+set editorcmd xterm -e vim
 
 set searchurls.g https://www.google.com/search?q=
 set searchurls.yt https://www.youtube.com/results?search_query=
@@ -42,3 +42,4 @@ quickmark B https://www.google.com/search?q=%22bedrock+linux%22+-%22elementaryOS
 quickmark g https://google.com
 quickmark r https://old.reddit.com
 quickmark d about:downloads
+quickmark w https://www.google.com/search?q=weather

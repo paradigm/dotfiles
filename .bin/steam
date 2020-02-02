@@ -15,7 +15,8 @@ ulimit -v "$(expr 1024 \* 1024 \* 12)"
 #export LOCALE=C
 
 # fix supreme commander
-#export PROTON_NO_ESYNC=1
+# fix disco elysium
+export PROTON_NO_ESYNC=1
 
 # fix for intel graphics
 if [ "$(uname -n)" = "am" ]
@@ -27,10 +28,7 @@ fi
 init_xcape_status="$(conctl s xcape | awk -F'[ ,]' '{print$5}')"
 conctl d xcape
 
-# restrict
-export PATH="/home/paradigm/.go/bin:/home/paradigm/.priv:/home/paradigm/.bin:/bedrock/cross/pin/bin:/bedrock/bin:/usr/local/bin:/usr/local/sbin:/opt/bin:/opt/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/snap/bin:/bedrock/cross/bin"
-
-/bedrock/cross/bin/sudo -u "$(whoami)-steam" /bedrock/cross/bin/steam "${@}"
+/bedrock/cross/bin/steam "${@}"
 
 # restore cursor
 xsetroot -cursor_name left_ptr
@@ -39,5 +37,5 @@ xsetroot -cursor_name left_ptr
 conctl "${init_xcape_status}" xcape
 
 # remove steam-created temp files
-rm -f /dev/shm/u$(id -u)-Shm_*
-rm -f /dev/shm/u$(id -u)-Valve*
+rm -f /dev/shm/u$(id -u)-*Shm_*
+rm -f /dev/shm/u$(id -u)-*Valve*

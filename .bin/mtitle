@@ -40,9 +40,9 @@ then
 elif populate_wininfo "VLC media player"
 then
 	echo "$winname" | sed 's/ - VLC media player.*$//'
-elif populate_wininfo "YouTube"
-then
-	echo "$winname" | sed 's/ - YouTube.*$//'
+#elif populate_wininfo "YouTube"
+#then
+#	echo "$winname" | sed 's/ - YouTube.*$//'
 elif populate_wininfo "Netflix"
 then
 	echo "Netflix"

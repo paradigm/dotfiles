@@ -1,6 +1,6 @@
 [submodule ".priv"]
 	path = .priv
-	url = ssh://git@mycroft:666/home/git/priv.git
+	url = ssh://git@wintermute:666/home/git/priv.git
 	ignore = dirty
 [submodule ".vim/remote/vim-ledger"]
 	path = .vim/remote/vim-ledger
