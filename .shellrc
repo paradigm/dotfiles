@@ -291,7 +291,7 @@ alias gg="git grep --color"
 alias ga="git add"
 alias gc="git commit -v"
 alias gcd='([ -r "$(git rev-parse --git-dir)/lazycommit" ] || (echo "non-lazy repo, aborting"; false )) && git commit -a -v -m "$(date)"'
-alias gb="git branch"
+alias gb="git --no-pager branch"
 alias gf="git fetch"
 alias gl="git log --no-merges"
 alias gr="git reset --hard HEAD"
@@ -1118,7 +1118,7 @@ elif "${is_zsh}"; then
 				if [[ "${BUFFER}" =~ " ${PAIR[1]}" ]]; then
 					PREFIX="${BUFFER[1,MEND-1]}"
 					BODY="${BUFFER[MEND+1,-1]}"
-					if [[ "${BODY}" =~ '[a-zA-Z0-9_-/.*]+' ]]; then
+					if [[ "${BODY}" =~ '[a-zA-Z0-9_/.*-]+' ]]; then
 						BUFFER="${PREFIX}~[${PAIR[2]}:${BODY[MEGIN,MEND]}]${BODY[MEND+1,-1]}"
 						RETRY=1
 					fi

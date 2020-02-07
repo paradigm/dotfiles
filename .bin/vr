@@ -1,0 +1,38 @@
+#!/bin/sh
+
+use_audio_card() {
+	pactl set-default-sink "${1}"
+	for i in $(pacmd list-sink-inputs | awk '/index/ {print$2}'); do
+		pacmd move-sink-input "${i}" "${1}"
+	done
+}
+
+# gather information
+vert_mon="$(xrandr --listmonitors | awk '/1200.*x1920/{print$NF}')"
+big_mon="$(xrandr --listmonitors | awk '/2560.*x1440/{print$NF}')"
+hdmi_mon="$(xrandr --listmonitors | awk '/HDMI/{print$NF}')"
+dvi_mon="$(xrandr --listmonitors | awk '/DVI/{print$NF}')"
+hdmi_audio="$(pacmd list cards | awk -F'[<>]' '/name: <alsa_output.*hdmi[^.]*>/{print$2}')"
+analog_audio="$(pacmd list cards | awk -F'[<>]' '/name: <alsa_output.*analog[^.]*>/{print$2}')"
+
+# Video card can only support so many monitors at a time.  Disable some to free up resources for the HMD.
+xrandr --output "${dvi_mon}" --off
+sleep 1
+
+# Set HMD as audio device
+use_audio_card "${hdmi_audio}"
+
+## Launch steamvr
+~/.bin/steam &
+
+xterm -e 'echo "Hit ENTER to kill SteamVR"; read PAUSE'
+pkill steam
+
+# restore video
+xrandr --output "${hdmi_mon}" --auto --mode 1280x1024 --pos 0x0      --rotate normal
+xrandr --output "${dvi_mon}"  --auto --mode 1280x1024 --pos 0x1024   --rotate normal
+xrandr --output "${vert_mon}" --auto --mode 1920x1200 --pos 3840x128 --rotate left
+xrandr --output "${big_mon}"  --auto --mode 2560x1440 --pos 1280x368 --rotate normal
+
+# restore audio
+use_audio_card "${analog_audio}"

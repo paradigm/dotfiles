@@ -40,7 +40,9 @@ connect_wifi() {
 		modprobe rtl_usb >/dev/null 2>&1
 		modprobe rtl8192cu >/dev/null 2>&1
 	fi
+	sleep 2
 	ip link set "${1}" up
+	sleep 2
 	echo "done"
 
 	printf "Determining wifi network... "
@@ -117,8 +119,10 @@ test_connection() {
 printf "Determining network interface... "
 netif=""
 if eth_if="$(basename /sys/class/net/e* 2>/dev/null | head -n1)"; then
-	ip link set "${eth_if}" up
-	sleep 0.25
+	if ! ip link show "${eth_if}" | grep "state UP"; then
+		ip link set "${eth_if}" up
+		sleep 5
+	fi
 	if grep -q "1" "/sys/class/net/${eth_if}/carrier"; then
 		echo "${eth_if}"
 		connect_ethernet "${eth_if}"
