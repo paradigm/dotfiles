@@ -13,5 +13,4 @@ echo ""
 
 remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$' | awk 'NR>2'
 
-echo "(enter to quit)"
-read pause
+echo "(enter to quit)" ; read PAUSE

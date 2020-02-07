@@ -1,3 +1,0 @@
-#!/bin/sh
-export PATH="/usr/bin"
-exec /bedrock/cross/bin/sudo -u web /bedrock/cross/bin/firefox "${@}"

@@ -111,3 +111,4 @@ $(date --iso) $payee
 EOF
 	break
 done
+echo "(enter to quit)" ; read PAUSE

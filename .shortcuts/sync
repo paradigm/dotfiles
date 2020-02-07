@@ -30,3 +30,4 @@ fi
 git commit -a -v -m "$(date)"
 git pull origin master
 git push origin master
+echo "(enter to quit)" ; read PAUSE

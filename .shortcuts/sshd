@@ -8,3 +8,4 @@ else
 	~/.bin/conctl u sshd
 fi
 ~/.bin/conctl s sshd
+echo "(enter to quit)" ; read PAUSE
