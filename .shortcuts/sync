@@ -27,7 +27,5 @@ then
 	ssh-add "$HOME/.ssh/id_rsa"
 fi
 
-git commit -a -v -m "$(date)"
-git pull origin master
-git push origin master
+./privsync
 echo "(enter to quit)" ; read PAUSE
