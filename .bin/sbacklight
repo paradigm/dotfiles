@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -eu
+
+cd $(find /sys -name "intel_backlight" 2>/dev/null | head -n1)
+max="$(cat max_brightness)"
+cur="$(cat brightness)"
+tgt="${1:-}"
+
+case "${tgt}" in
+"")     echo $((cur * 100 / max)) ;;
+"up")   echo $((cur + (max / 10) )) > brightness ;;
+"down") echo $((cur - (max / 10) )) > brightness ;;
+*)      echo $((tgt * max / 100))   > brightness ;;
+esac

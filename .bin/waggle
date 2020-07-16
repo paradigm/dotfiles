@@ -1,0 +1,11 @@
+#!/bin/sh
+
+while sleep 599; do
+	eval $(xdotool getmouselocation --shell)
+	if [ "$X" -eq "0" ]; then
+		xdotool mousemove "1" "$Y"
+	else
+		xdotool mousemove "$(expr "$X" - 1)" "$Y"
+	fi
+	xdotool mousemove "$X" "$Y"
+done

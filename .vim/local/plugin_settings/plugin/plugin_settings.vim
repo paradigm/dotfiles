@@ -34,3 +34,5 @@ let g:ale_sign_warning = 'WW'
 " rust completion
 let g:racer_cmd = 'racer'
 let $RUST_SRC_PATH=$HOME . "/.vim/remote/rust/src/"
+
+let g:languagetool_jar = "/bedrock/strata/arch/usr/share/java/languagetool/languagetool-commandline.jar"

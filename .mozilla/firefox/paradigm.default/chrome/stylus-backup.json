@@ -11,11 +11,14 @@
 			{
 				"code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}\n\n/* google weather */\ndiv#wob_temp.ksb,\ndiv#wob_rain.ksb,\ndiv#wob_wind.ksb,\n/* misc google */\n.gb_Eb,\n/* github */\n.btn {\n\tbackground-image: none !important;\n}",
 				"regexps": [
-					"(http|https|file|moz-extension)://(?!((.*[.])?reddit.com|(.*[.])?slack.com|(.*[.])?discordapp.com|(.*[.])?twitch.tv|(.*[.])?youtube.com|www.google.com/maps/|www.netflix.com|www.amazon.com/gp/video/)).*"
+					"(http|https|file|moz-extension)://(?!((.*[.])?reddit.com|(.*[.])?slack.com|(.*[.])?discord.com|(.*[.])?duolingo.com|(.*[.])?twitch.tv|(.*[.])?youtube.com|www.google.com|www.netflix.com|www.amazon.com/gp/video/)).*"
 				]
 			}
 		],
-		"id": 26
+		"id": 26,
+		"_id": "23f17cfd-ec4b-4142-b6ca-c10f2bb2cd78",
+		"_rev": 1595253642593,
+		"updateDate": 1594770196674
 	},
 	{
 		"installDate": 1531845876663,
@@ -34,11 +37,13 @@
 		],
 		"name": "bnw-reddit",
 		"originalDigest": "5f05530a5560fb36aa50710f40957f3ab0447648",
-		"id": 30
+		"id": 30,
+		"_id": "581f47fe-9f44-4464-96b4-4a6a9fe560c4",
+		"_rev": 1594907848732
 	},
 	{
 		"installDate": 1531850428578,
-		"enabled": true,
+		"enabled": false,
 		"updateUrl": "https://userstyles.org/styles/chrome/127836.json",
 		"md5Url": "https://update.userstyles.org/127836.md5",
 		"url": "http://userstyles.org/styles/127836",
@@ -56,7 +61,9 @@
 		],
 		"name": "bnw-slack",
 		"originalDigest": "1b69089f831862981a5a744a0366ab29fcd0cd18",
-		"id": 35
+		"id": 35,
+		"_id": "5e96d81b-6aa4-4fa7-8559-7b5036b338e5",
+		"_rev": 1583330020958
 	},
 	{
 		"installDate": 1531854106589,
@@ -77,7 +84,9 @@
 				"regexps": []
 			}
 		],
-		"id": 36
+		"id": 36,
+		"_id": "59c1ddfd-de59-413c-bf92-d90eb16ae4ad",
+		"_rev": 1584394836606
 	},
 	{
 		"enabled": true,
@@ -98,6 +107,92 @@
 				"regexps": []
 			}
 		],
-		"id": 46
+		"id": 46,
+		"_id": "df72b375-cbfe-4ccc-bfcd-b07389f5713d",
+		"_rev": 1593992974032
+	},
+	{
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"installDate": 1594766857343,
+		"name": "bnw-duolingo",
+		"sections": [
+			{
+				"code": "body, ._2Jt0i, ._2y4G6, ._2CXf4, ._2iVqi, ._1ruUC, ._3JU6l, ._27B_u, ._3fNBj, ._2VdVL, ._1UnBr, ._1E0xz, ._2NEKS, ._1JwI_, input, textarea, ._37uvX, ._66Mfn, ._3V1pH, .t-hzx, ._3D7BY, ._3SqdF, ._2vedk {\n        background-color: #000000 !important;\n        background: #000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n._2iSv6 {\n        background-color: #555555 !important;\n        background: #555 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n._3uKcR {\n\tdisplay: none !important;\n}\n",
+				"domains": [
+					"duolingo.com"
+				]
+			}
+		],
+		"updateDate": 1595255637945,
+		"_id": "a297becf-2fe3-470e-9bf1-95cd82a53989",
+		"_rev": 1595255637945,
+		"id": 47
+	},
+	{
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"installDate": 1594770095574,
+		"name": "bnw-file",
+		"sections": [
+			{
+				"code": "*, html, html * {\n        background-color: #000000 !important;\n}",
+				"urlPrefixes": [
+					"file:///"
+				]
+			}
+		],
+		"updateDate": 1594770123587,
+		"_id": "19b3cb67-a80a-42fb-aebe-0f3a5e08c722",
+		"_rev": 1595001562813,
+		"id": 48
+	},
+	{
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"installDate": 1594770215003,
+		"name": "bnw-google",
+		"sections": [
+			{
+				"code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}\n\n/* google weather */\ndiv#wob_temp.ksb,\ndiv#wob_rain.ksb,\ndiv#wob_wind.ksb,\n/* misc google */\n.gb_Eb,\n/* github */\n.btn {\n\tbackground-image: none !important;\n}",
+				"domains": [
+					"google.com"
+				]
+			}
+		],
+		"updateDate": 1594770246824,
+		"_id": "7f29638a-cb51-4f29-b460-debf37da325d",
+		"_rev": 1595250038627,
+		"id": 49
+	},
+	{
+		"enabled": true,
+		"updateUrl": null,
+		"md5Url": null,
+		"url": null,
+		"originalMd5": null,
+		"installDate": 1594770320788,
+		"name": "ycombinator.com",
+		"sections": [
+			{
+				"code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}",
+				"domains": [
+					"ycombinator.com"
+				]
+			}
+		],
+		"updateDate": 1594770320788,
+		"_id": "4d2f9363-b8a5-46d5-821d-2f12ad608122",
+		"_rev": 1594770320788,
+		"id": 50
 	}
 ]

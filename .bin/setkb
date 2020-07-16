@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ "${2}" ]; then
+	setxkbmap -layout "${1}" -variant "${2}"
+else
+	setxkbmap -layout "${1}"
+fi
+
+if [ $? -ne 0 ]; then
+	echo "error setting specified keyboard layout"
+	exit 1
+fi
+
+pkill -HUP dwmstatus
+
+if [ "${1}-${2}" = "us-intl" ]; then
+	xmodmap -e 'clear Lock'
+	xmodmap -e 'keycode 0x42 = ISO_Level3_Shift'
+else
+	xmodmap -e 'clear Lock'
+	xmodmap -e 'keycode 0x42 = Control_L'
+	xmodmap -e 'add Control = Control_L'
+fi
+pkill xcape
+conctl r xcape

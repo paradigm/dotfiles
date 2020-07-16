@@ -11,6 +11,33 @@ tabbrowser, tabpanels {
 	background-color: #000000 !important;
 }
 
+/* Firefox 75 REMOVE MEGABAR START */
+/* https://raw.githubusercontent.com/WesleyBranton/userChrome.css-Customizations/master/css/remove_megabar.css */
+#urlbar[breakout][breakout-extend] > #urlbar-input-container,
+#urlbar-input-container {
+	height: var(--urlbar-height) !important;
+	padding-block: 0px !important;
+	padding-inline: 0px !important;
+	background-color: var(--lwt-toolbar-field-background-color, rgba(255, 255, 255, 0.8));
+	transition: none !important;
+	border-radius: var(--toolbarbutton-border-radius);
+}
+
+#urlbar[breakout][breakout-extend] {
+	top: calc((var(--urlbar-toolbar-height) - var(--urlbar-height)) / 2) !important;
+	left: 0 !important;
+	width: 100% !important;
+}
+
+#urlbar[breakout][breakout-extend] > #urlbar-input-container {
+	border: 1px solid var(--toolbar-field-focus-border-color) !important;
+}
+
+#urlbar[breakout][breakout-extend][open] > #urlbar-input-container {
+	border-bottom: 1px solid transparent !important;
+}
+/* REMOVE MEGABAR END */
+
 :root {
 	font-family: "Terminus (TTF)" !important;
 	font-size: 9pt !important;
@@ -24,8 +51,11 @@ tabbrowser, tabpanels {
 	--toolbar-bgimage: none !important;
 	--toolbox-border-bottom-color: none !important;
 	--toolbarbutton-inner-padding: 0px !important;
-	--tab-min-height: 12px !important;
-	--tab-max-height: 12px !important;
+	--tab-min-height: 14px !important;
+	--tab-max-height: 14px !important;
+	--lwt-toolbar-field-background-color: #000000 !important;
+	--toolbar-field-focus-border-color: #ffffff !important;
+	--toolbarbutton-border-radius: 0px !important;
 
 	line-height: 1em !important;
 }
@@ -96,6 +126,9 @@ window#main-window toolbox#navigator-toolbox toolbar#TabsToolbar.titlebar-color.
 }
 
 #urlbar {
+	font-family: "Terminus (TTF)" !important;
+	font-size: 9pt !important;
+
 	background-color: #000000 !important;
 	color: #ffffff !important;
 
@@ -104,8 +137,8 @@ window#main-window toolbox#navigator-toolbox toolbar#TabsToolbar.titlebar-color.
 
 	background-clip: none !important;
 
-	max-height: 12px !important;
-	min-height: 12px !important;
+	max-height: 14px !important;
+	min-height: 14px !important;
 	padding: 0px !important;
 	margin: 0px !important;
 }

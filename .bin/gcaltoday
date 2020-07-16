@@ -12,7 +12,7 @@ fi
 # it shouldn't update overly often
 cache_timeout_sec=900
 if ! [ -e "${cache}" ] || [ "$(date +%s)" -gt "$(expr $(stat -c %Y "${cache}") + "${cache_timeout_sec}")" ]; then
-	if ! gcalcli --nocolor --nostarted agenda "$(date --iso)" "$(date --iso -dtomorrow)" > "${cache}"; then
+	if ! gcalcli --nocolor agenda "$(date --iso)" "$(date --iso -dtomorrow)" > "${cache}"; then
 		rm "${cache}"
 	fi
 fi
@@ -33,6 +33,13 @@ BEGIN {
 
 	# split hours/minutes
 	sub(/:/, " ")
+	# handle am/pm
+	if ($2 ~ /pm$/) {
+		sub(/pm$/, "", $2)
+		$1 = $1 + 12
+	} else {
+		sub(/am$/, "", $2)
+	}
 
 	task_mins = $1 * 60 + $2
 	diff=int(task_mins - now_mins)

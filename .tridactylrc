@@ -1,3 +1,7 @@
+# ==============================================================================
+# = paradigm's tridactyl configuration                                         =
+# ==============================================================================
+
 sanitise tridactyllocal tridactylsync
 
 set theme dark
@@ -5,7 +9,8 @@ set allowautofocus false
 
 set modeindicator false
 
-" set newtab about:blank
+#set newtab file:///home/web/.blank
+set newtabfocus page
 
 set hintfiltermode vimperator-reflow
 set hintchars 1234567890
@@ -18,28 +23,41 @@ set searchurls.yu https://www.youtube.com/user/%s/videos
 set searchurls.gh https://github.com/search?q=
 set searchurls.r https://old.reddit.com/r/
 set searchurls.u https://old.reddit.com/u/
+set searchurls.d https://www.dictionary.com/browse/
+set searchurls.t https://www.thesaurus.com/browse/
+
+set hintdelay 50
 
 autocmd DocStart about:blank hint -;
 autocmd DocEnd about:blank hint -;
 
-" support tridactyl on pages that otherwise disable it?
-"set csp clobber
-
-" bind xm set modeindicator false
-" bind xM set modeindicator true
+bind m set modeindicator false
+bind M set modeindicator true
+bind --mode=normal <Insert> mode ignore
+bind --mode=ignore <Insert> mode normal
 
 bind Q composite sanitize tridactyllocal tridactylsync | source
-bind e hint -c [data-event-action="comments"]
-bind E hint -b [data-event-action="comments"]
+bindurl reddit.com e hint -c [data-event-action="comments"]
+bindurl reddit.com E hint -bc [data-event-action="comments"]
+bindurl reddit.com/r/[^/]*/comments/[^/]*/[^/]*/$ gu urlparent 3
+bindurl reddit.com/r/[^/]*/$ gu urlparent 2
+bindurl news.ycombinator.com e hint -fr comments$
+bindurl news.ycombinator.com E hint -bfr comments$ # -bfr does not work?
+bindurl news.ycombinator.com gu urlparent 2
+bindurl slack.com ;s hint -c [class="p-channel_sidebar__name" ]
+bindurl discord.com ;s hint -c [class*="content-" ]
+bindurl discord.com ;j hint -f jump to present
+bindurl discord.com ;m hint -f mark as read
 
-bind > tabnext_gt
-bind < tabprev
+" bind > tabnext_gt
+" bind < tabprev
 " bind <c-n> tabnext_gt "firefox disallows this from working
 " bind <c-p> tabprev
 
+quickmark B https://www.google.com/search?q=%22bedrock+linux%22+-%22elementaryOS%22+-%22meterpreter.org%22&tbs=qdr:w&filter=0&biw=2560&bih=1384
 quickmark b https://bedrocklinux.org
-quickmark B https://www.google.com/search?q=%22bedrock+linux%22+-%22elementaryOS%22&tbs=qdr:w&filter=0&biw=2560&bih=1384
+quickmark d about:downloads
 quickmark g https://google.com
 quickmark r https://old.reddit.com
-quickmark d about:downloads
+quickmark t https://translate.google.com
 quickmark w https://www.google.com/search?q=weather

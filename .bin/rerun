@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -z "${1}" ]; then
+	echo "arg to regularly run required"
+fi
+
+while :; do
+	clear
+	echo "$ $@"
+	eval "${@}"
+	echo ""
+	inotifywait -e close_write -r .
+	sleep 0.25
+done

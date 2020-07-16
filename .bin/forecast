@@ -1,0 +1,63 @@
+#!/bin/sh
+
+if ! [ -e ~/.forecast ]; then
+	echo "No ~/.forecast file"
+	exit 1
+fi
+
+if [ -w "$XDG_RUNTIME_DIR" ]; then
+	cache="$XDG_RUNTIME_DIR/forecast-$(id -u)"
+else
+	cache="/tmp/forecast-$(id -u)"
+fi
+
+if ! [ -e "${cache}" ] || [ "$(date +%s)" -gt "$(expr "$(stat -c %Y "${cache}")" + 900)" ]; then
+	if ! ekvs quiet test; then
+		echo "keyring locked"
+		exit 1
+	fi
+	key="$(ekvs g "^openweathermap-apikey$")"
+	loc="$(cat ~/.forecast)"
+	unit="imperial"
+	exclude="minutely,daily"
+	suffix="$(printf "?%s&appid=%s&units=%s&exclude=%s" "${loc}" "${key}" "${unit}" "${exclude}")"
+	if ! json="$(curl "api.openweathermap.org/data/2.5/onecall${suffix}" 2>/dev/null > "${cache}")"; then
+		echo "api error"
+		rm "${cache}"
+		exit 1
+	fi
+fi
+
+json="$(cat "${cache}")"
+
+cond_now="$(echo "${json}" | jq -r ".current.weather[0].description")"
+temp_now="$(echo "${json}" | jq -r ".current.temp" | cut -d. -f1)"
+range="$(echo "${json}" | jq -r ".hourly[0:13]")"
+
+min=""
+max=""
+fore=""
+for i in $(seq 1 12); do
+	temp="$(echo "${range}" | jq -r ".[$i].temp" | cut -d. -f1)"
+	cond="$(echo "${range}" | jq -r ".[$i].weather[0].description")"
+	if [ -z "${min}" ] || [ "${temp}" -lt "${min}" ]; then
+		min="${temp}"
+	fi
+	if [ -z "${max}" ] || [ "${temp}" -gt "${max}" ]; then
+		max="${temp}"
+	fi
+	# https://openweathermap.org/weather-conditions
+	for sev in "tornado" "squall" "ash" "extreme" "very heavy" "heavy" "ragged" "moderate" "thunderstorm" "sleet" "snow" "light"; do
+		if ! echo "${cond}" | grep -qi "clear sky" &&\
+			! echo "${fore}" | grep -qi "${sev}" &&\
+			echo "${cond}" | grep -qi "${sev}"; then
+			fore="${cond}"
+			break
+		fi
+	done
+	if [ -z "${fore}" ]; then
+		fore="${cond}"
+	fi
+done
+
+printf "%s %s; %s %s-%s\n" "${cond_now}" "${temp_now}" "${fore}" "${min}" "${max}"

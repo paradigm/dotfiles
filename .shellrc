@@ -168,9 +168,10 @@ export XDG_VIDEOS_DIR="${HOME}"
 	fi
 
 	umask 077
-	if ! [ -d "${dir}" ]
+	if ! [ -d "${dir}/" ]
 	then
-		mkdir -p "${dir}"
+		mkdir -p "${dir}/"
+		chmod a+rx "${dir}/" # needed for sub-user sharing
 	fi
 	if ! [ -h "${XDG_RUNTIME_DIR}" ]
 	then
@@ -204,7 +205,7 @@ export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/S.ssh-agent"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/S.dbus"
 
 # pulseaudio creates socket at ${XDG_RUNTIME_DIR}/pulse/native
-export PULSE_SERVER="unix:${XDG_RUNTIME_DIR}/pulse/native"
+export PULSE_SERVER="unix:/dev/shm/.pulse/S.pulse"
 
 # ==============================================================================
 # = theme                                                                      =
@@ -319,7 +320,7 @@ fi
 if [ -x /bedrock/bin/brl ]; then
 	for stratum in $(brl list -aA)
 	do
-		[ "${stratum}" = "local" ] && continue
+		command -v "${stratum}" >/dev/null 2>&1 && continue
 		alias "${stratum}"="strat ${stratum}"
 		alias "r${stratum}"="strat -r ${stratum}"
 		alias "u${stratum}"="strat -u ${stratum}"

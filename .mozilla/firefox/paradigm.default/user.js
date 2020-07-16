@@ -4,9 +4,21 @@ user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
 user_pref("browser.newtab.preload", false);
 user_pref("browser.newtabpage.enabled", false);
 user_pref("browser.newtabpage.enhanced", false);
-user_pref("browser.showQuitWarning", true);
 user_pref("browser.startup.homepage", "file:///home/web/.blank");
 user_pref("browser.tabs.closeWindowWithLastTab", false);
+user_pref("browser.ctrlTab.recentlyUsedOrder", false);
+
+user_pref("browser.showQuitWarning", true);
+user_pref("browser.aboutConfig.showWarning", false);
+user_pref("browser.feeds.showFirstRunUI", false);
+user_pref("browser.newtabpage.introShown", true);
+
+/* firefox 75 address bar noise */
+/* https://lifehacker.com/how-to-disable-firefox-75s-new-address-bar-1842728031 */
+user_pref("browser.urlbar.openViewOnFocus", false);
+user_pref("browser.urlbar.update1", false);
+user_pref("browser.urlbar.update1.interventions", false);
+user_pref("browser.urlbar.update1.searchTips", false);
 
 user_pref("browser.formfill.enable", false);
 user_pref("browser.urlbar.autocomplete.enabled", false);
@@ -32,13 +44,10 @@ user_pref("signon.rememberSignons", false);
 
 user_pref("browser.autofocus", false);
 
-user_pref("security.sandbox.content.level", 2); // allow cross-stratum fonts
+user_pref("media.videocontrols.picture-in-picture.video-toggle.enabled", false);
 
 user_pref("browser.defaultenginename", "Google");
 user_pref("browser.defaultenginename.US", "Google");
-
-user_pref("browser.feeds.showFirstRunUI", false);
-user_pref("browser.newtabpage.introShown", true);
 
 user_pref("extensions.pocket.enabled", false);
 user_pref("experiments.enabled", false); /* Opt out of experiments */

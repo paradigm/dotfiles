@@ -14,17 +14,19 @@ xmodmap -e "clear Lock"
 xmodmap -e "keycode 0x42 = Control_L"
 xmodmap -e "add Control = Control_L"
 
+case "$(hostname)" in
+"eddie")
+	xinput --set-prop "Elan TrackPoint" "libinput Accel Speed" "-0.6"
+	xinput --set-prop "Elan Touchpad" "Device Enabled" "0"
+	;;
+esac
+
 for user in web games misc fin; do
 	xhost +local:$(hostname):${user}
 done
 
 # Disable the system beep.
 xset s off
-
-if [ -d /sys/class/power_supply/BAT0/ ]; then
-	rmmouse&
-	xbacklight -set 30%
-fi
 
 if type conctl >/dev/null 2>&1; then
 	[ "$(conctl --state xorg)" = "starting" ] && conctl k SIGUSR1 xorg
