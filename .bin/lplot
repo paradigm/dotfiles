@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -z "${1}" ]; then
+	echo "specify ledger account to plot"
+	exit 1
+fi
+
+cat <<EOF | gnuplot -p
+set xdata time
+set timefmt "%Y-%m-%d"
+plot "< ledger register -J $@ | awk '{x[\$1] = \$2} END {for (d in x) {print d\" \"x[d]}}' | sort" u 1:2 smooth unique w lp
+EOF
