@@ -25,13 +25,16 @@ then
 elif populate_wininfo "VLC media player"
 then
 	xdotool windowactivate "$winid"
-elif populate_wininfo "YouTube"
-then
-	xdotool windowactivate "$winid"
 elif populate_wininfo "Netflix"
 then
 	xdotool windowactivate "$winid"
 elif populate_wininfo "Twitch"
+then
+	xdotool windowactivate "$winid"
+elif populate_wininfo " . Prime Video"
+then
+	xdotool windowactivate "$winid"
+elif populate_wininfo "YouTube"
 then
 	xdotool windowactivate "$winid"
 fi

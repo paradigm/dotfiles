@@ -1,5 +1,5 @@
 " ==============================================================================
-" = vim ftplugin                                                               =
+" = vim_ftplugin                                                               =
 " ==============================================================================
 
 " have [i and friends follow :source and relevant rtp entries
@@ -57,3 +57,11 @@ setlocal isfname -=,
 " Include "#" and ":" in identifiers, as its used in some vim function names
 setlocal isident +=#
 setlocal isident +=:
+
+if executable('vim-language-server')
+	autocmd User lsp_setup call lsp#register_server({
+				\   'name': 'vim-language-server',
+				\   'cmd': {server_info->['vim-language-server', '--stdio']},
+				\   'whitelist': ['vim'],
+				\ })
+endif

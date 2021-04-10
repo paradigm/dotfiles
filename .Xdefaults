@@ -5,6 +5,7 @@
 *.background: #000000
 *.highlight:  #888888
 *.scrollBar: false
+*.fastScroll: true
 xterm*font: -xos4-terminus-medium-r-normal-*-12-*-*-*-*-*-*-*
 *.colorBD: #888888
 ! have urls in xterm act as one word so it can be double-clicked to select

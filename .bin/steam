@@ -21,24 +21,21 @@ ulimit -v "$(expr 1024 \* 1024 \* 24)"
 # fix supreme commander
 # fix disco elysium
 #export PROTON_NO_ESYNC=1
+# if esync out of fd errors, increase hard limit via /etc/security/limits.conf or .d
 
 # fix for intel graphics
 if [ "$(uname -n)" = "am" ]; then
 	export MESA_EXTENSION_OVERRIDE='GL_EXT_texture_filter_anisotropic'
 fi
 
-## disable xcape in games
-#init_xcape_status="$(conctl s xcape | awk -F'[ ,]' '{print$5}')"
-#conctl d xcape
-
+# disable xcape in games
+init_xcape_status="$(conctl s xcape | awk -F'[ ,]' '{print$5}')"
+conctl d xcape
 /bedrock/cross/bin/sudo -u games /bedrock/cross/bin/steam "${@}"
+/bedrock/cross/bin/sudo -u games /bedrock/cross/bin/steam-clean-up
 
 # restore cursor
 xsetroot -cursor_name left_ptr
 
-## restore xcape
-#conctl "${init_xcape_status}" xcape
-
-# remove steam-created temp files
-rm -f /dev/shm/u$(id -u)-Shm_*
-rm -f /dev/shm/u$(id -u)-*Valve*
+# restore xcape
+conctl "${init_xcape_status}" xcape

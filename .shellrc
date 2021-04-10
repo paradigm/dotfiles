@@ -71,7 +71,7 @@ fi
 # = general-envvars                                                            =
 # ==============================================================================
 
-for dir in .bin .priv .go/bin; do
+for dir in .bin .priv .go/bin .cargo/bin; do
 	if ! echo "${PATH}" | grep -q "\(:\|^\)${HOME}/${dir}\(:\|$\)"; then
 		export PATH="${HOME}/${dir}:${PATH}"
 	fi
@@ -148,6 +148,7 @@ export XDG_PUBLICSHARE_DIR="$HOME/public"
 export XDG_RUNTIME_DIR="${HOME}/.run"
 export XDG_TEMPLATES_DIR="${HOME}"
 export XDG_VIDEOS_DIR="${HOME}"
+export NO_AT_BRIDGE=1 # disable at-spi2-registryd daemon autostart
 
 # ==============================================================================
 # = runtime-directory                                                          =
@@ -255,6 +256,7 @@ alias yours="sudo find . -perm -u+x -exec chmod a+x {} \; && sudo find . -perm -
 alias ..="cd .."
 alias :q="exit"
 alias :wq="exit"
+alias c="chore"
 alias s="sudo"
 alias sd="sudo poweroff"
 alias sr="sudo reboot"
@@ -288,27 +290,28 @@ alias balance='ledger balance'
 alias register='ledger register'
 alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
 
-alias gg="git grep --color"
 alias ga="git add"
+alias gb="git --no-pager branch"
 alias gc="git commit -v"
 alias gcd='([ -r "$(git rev-parse --git-dir)/lazycommit" ] || (echo "non-lazy repo, aborting"; false )) && git commit -a -v -m "$(date)"'
-alias gb="git --no-pager branch"
+alias gco="git checkout"
+alias gdh='git diff HEAD'
 alias gf="git fetch"
+alias gg="git grep --color"
 alias gl="git log --no-merges"
+alias gm="git merge"
 alias gr="git reset --hard HEAD"
 alias gs="git status"
-alias gw="git show"
-alias gco="git checkout"
-alias gm="git merge"
-alias gus="git push"
-alias guss='git push origin $(git branch | awk '\''/^\*/{print$2}'\'')'
-alias gul="git pull"
-alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
-alias gusu='git submodule foreach git pull origin master'
-alias gdh='git diff HEAD'
+alias gsync='gcd ; gull && guss'
 alias gt="git rev-parse --show-toplevel"
 alias gT='cd "$(git rev-parse --show-toplevel)"; pwd'
-alias gsync='gcd ; gull && guss'
+alias gul="git pull"
+alias gull='git pull origin $(git branch | awk '\''/^\*/{print$2}'\'')'
+alias gus="git push"
+alias guss='git push origin $(git branch | awk '\''/^\*/{print$2}'\'')'
+alias gusu='git submodule foreach git pull origin master'
+alias gv='$EDITOR -- $(git status | awk "\$1 == \"modified:\" {print\$2}")'
+alias gw="git show"
 
 if [ -r ~/.mozilla/firefox/profiles.ini ]; then
 	for profile in $(awk -F= '/^Name=/{print$2}' ~/.mozilla/firefox/profiles.ini)
@@ -1087,21 +1090,20 @@ elif "${is_zsh}"; then
 		fi
 	}
 
-	# Makes substitutes in the BUFFER just before zsh parses it.  This
-	# allows for some slightly shorter inputs at the cost of breaking zsh's
-	# input namespace.
+	# Alters the BUFFER just before zsh parses it.  This allows for some
+	# slightly shorter inputs at the cost of breaking zsh's input namespace.
 	#
 	# This parser is not smart enough to do things like withhold
 	# substitution in a string.  It'd sure be nice.
 	#
 	# To make this easily disable/bypass-able per entry, it must follow a
-	# space.  Thus, things like `echo '@word'` won't trigger the
-	# substitution because the "@" follows a quote, not a space.  To
+	# space.  Thus, things like `echo '@@word'` won't trigger the
+	# substitution because the "@@" follows a quote, not a space.  To
 	# disable for an extended session, unset ENABLE_FUZZ_BUFFER.
 	#
-	#    " @word" -> " ~[d:word]"
-	#    " #word" -> " ~[f:word]"
-	#    " !word" -> " ~[v:word]"
+	#    " @@word" -> " ~[d:word]"
+	#    " ##word" -> " ~[f:word]"
+	#    " !!word" -> " ~[v:word]"
 	#
 	ENABLE_FUZZ_BUFFER=1
 	_insert_dynamic_named_directories() {
@@ -1116,8 +1118,8 @@ elif "${is_zsh}"; then
 		while [ -n "${RETRY}" ]; do
 			RETRY=""
 			for PAIR in "@d" "#f" "!v"; do
-				if [[ "${BUFFER}" =~ " ${PAIR[1]}" ]]; then
-					PREFIX="${BUFFER[1,MEND-1]}"
+				if [[ "${BUFFER}" =~ " ${PAIR[1]}${PAIR[1]}" ]]; then
+					PREFIX="${BUFFER[1,MEND-2]}"
 					BODY="${BUFFER[MEND+1,-1]}"
 					if [[ "${BODY}" =~ '[a-zA-Z0-9_/.*-]+' ]]; then
 						BUFFER="${PREFIX}~[${PAIR[2]}:${BODY[MEGIN,MEND]}]${BODY[MEND+1,-1]}"

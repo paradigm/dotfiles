@@ -134,9 +134,8 @@ endfunction
 
 " -----------------------------------------------------------------------------
 " operator to filter through bc
-
 function! operators#filter_bc(type)
-	silent! call s:filter(a:type, 'bc -l')
+	silent! call s:filter(a:type, 'bc -l | sed "s/[.]0\+$//"')
 endfunction
 
 " -----------------------------------------------------------------------------

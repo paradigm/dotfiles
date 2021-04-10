@@ -22,7 +22,7 @@ run_in_window() {
 
 if ps -e -o comm | grep -q '^mpd$'
 then
-	ncmpcpp --now-playing
+	mpc status | head -n1
 elif ps -e -o comm | grep -q '^mocp$'
 then
 	if mocp --format "%title" | grep -q '.'
@@ -34,19 +34,22 @@ then
 elif ps -e -o comm | grep -q '^pianobar$'
 then
 	awk 'BEGIN{RS=".\x1B[[]2K";ORS="\n"}/^\|>  /{x=substr($0,5)}END{print x}' ~/.config/pianobar/out
-elif populate_wininfo "mpv - "
+elif populate_wininfo " - mpv"
 then
-	echo "$winname" | sed 's/^mpv - //'
+	echo "$winname" | sed 's/ - mpv$//'
 elif populate_wininfo "VLC media player"
 then
 	echo "$winname" | sed 's/ - VLC media player.*$//'
-#elif populate_wininfo "YouTube"
-#then
-#	echo "$winname" | sed 's/ - YouTube.*$//'
 elif populate_wininfo "Netflix"
 then
 	echo "Netflix"
 elif populate_wininfo "Twitch"
 then
 	echo "$winname" | sed 's/ - Twitch.*$//'
+elif populate_wininfo " . Prime Video"
+then
+	echo "$winname" | sed -e 's/^Watch //' -e 's/ . Prime Video.*$//'
+elif populate_wininfo "YouTube"
+then
+	echo "$winname" | sed 's/ - YouTube.*$//'
 fi

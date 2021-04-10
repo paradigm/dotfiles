@@ -36,6 +36,8 @@ bind M set modeindicator true
 bind --mode=normal <Insert> mode ignore
 bind --mode=ignore <Insert> mode normal
 
+bind ען focusinput -l
+
 bind Q composite sanitize tridactyllocal tridactylsync | source
 bindurl reddit.com e hint -c [data-event-action="comments"]
 bindurl reddit.com E hint -bc [data-event-action="comments"]
@@ -48,6 +50,9 @@ bindurl slack.com ;s hint -c [class="p-channel_sidebar__name" ]
 bindurl discord.com ;s hint -c [class*="content-" ]
 bindurl discord.com ;j hint -f jump to present
 bindurl discord.com ;m hint -f mark as read
+bindurl duolingo.com ]] hint -c [data-test="player-next"]
+bindurl duolingo.com [[ hint -c [data-test="player-next"]
+
 
 " bind > tabnext_gt
 " bind < tabprev

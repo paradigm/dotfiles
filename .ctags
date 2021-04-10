@@ -38,9 +38,10 @@
 
 --langdef=markdown
 --langmap=markdown:.md
---regex-markdown=/^#[ \t]+(\{.*\}[ \t]*)(.*)/\2/h,heading/
---regex-markdown=/^##[ \t]+(\{.*\}[ \t]*)(.*)/\2/s,subheading/
---regex-markdown=/^###[ \t]+(\{.*\}[ \t]*)(.*)/\2/S,subsubheading/
+--regex-markdown=/^#[ \t]+(.*)/\1/h,heading/
+--regex-markdown=/^##[ \t]+(.*)/\1/h,heading2/
+--regex-markdown=/^###[ \t]+(.*)/\1/h,heading3/
+--regex-markdown=/^####[ \t]+(.*)/\1/h,heading4/
 
 --langdef=asm68k
 --langmap=asm68k:.x68

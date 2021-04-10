@@ -92,3 +92,11 @@ setlocal errorformat=%f:%l:\ %m
 
 let b:runcmd = "pkill -HUP mupdf"
 let b:runquiet = 1
+
+if executable('texlab')
+	autocmd User lsp_setup call lsp#register_server({
+				\   'name': 'texlab',
+				\   'cmd': {server_info->['texlab']},
+				\   'whitelist': ['tex', 'plaintex', 'latex', 'context'],
+				\ })
+endif

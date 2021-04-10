@@ -55,7 +55,6 @@ function! Text_Obj_Inside_c_func()
 endfunction
 let b:sel_i_func="Text_Obj_Inside_c_func"
 
-
 " Regex to match #include macros.
 setlocal include&vim
 
@@ -75,22 +74,12 @@ let b:runpath = "./a.out"
 " Have 'K' open the man page in a preview window
 nnoremap <silent> <buffer> K :<c-u>call preview#man(expand("<cword>"), '')<cr>
 
-" If clang exists, use clang
-if exists('g:clang_complete_loaded')
-	" jump to declaration
-	" note g<c-]> is still available to access tag jump
-	nnoremap <buffer> <c-]>        :call support#push_stack()<cr>:call g:ClangGotoDeclaration()<cr>
-	" jump to declaration without using tag stack
-	nnoremap <buffer> gd           :call g:ClangGotoDeclaration()<cr>
-	" pop tag stack
-	nnoremap <buffer> <c-t>        :call support#pop_stack()<cr>
-	" preview declaration
-	nnoremap <buffer> <space>P     :call g:ClangGotoDeclarationPreview()<cr>
-	" preview declaration line
-	nnoremap <buffer> <space><c-p> :call preview#jump("call g:ClangGotoDeclaration()", 1)<cr>
-	" Use clang to lint
-	let b:lintcmd = "cd %:p:h | call ClangUpdateQuickFix() | cd -"
-	let b:linterrorformat = &l:errorformat
+if executable('clangd')
+	autocmd User lsp_setup call lsp#register_server({
+				\   'name': 'clangd',
+				\   'cmd': {server_info->['clangd']},
+				\   'whitelist': ['c'],
+				\ })
 endif
 
 call snippet#add(";main","

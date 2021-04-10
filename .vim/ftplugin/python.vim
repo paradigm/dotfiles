@@ -27,19 +27,10 @@ let b:lintprg = 'sh -c "pep8 %; pylint -r n -f parseable --include-ids=y % \\| '
 			\ '"'
 let b:linterrorformat='%f:%l:%c:\ %m'
 
-" If jedi exists, use jedi
-"
-" jedi doesn't seem to use a g:load... variable, but it does define :Pyimport
-" in plugin so we can check for that.
-if exists(":Pyimport")
-	" jump to definition
-	nnoremap <buffer> <c-]> :call support#push_stack()<cr>:call jedi#goto_definitions()<cr>
-	" jump to assignment
-	nnoremap <buffer> gd :call jedi#goto_assignments()<cr>
-	" pop tag stack
-	nnoremap <buffer> <c-t> :call support#pop_stack()<cr>
-	" preview declaration
-	nnoremap <buffer> <space>P :normal mP<cr>:pedit!<cr>:wincmd w<cr>:normal `P\d<cr>:wincmd w<cr>
-	" preview declaration line
-	nnoremap <buffer> <space><c-p> :call preview#jump("normal \\d", 1)<cr>
+if executable('pyls')
+	autocmd User lsp_setup call lsp#register_server({
+				\   'name': 'Python Language Server',
+				\   'cmd': {server_info->['pyls']},
+				\   'whitelist': ['python'],
+				\ })
 endif

@@ -22,7 +22,7 @@ run_in_window() {
 
 if ps -e -o comm | grep -q '^mpd$'
 then
-	ncmpcpp next
+	mpc next
 elif ps -e -o comm | grep -q '^mocp$'
 then
 	nocmp --next
@@ -35,13 +35,17 @@ then
 elif populate_wininfo "VLC media player"
 then
 	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers "n" && sleep 0.1'
-elif populate_wininfo "YouTube"
-then
-	false
 elif populate_wininfo "Netflix"
 then
-	false
+	# skip intro
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers "S" && sleep 0.1'
 elif populate_wininfo "Twitch"
 then
 	false
+elif populate_wininfo " . Prime Video"
+then
+	false
+elif populate_wininfo "YouTube"
+then
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers "N" && sleep 0.1'
 fi

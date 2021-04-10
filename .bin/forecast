@@ -34,6 +34,18 @@ cond_now="$(echo "${json}" | jq -r ".current.weather[0].description")"
 temp_now="$(echo "${json}" | jq -r ".current.temp" | cut -d. -f1)"
 range="$(echo "${json}" | jq -r ".hourly[0:13]")"
 
+score() {
+	# https://openweathermap.org/weather-conditions
+	i=0
+	for sev in "ash" "tornado" "squall" "freezing" "extreme" "thunderstorm" "very heavy" "heavy" "ragged" "moderate" "sleet" "snow" "light"; do
+		if echo "${1}" | grep -q "${sev}"; then
+			break
+		fi
+		i=$((i+1))
+	done
+	echo "${i}"
+}
+
 min=""
 max=""
 fore=""
@@ -46,16 +58,7 @@ for i in $(seq 1 12); do
 	if [ -z "${max}" ] || [ "${temp}" -gt "${max}" ]; then
 		max="${temp}"
 	fi
-	# https://openweathermap.org/weather-conditions
-	for sev in "tornado" "squall" "ash" "extreme" "very heavy" "heavy" "ragged" "moderate" "thunderstorm" "sleet" "snow" "light"; do
-		if ! echo "${cond}" | grep -qi "clear sky" &&\
-			! echo "${fore}" | grep -qi "${sev}" &&\
-			echo "${cond}" | grep -qi "${sev}"; then
-			fore="${cond}"
-			break
-		fi
-	done
-	if [ -z "${fore}" ]; then
+	if [ -z "${fore}" ] || [ "$(score "${cond}")" -lt "$(score "${fore}")" ]; then
 		fore="${cond}"
 	fi
 done

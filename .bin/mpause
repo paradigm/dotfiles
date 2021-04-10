@@ -22,7 +22,7 @@ run_in_window() {
 
 if ps -e -o comm | grep -q '^mpd$'
 then
-	ncmpcpp toggle
+	mpc toggle
 elif ps -e -o comm | grep -q '^mocp$'
 then
 	mocp --toggle-pause
@@ -35,16 +35,22 @@ then
 elif populate_wininfo "VLC media player"
 then
 	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
-elif populate_wininfo "YouTube"
-then
-	window_width=$(xdotool getwindowgeometry "$winid" | awk '$1 == "Geometry:" {print$2}' | cut -dx -f1)
-	cursor_x_pos=$(expr $window_width / 2 - 100)
-	run_in_window 'xdotool mousemove --window "$winid" "$cursor_x_pos" 100 && xdotool click --clearmodifiers 1'
 elif populate_wininfo "Netflix"
 then
-	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
+	# Space is inconsistent due to UI element focus concerns
+	# Clicking in top-left corner hits Firefox chrome.  Click just slightly down.
+	run_in_window 'sleep 0.1 \
+		&& xdotool mousemove --window "$winid" "1" "50" \
+		&& xdotool click --clearmodifiers 1 \
+		&& sleep 0.1'
 elif populate_wininfo "Twitch"
 then
 	# assumes fullscreen
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
+elif populate_wininfo " . Prime Video"
+then
+	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
+elif populate_wininfo "YouTube"
+then
 	run_in_window 'sleep 0.1 && xdotool type --clearmodifiers " " && sleep 0.1'
 fi

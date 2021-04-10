@@ -2,6 +2,8 @@
 .bin/conctl
 .bin/connate
 .cache
+.cargo/*
+.chore/default-filters/*
 .config/QtProject.conf
 .config/Trolltech.conf
 .config/beets
@@ -11,6 +13,7 @@
 .forecast
 .gcalcli_cache
 .gcalcli_oauth
+.go/*
 .kube
 .local/share
 .mail
@@ -19,6 +22,7 @@
 .ocm.json
 .pulse*
 .run
+.rustup
 .src
 .steam*
 .vim/dictionary

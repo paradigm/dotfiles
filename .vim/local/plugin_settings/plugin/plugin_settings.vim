@@ -28,11 +28,47 @@ let g:EclimJavaValidate = 0
 " With JavaSearch/JavaSearchContextalways jump to definition in current window
 let g:EclimJavaSearchSingleResult = 'edit'
 
-let g:ale_sign_error = 'EE'
-let g:ale_sign_warning = 'WW'
-
-" rust completion
-let g:racer_cmd = 'racer'
-let $RUST_SRC_PATH=$HOME . "/.vim/remote/rust/src/"
-
 let g:languagetool_jar = "/bedrock/strata/arch/usr/share/java/languagetool/languagetool-commandline.jar"
+
+" vim-lsp
+function! s:on_lsp_buffer_enabled() abort
+	setlocal omnifunc=lsp#complete
+	setlocal signcolumn=yes
+	if exists('+tagfunc')
+		setlocal tagfunc=lsp#tagfunc
+	endif
+
+	let g:lsp_diagnostics_highlights_enabled = 0
+	let g:lsp_document_highlight_enabled = 0
+	let g:lsp_diagnostics_echo_movement = 1
+	let g:lsp_document_code_action_signs_enabled = 0
+
+	highlight link LspErrorText Normal
+	highlight link LspWarningText Comment
+	highlight link LspInformationText Comment
+	highlight link LspHintText Comment
+
+	nmap <buffer> <c-]> <plug>(lsp-definition)
+	nmap <buffer> gd <plug>(lsp-definition)
+	nmap <buffer> g<c-]> <plug>(lsp-declaration)
+	nmap <buffer> <backspace> <plug>(lsp-document-symbol-search)
+	nmap <buffer> g<backspace> <plug>(lsp-workspace-symbol-search)
+	"" doesn't work with e.g. rust-analyzer, detect where it does before setting it
+	" nmap <buffer> gq <plug>(lsp-document-range-format)
+	nmap <buffer> <space>l <plug>(lsp-document-diagnostics)
+	nmap <buffer> <space>L <plug>(lsp-preview-diagnostic)
+	nmap <buffer> ]q <plug>(lsp-next-diagnostic-nowrap)
+	nmap <buffer> [q <plug>(lsp-previous-diagnostic-nowrap)
+	nmap <buffer> <c-w>} <plug>(lsp-peek-definition)
+	nmap <buffer> <space>P <plug>(lsp-peek-definition)
+	nmap <buffer> gr <plug>(lsp-references)
+	nmap <buffer> gi <plug>(lsp-implementation)
+	nmap <buffer> K <plug>(lsp-hover)
+	" nmap <buffer> <space>rn <plug>(lsp-rename) " just call :LspRename
+	" nmap <buffer> <space>p <plug>(lsp-preview-close)
+endfunction
+augroup lsp_install
+	au!
+	" call s:on_lsp_buffer_enabled only for languages that has the server registered.
+	autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END

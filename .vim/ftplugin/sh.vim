@@ -45,3 +45,11 @@ syn region AWKScriptCode matchgroup=AWKCommand start=+[=\\]\@<!'+ skip=+\\'+ end
 syn region AWKScriptEmbedded matchgroup=AWKCommand start=+\<awk\>+ skip=+\\$+ end=+[=\\]\@<!'+me=e-1 contains=@shIdList,@shExprList2 nextgroup=AWKScriptCode
 syn cluster shCommandSubList add=AWKScriptEmbedded
 hi def link AWKCommand Type
+
+if executable('bash-language-server')
+	autocmd User lsp_setup call lsp#register_server({
+				\   'name': 'Bash Language Server',
+				\   'cmd': {server_info->['bash-language-server', 'start']},
+				\   'whitelist': ['sh', 'bash', 'zsh'],
+				\ })
+endif

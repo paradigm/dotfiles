@@ -59,15 +59,15 @@ set runtimepath+=~/.vim/local/edit
 set runtimepath+=~/.vim/local/tagcallgraph
 set runtimepath+=~/.vim/local/general_increment
 set runtimepath+=~/.vim/local/abook
-set runtimepath+=~/.vim/local/languagetool
 
 set runtimepath+=~/.vim/remote/AnsiEsc.vim/
-set runtimepath+=~/.vim/remote/clang_complete/
-set runtimepath+=~/.vim/remote/vim-fugitive/
-set runtimepath+=~/.vim/remote/vim-go/
-set runtimepath+=~/.vim/remote/vim-ledger/
-set runtimepath+=~/.vim/remote/vim-zsh-completion/
 set runtimepath+=~/.vim/remote/LanguageTool/
+set runtimepath+=~/.vim/remote/tabular
+set runtimepath+=~/.vim/remote/vim-fugitive/
+set runtimepath+=~/.vim/remote/vim-ledger/
+set runtimepath+=~/.vim/remote/vim-lsp/
+set runtimepath+=~/.vim/remote/vim-toml/
+set runtimepath+=~/.vim/remote/vim-zsh-completion/
 
 " scripts bundled with vim
 set runtimepath+=$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after

@@ -64,9 +64,10 @@ if &t_Co == 256 && filereadable($HOME . "/.themes/current/terminal/256-theme")
 endif
 
 if loaded_colors
-	" ------------------------------------------------------------------------------
-	" - general_syntax_(theme)                                                     -
-	" ------------------------------------------------------------------------------
+" ------------------------------------------------------------------------------
+" - general_syntax_(theme)                                                     -
+" ------------------------------------------------------------------------------
+
 	execute "highlight Comment    cterm   = NONE"
 	execute "highlight Comment    ctermfg = " . theme_insensitive_fg
 	execute "highlight Comment    ctermbg = " . theme_insensitive_bg
@@ -184,6 +185,7 @@ if loaded_colors
 	execute "highlight FoldColumn   ctermbg = " . theme_normal_bg
 	execute "highlight SpellRare    ctermfg = NONE"
 	execute "highlight SpellRare    ctermbg = NONE"
+
 else
 	"	echoerr "Could not load 'currentterm' theme - probably problem with t_Co or ~/.themes/current/terminal/<t_Co>-theme"
 endif

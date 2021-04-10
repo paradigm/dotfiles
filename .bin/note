@@ -1,0 +1,83 @@
+#!/bin/sh
+set -eu
+
+enforce_one_section() {
+	if ! grep '^[^[:space:]]' ~/.notes | grep -q "${1}"; then
+		echo "Could not find corresponding section" >&2
+		exit 1
+	elif [ "$(grep '^[^[:space:]]' ~/.notes | grep -c "${1}")" -ne 1 ]; then
+		echo "Found more than one section:" >&2
+		grep '^[^[:space:]]' ~/.notes | grep "${1}" | sed 's/^/  /g'
+		exit 1
+	fi
+}
+
+new_section() {
+	section="${1}"
+	shift
+	echo "" > ~/.notes
+	echo "${section}" > ~/.notes
+	echo "created '${section}'"
+
+	if [ -n "${@:-}" ]; then
+		add_note "${section}" "${@}"
+	fi
+}
+
+add_note() {
+	section="${1}"
+	shift
+	body="${@}"
+	enforce_one_section "${section}"
+	awk -v"s=${section}" -v"b=${body}" '
+		in_section && ($0 == "" || /^[^[:space:]]/) {
+			printf "\t%s\n", b
+			in_section = 0
+			printed_body = 1
+		}
+		/^[^[:space:]]/ && tolower($0) ~ tolower(s) {
+			in_section = 1
+		}
+		{
+			print
+		}
+		END {
+			if (!printed_body) {
+				printf "\t%s\n", b
+			}
+		}
+	' ~/.notes > ~/.notes-new
+	cp ~/.notes-new ~/.notes && rm ~/.notes-new
+	echo "added '${body}' to '${section}'"
+}
+
+read_section() {
+	enforce_one_section "${1}"
+	awk -v "s=${1}" '
+		$0 == "" || /^[^[:space:]]/ {
+			in_section = 0
+		}
+		/^[^[:space:]]/ && tolower($0) ~ tolower(s) {
+			in_section = 1
+		}
+		in_section {
+			print
+		}
+	' ~/.notes
+}
+
+if [ -z "${1:-}" ]; then
+	echo "no section specified" >&2
+	exit 1
+elif [ "${1}" = "NEW" ]; then
+	shift
+	section="${1}"
+	shift
+	new_section "${section}" "${@}"
+elif [ -n "${2:-}" ]; then
+	section="${1}"
+	shift
+	add_note "${section}" "${@}"
+else
+	read_section "${1}"
+fi

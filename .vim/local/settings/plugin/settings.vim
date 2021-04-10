@@ -96,3 +96,14 @@ execute "set thesaurus=" . $HOME . '/.vim/thesaurus'
 " Note that the last field is populated by non-words.  Ensure "spell" is
 " placed before the def dictionary so it has a higher priority.
 execute "set dictionary=spell," . $HOME . '/.vim/dictionary'
+
+" use ripgrep if available
+if executable('rg')
+	set grepprg=rg\ --vimgrep
+endif
+
+" vim 8.1.2194 changed how keys are read in some terminals, such as xterm.
+" See `:help modifyOtherKeys`
+" This broke things like `ctrl-f` and `A` in the cmdline-window.  Undo it.
+let &t_TI = ""
+let &t_TE = ""
