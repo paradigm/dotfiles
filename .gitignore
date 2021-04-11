@@ -29,6 +29,7 @@
 .vim/spell
 .vim/swap
 .vim/tags
+.vim/thesaurus
 .vim/undo
 .viminfo
 .zsh
