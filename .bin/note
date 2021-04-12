@@ -15,8 +15,8 @@ enforce_one_section() {
 new_section() {
 	section="${1}"
 	shift
-	echo "" > ~/.notes
-	echo "${section}" > ~/.notes
+	echo "" >> ~/.notes
+	echo "${section}" >> ~/.notes
 	echo "created '${section}'"
 
 	if [ -n "${@:-}" ]; then
