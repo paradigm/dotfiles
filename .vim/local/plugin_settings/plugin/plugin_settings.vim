@@ -37,6 +37,7 @@ function! s:on_lsp_buffer_enabled() abort
 	if exists('+tagfunc')
 		setlocal tagfunc=lsp#tagfunc
 	endif
+	autocmd BufWritePre <buffer> LspDocumentFormatSync
 
 	let g:lsp_diagnostics_highlights_enabled = 0
 	let g:lsp_document_highlight_enabled = 0
