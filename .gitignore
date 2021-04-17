@@ -8,12 +8,15 @@
 .config/Trolltech.conf
 .config/beets
 .config/htop
+.config/ncmpcpp/error.log
 .config/pulse
+.config/vlc
 .dirtags
 .forecast
 .gcalcli_cache
 .gcalcli_oauth
 .go/*
+.java
 .kube
 .local/share
 .mail
