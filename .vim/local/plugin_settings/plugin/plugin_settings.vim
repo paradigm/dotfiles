@@ -28,8 +28,6 @@ let g:EclimJavaValidate = 0
 " With JavaSearch/JavaSearchContextalways jump to definition in current window
 let g:EclimJavaSearchSingleResult = 'edit'
 
-let g:languagetool_jar = "/bedrock/strata/arch/usr/share/java/languagetool/languagetool-commandline.jar"
-
 " vim-lsp
 function! s:on_lsp_buffer_enabled() abort
 	setlocal omnifunc=lsp#complete

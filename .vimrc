@@ -60,9 +60,9 @@ set runtimepath+=~/.vim/local/tagcallgraph
 set runtimepath+=~/.vim/local/general_increment
 set runtimepath+=~/.vim/local/abook
 set runtimepath+=~/.vim/local/chore
+set runtimepath+=~/.vim/local/languagetool/
 
 set runtimepath+=~/.vim/remote/AnsiEsc.vim/
-set runtimepath+=~/.vim/remote/LanguageTool/
 set runtimepath+=~/.vim/remote/tabular
 set runtimepath+=~/.vim/remote/vim-fugitive/
 set runtimepath+=~/.vim/remote/vim-ledger/

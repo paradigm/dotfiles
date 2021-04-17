@@ -18,10 +18,6 @@
 	path = .vim/remote/vim-zsh-completion
 	url = https://github.com/Valodim/vim-zsh-completion.git
 	ignore = dirty
-[submodule ".vim/remote/LanguageTool"]
-	path = .vim/remote/LanguageTool
-	url = https://github.com/vim-scripts/LanguageTool.git
-	ignore = dirty
 [submodule ".vim/remote/vim-lsp"]
 	path = .vim/remote/vim-lsp
 	url = git@github.com:paradigm/vim-lsp.git
