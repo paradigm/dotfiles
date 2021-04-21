@@ -22,5 +22,5 @@
 	path = .vim/remote/vim-lsp
 	url = git@github.com:paradigm/vim-lsp.git
 [submodule "vim-toml"]
-	path = vim-toml
+	path = .vim/remote/vim-toml
 	url = https://github.com/cespare/vim-toml.git
