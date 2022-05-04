@@ -1,9 +1,66 @@
 #!/bin/sh
-time="${1}"
+
+now="$(date +%s)"
+target="${1}"
+unit="$(echo "${target}" | sed 's/[0-9.]//g')"
+target="$(echo "${target}" | sed 's/[^0-9.]//g')"
+# need bc rather than $((...)) to handle decimal inputs e.g. 1.5m
+case "${unit}" in
+	"s") target="$(echo "${now} + ${target}" | bc)" ;;
+	"m") target="$(echo "${now} + ${target} * 60" | bc)" ;;
+	"h") target="$(echo "${now} + ${target} * 60 * 60" | bc )" ;;
+	"d") target="$(echo "${now} + ${target} * 60 * 60 * 24" | bc )" ;;
+esac
+target="$(echo "${target}" | sed 's/[.].*$//')"
 shift
+
 if [ -z "${1:-}" ]; then
 	msg="timer expired"
 else
 	msg="${@}"
 fi
-sleep "${time}" && notify-send -u critical "${msg}"
+
+while :; do
+	now="$(date +%s)"
+	remaining="$(( target - now ))"
+	if [ "${remaining}" -le 0 ]; then
+		notify-send -u critical "${msg}"
+		printf "\r%s " "${msg} done"
+		exit
+	fi
+
+	days="$(( remaining / 60 / 60 / 24 ))"
+	hours="$(( remaining / 60 / 60 % 24 ))"
+	minutes="$(( remaining / 60 % 60 ))"
+	seconds="$(( remaining % 60 ))"
+
+	output="$(
+		fmt="%d"
+		if [ "${days}" -gt 0 ]; then
+			printf "${fmt}d" "${days}"
+			fmt="%02d"
+		fi
+		if [ "${days}" -gt 0 ] || [ "${hours}" -gt 0 ]; then
+			printf "${fmt}h" "${hours}"
+			fmt="%02d"
+		fi
+		if [ "${days}" -gt 0 ] || [ "${hours}" -gt 0 ] || [ "${minutes}" -gt 0 ]; then
+			printf "${fmt}m" "${minutes}"
+			fmt="%02d"
+		fi
+		printf "${fmt}s %s\n" "${seconds}" "${msg}"
+	)"
+	printf "\r%s " "${output}"
+	sleep 1
+done
+
+### Old simple version
+# #!/bin/sh
+# time="${1}"
+# shift
+# if [ -z "${1:-}" ]; then
+# 	msg="timer expired"
+# else
+# 	msg="${@}"
+# fi
+# sleep "${time}" && notify-send -u critical "${msg}"

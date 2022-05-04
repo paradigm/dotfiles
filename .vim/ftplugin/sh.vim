@@ -47,6 +47,7 @@ syn cluster shCommandSubList add=AWKScriptEmbedded
 hi def link AWKCommand Type
 
 if executable('bash-language-server')
+	let lsp_format_on_save=1
 	autocmd User lsp_setup call lsp#register_server({
 				\   'name': 'Bash Language Server',
 				\   'cmd': {server_info->['bash-language-server', 'start']},

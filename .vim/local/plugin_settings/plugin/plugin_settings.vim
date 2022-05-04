@@ -29,23 +29,26 @@ let g:EclimJavaValidate = 0
 let g:EclimJavaSearchSingleResult = 'edit'
 
 " vim-lsp
+let g:lsp_signature_help_enabled = 0 " does not work in defined function, must be before any lsp code
 function! s:on_lsp_buffer_enabled() abort
 	setlocal omnifunc=lsp#complete
-	setlocal signcolumn=yes
 	if exists('+tagfunc')
 		setlocal tagfunc=lsp#tagfunc
 	endif
-	autocmd BufWritePre <buffer> LspDocumentFormatSync
+	if exists("lsp_format_on_save") && lsp_format_on_save
+		autocmd BufWritePre <buffer> LspDocumentFormatSync
+	endif
 
-	let g:lsp_diagnostics_highlights_enabled = 0
-	let g:lsp_document_highlight_enabled = 0
 	let g:lsp_diagnostics_echo_movement = 1
+	let g:lsp_diagnostics_highlights_enabled = 0
 	let g:lsp_document_code_action_signs_enabled = 0
+	let g:lsp_document_highlight_enabled = 0
 
+	" Against subdued numbers, Normal signs stand out adequately
 	highlight link LspErrorText Normal
+	highlight link LspHintText Normal
 	highlight link LspWarningText Comment
 	highlight link LspInformationText Comment
-	highlight link LspHintText Comment
 
 	nmap <buffer> <c-]> <plug>(lsp-definition)
 	nmap <buffer> gd <plug>(lsp-definition)
@@ -63,6 +66,7 @@ function! s:on_lsp_buffer_enabled() abort
 	nmap <buffer> gr <plug>(lsp-references)
 	nmap <buffer> gi <plug>(lsp-implementation)
 	nmap <buffer> K <plug>(lsp-hover)
+	nnoremap <buffer> gx :LspCodeAction quickfix<cr>
 	" nmap <buffer> <space>rn <plug>(lsp-rename) " just call :LspRename
 	" nmap <buffer> <space>p <plug>(lsp-preview-close)
 endfunction

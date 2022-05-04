@@ -1,38 +1,10 @@
 #!/bin/sh
-# wrapper for steam to fix minor annoyances
-
-cd /
-
-# max memory limit in kilobytes
-ulimit -m "$(expr 1024 \* 1024 \* 24)"
-# virtual limit in kilobytes
-ulimit -v "$(expr 1024 \* 1024 \* 24)"
-
-## use alsa for sound
-#export SDL_AUDIODRIVER=ALSA
-## use pulse for sound
-#export SDL_AUDIODRIVER=pulseaudio
-#export SDL_AUDIODRIVER=pulse
-#export SDL_AUDIODRIVER=PulseAudio
-
-# fix locale
-#export LOCALE=C
-
-# fix supreme commander
-# fix disco elysium
-#export PROTON_NO_ESYNC=1
-# if esync out of fd errors, increase hard limit via /etc/security/limits.conf or .d
-
-# fix for intel graphics
-if [ "$(uname -n)" = "am" ]; then
-	export MESA_EXTENSION_OVERRIDE='GL_EXT_texture_filter_anisotropic'
-fi
 
 # disable xcape in games
 init_xcape_status="$(conctl s xcape | awk -F'[ ,]' '{print$5}')"
 conctl d xcape
-/bedrock/cross/bin/sudo -u games /bedrock/cross/bin/steam "${@}"
-/bedrock/cross/bin/sudo -u games /bedrock/cross/bin/steam-clean-up
+
+/bedrock/cross/bin/sudo -u games /bedrock/strata/debian/usr/local/bin/steam-wrap
 
 # restore cursor
 xsetroot -cursor_name left_ptr

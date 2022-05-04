@@ -1,0 +1,14 @@
+#!/bin/sh
+if ! time="$(date -d "${1}" +%s)"; then
+	exit 1
+fi
+shift
+if [ -z "${1:-}" ]; then
+	msg="alarm expired"
+else
+	msg="${@}"
+fi
+now="$(date +%s)"
+seconds=$(expr ${time} - ${now})
+printf "Alarm set for %s\n" "$(date -d "@${time}")"
+sleep "${seconds}" && notify-send -u critical "${msg}"

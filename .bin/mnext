@@ -20,7 +20,7 @@ run_in_window() {
 	xdotool mousemove "$X" "$Y"
 }
 
-if ps -e -o comm | grep -q '^mpd$'
+if ps -e -o comm | grep -q '^mpd$' && [ "$(mpc | wc -l)" -gt 1 ]
 then
 	mpc next
 elif ps -e -o comm | grep -q '^mocp$'

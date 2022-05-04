@@ -1,5 +1,5 @@
 [Configuration]
-FontName=Terminus (TTF) Medium 9
+FontName=Terminus (TTF) Medium 18
 MiscAlwaysShowTabs=FALSE
 MiscBell=FALSE
 MiscBellUrgent=FALSE
@@ -25,4 +25,7 @@ MiscRewrapOnResize=TRUE
 MiscUseShiftArrowsToScroll=FALSE
 MiscSlimTabs=FALSE
 MiscNewTabAdjacent=FALSE
+ScrollingBar=TERMINAL_SCROLLBAR_NONE
+MiscSearchDialogOpacity=100
+MiscShowUnsafePasteDialog=TRUE
 

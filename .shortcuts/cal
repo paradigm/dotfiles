@@ -1,2 +1,2 @@
 #!/data/data/com.termux/files/usr/bin/sh
-remind -c12 -g -q ~/.reminders | vim - +'set buftype=nofile'
+remind -cu12 -g -q ~/.reminders | sed 's///' | vim - +'set buftype=nofile' '+/<TODAY>'

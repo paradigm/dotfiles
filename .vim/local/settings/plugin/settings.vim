@@ -34,6 +34,11 @@ set number
 if exists('&relativenumber')
 	set relativenumber
 endif
+if has("patch-8.1.1910")
+	set signcolumn=number
+else
+	set signcolumn=yes
+endif
 " Always show cursor position in statusline.
 set ruler
 " Default color scheme should assume dark background.
@@ -43,7 +48,7 @@ set title
 " Enable wordwrap
 set textwidth=0 wrap linebreak
 " Enable unicode characters.  This is needed for the 'listchars' below.
-" nvim does this by default and warns if this is explicitly set"
+" nvim does this by default and warns if this is explicitly set
 if !has("nvim")
 	set encoding=utf-8
 endif

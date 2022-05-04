@@ -59,7 +59,7 @@ bindurl duolingo.com [[ hint -c [data-test="player-next"]
 " bind <c-n> tabnext_gt "firefox disallows this from working
 " bind <c-p> tabprev
 
-quickmark B https://www.google.com/search?q=%22bedrock+linux%22+-%22elementaryOS%22+-%22meterpreter.org%22&tbs=qdr:w&filter=0&biw=2560&bih=1384
+quickmark B https://www.google.com/search?q=%22bedrock+linux%22+-%22elementaryOS%22+-%22meterpreter.org%22+-%22hullcitytigers.com%22+-%22distrowatch.com%22&tbs=qdr%3Aw
 quickmark b https://bedrocklinux.org
 quickmark d about:downloads
 quickmark g https://google.com

@@ -10,7 +10,7 @@ populate_wininfo() {
 	[ -n "$winid" ] && winname="$(xdotool getwindowname "$winid")"
 }
 
-if ps -e -o comm | grep -q '^mpd$'
+if ps -e -o comm | grep -q '^mpd$' && [ "$(mpc | wc -l)" -gt 1 ]
 then
 	uxterm -e ncmpcpp
 elif ps -e -o comm | grep -q '^mocp$'

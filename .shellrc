@@ -72,7 +72,9 @@ fi
 # ==============================================================================
 
 for dir in .bin .priv .go/bin .cargo/bin; do
-	if ! echo "${PATH}" | grep -q "\(:\|^\)${HOME}/${dir}\(:\|$\)"; then
+	if echo "${PATH}" | grep -q "\(:\|^\)${HOME}/${dir}:"; then
+		export PATH="${HOME}/${dir}:$(echo "${PATH}" | sed "s,:${HOME}/${dir}:,:,")"
+	else
 		export PATH="${HOME}/${dir}:${PATH}"
 	fi
 done
@@ -282,12 +284,14 @@ alias ls="ls --color=auto -h"
 alias octave="octave --silent"
 alias xpdfr="xpdf -remote 127.0.0.1"
 alias xpdfv="xpdf -rv"
-alias rem="remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$'"
-alias remn="remind -n -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$' | sort"
-alias remcal="remind -c1 -g -q ~/.reminders"
-alias remyear="remind -c12 -g -q ~/.reminders"
+rem() {
+	# $@ can be start date e.g. 2020-01-01
+	remind -cu12 -g -q ~/.reminders $@ |\
+		sed 's///' |\
+		vim - +'set buftype=nofile' '+/<TODAY>'
+}
 alias balance='ledger balance'
-alias register='ledger register'
+alias register='ledger register --no-revalued'
 alias wine32='WINEPREFIX=~/.wine32/ WINEARCH=win32 wine'
 
 alias ga="git add"
@@ -323,12 +327,12 @@ fi
 if [ -x /bedrock/bin/brl ]; then
 	for stratum in $(brl list -aA)
 	do
-		command -v "${stratum}" >/dev/null 2>&1 && continue
-		alias "${stratum}"="strat ${stratum}"
-		alias "r${stratum}"="strat -r ${stratum}"
-		alias "u${stratum}"="strat -u ${stratum}"
-		alias "s${stratum}"="sudo strat ${stratum}"
 		hash -d "${stratum}"="/bedrock/strata/${stratum}"
+		command -v "${stratum}" >/dev/null 2>&1 && continue
+		alias "${stratum}=strat ${stratum}"
+		alias "r${stratum}=strat -r ${stratum}"
+		alias "u${stratum}=strat -u ${stratum}"
+		alias "s${stratum}=sudo strat ${stratum}"
 	done
 fi
 

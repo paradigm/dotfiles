@@ -8,6 +8,8 @@
 *.fastScroll: true
 xterm*font: -xos4-terminus-medium-r-normal-*-12-*-*-*-*-*-*-*
 *.colorBD: #888888
+! Default blue shade is difficult to read on some monitors/projectors.  Lighten it a bit.
+xterm*color4: #4444ff
 ! have urls in xterm act as one word so it can be double-clicked to select
 XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
 Xcursor.size: 12

@@ -25,7 +25,6 @@ function! dictionary#dictionary_add(word)
 	endif
 
 	redraw
-	echo "Looking up \"" . a:word . "\"..."
 
 	let apikey = systemlist("echo 'dictionaryapi.com-dictionary-api-key' | ekvs quiet get")
 	if len(apikey) == 0
@@ -48,7 +47,6 @@ function! dictionary#dictionary_add(word)
 	endif
 	let dictionary += [a:word . "|" . response]
 	call writefile(dictionary, dictionaryfile)
-	echon " done"
 endfunction
 
 function! dictionary#define(word)
@@ -110,7 +108,6 @@ function! dictionary#thesaurus_add(word)
 	endif
 
 	redraw
-	echo "Looking up \"" . a:word . "\"..."
 
 	let apikey = systemlist("echo 'dictionaryapi.com-thesaurus-api-key' | ekvs quiet get")
 	if len(apikey) == 0
@@ -140,7 +137,6 @@ function! dictionary#thesaurus_add(word)
 	endif
 	let thesaurus += [entry]
 	call writefile(thesaurus, thesaurusfile)
-	echon " done"
 endfunction
 
 function! dictionary#synonymize(word)

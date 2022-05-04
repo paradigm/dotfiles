@@ -44,6 +44,8 @@ user_pref("signon.rememberSignons", false);
 
 user_pref("browser.autofocus", false);
 
+user_pref("layers.acceleration.force-enabled", true);
+
 user_pref("media.videocontrols.picture-in-picture.video-toggle.enabled", false);
 
 user_pref("browser.defaultenginename", "Google");

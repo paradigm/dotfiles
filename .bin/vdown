@@ -1,2 +1,2 @@
 #!/bin/sh
-amixer set Master 10- >/dev/null
+amixer set Master 5- >/dev/null

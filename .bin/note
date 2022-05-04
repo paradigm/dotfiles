@@ -1,6 +1,10 @@
 #!/bin/sh
 set -eu
 
+list_sections() {
+	grep '^[^[:space:]]' ~/.notes
+}
+
 enforce_one_section() {
 	if ! grep '^[^[:space:]]' ~/.notes | grep -q "${1}"; then
 		echo "Could not find corresponding section" >&2
@@ -67,8 +71,10 @@ read_section() {
 }
 
 if [ -z "${1:-}" ]; then
-	echo "no section specified" >&2
+	echo "no command or section specified" >&2
 	exit 1
+elif [ "${1}" = "LIST" ]; then
+	list_sections
 elif [ "${1}" = "NEW" ]; then
 	shift
 	section="${1}"

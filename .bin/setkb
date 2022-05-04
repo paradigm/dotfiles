@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if xset -q | grep -q 'Caps Lock: *on'; then
+	xdotool key Caps_Lock
+fi
+
 if [ "${2}" ]; then
 	setxkbmap -layout "${1}" -variant "${2}"
 else

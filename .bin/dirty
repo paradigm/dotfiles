@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eux
+[ $(id -u) -eq 0 ]
+watch -n0.1 grep Dirty /proc/meminfo &
+pid=$!
+sync
+kill $!

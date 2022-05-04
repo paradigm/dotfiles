@@ -21,9 +21,14 @@ endfunction
 let b:sel_i_func="Text_Obj_Inside_rust_func"
 
 if executable('rust-analyzer')
+	let lsp_format_on_save=1
 	autocmd User lsp_setup call lsp#register_server({
 				\   'name': 'Rust Language Server',
 				\   'cmd': {server_info->['rust-analyzer']},
 				\   'whitelist': ['rust'],
 				\ })
+				" slow
+				" \   'workspace_config': {'rust-analyzer': {
+				" \       'checkOnSave': {'command':'clippy'},
+				" \    }},
 endif
