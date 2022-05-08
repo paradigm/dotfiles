@@ -15,7 +15,7 @@ then
 	POWER_NOW=$(cat power_now)
 	STATUS=$(cat status)
 
-	if [ $STATUS = "Discharging" ]; then
+	if [ "${STATUS}" = "Discharging" ]; then
 		P=$(expr 100 \* $ENERGY_NOW / $ENERGY_FULL)
 		H=$(expr $ENERGY_NOW / $POWER_NOW)
 		M=$(expr 60 \* $ENERGY_NOW / $POWER_NOW - 60 \* $H)

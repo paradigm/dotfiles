@@ -20,34 +20,48 @@ connect_ethernet() {
 }
 
 connect_wifi() {
-	printf "Preparing wifi card... "
+	printf "Preparing wifi device... "
 	ip link set "${1}" down
 	pkill wpa_supplicant >/dev/null 2>&1
 	pkill dhclient >/dev/null 2>&1
-	if lsmod | grep -q iwlwifi; then
-		rmmod iwldvm >/dev/null 2>&1
-		rmmod iwlwifi >/dev/null 2>&1
-		modprobe iwlwifi >/dev/null 2>&1
-		modprobe iwldvm >/dev/null 2>&1
+	#if lsmod | grep -q iwlwifi; then
+	#	rmmod iwldvm >/dev/null 2>&1
+	#	rmmod iwlwifi >/dev/null 2>&1
+	#	rmmod ath11k_pci >/dev/null 2>&1
+	#	modprobe iwlwifi >/dev/null 2>&1
+	#	modprobe iwldvm >/dev/null 2>&1
+	#fi
+	#if lsmod | grep -q rtlwifi; then
+	#	rmmod rtl8192cu >/dev/null 2>&1
+	#	rmmod rtl_usb >/dev/null 2>&1
+	#	rmmod rtl8192c_common >/dev/null 2>&1
+	#	rmmod rtlwifi >/dev/null 2>&1
+	#	modprobe rtlwifi >/dev/null 2>&1
+	#	modprobe rtl8192c_common >/dev/null 2>&1
+	#	modprobe rtl_usb >/dev/null 2>&1
+	#	modprobe rtl8192cu >/dev/null 2>&1
+	#fi
+	if dmesg | grep -q "ath11k_pci"; then
+		rmmod ath11k >/dev/null 2>&1
+		rmmod ath11k_pci >/dev/null 2>&1
+		modprobe ath11k >/dev/null 2>&1
+		modprobe ath11k_pci >/dev/null 2>&1
 	fi
-	if lsmod | grep -q rtlwifi; then
-		rmmod rtl8192cu >/dev/null 2>&1
-		rmmod rtl_usb >/dev/null 2>&1
-		rmmod rtl8192c_common >/dev/null 2>&1
-		rmmod rtlwifi >/dev/null 2>&1
-		modprobe rtlwifi >/dev/null 2>&1
-		modprobe rtl8192c_common >/dev/null 2>&1
-		modprobe rtl_usb >/dev/null 2>&1
-		modprobe rtl8192cu >/dev/null 2>&1
-	fi
-	sleep 2
-	ip link set "${1}" up
-	sleep 2
+	end="$(( $(date +%s) + 3 ))"
+	while ! ip link set "${1}" up >/dev/null 2>&1 && [ "$(date +%s)" -lt "${end}" ]; do
+		sleep 0.1
+	done
+
+	end="$(( $(date +%s) + 10 ))"
+	scan="$(iwlist "${1}" scan 2>/dev/null)"
+	while [ "$(echo "${scan}" | wc -l)" -le 1 ] && [ "$(date +%s)" -lt "${end}" ]; do
+		scan="$(iwlist "${1}" scan 2>/dev/null)"
+	done
 	echo "done"
 
 	printf "Determining wifi network... "
 	saved="$(grep "^$(id -un):" /etc/passwd | awk -F: '{print$6}')/.networks"
-	network_and_pass="$(iwlist "${1}" scan | awk -F'[=:"/]' -v"n=${saved}" '
+	network_and_pass="$(echo "${scan}" | awk -F'[=:"/]' -v"n=${saved}" '
 	BEGIN {
 		while ((getline < n) > 0) {
 			split($0,a,"\t\t*")
@@ -118,10 +132,10 @@ test_connection() {
 
 printf "Determining network interface... "
 netif=""
-if eth_if="$(basename /sys/class/net/e* 2>/dev/null | head -n1)"; then
+if eth_if="$(ls /sys/class/net/e* >/dev/null 2>&1 && basename /sys/class/net/e* 2>/dev/null | head -n1)"; then
 	if ! ip link show "${eth_if}" | grep "state UP"; then
 		ip link set "${eth_if}" up
-		sleep 5
+		sleep 2
 	fi
 	if grep -q "1" "/sys/class/net/${eth_if}/carrier"; then
 		echo "${eth_if}"
@@ -131,7 +145,7 @@ if eth_if="$(basename /sys/class/net/e* 2>/dev/null | head -n1)"; then
 	fi
 fi
 
-if wifi_if="$(basename /sys/class/net/w* 2>/dev/null | head -n1)"; then
+if wifi_if="$(ls /sys/class/net/w* >/dev/null 2>&1 && basename /sys/class/net/w* 2>/dev/null | head -n1)"; then
 	echo "${wifi_if}"
 	connect_wifi "${wifi_if}"
 	test_connection

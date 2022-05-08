@@ -1,0 +1,27 @@
+#!/bin/sh
+
+printf "Disabling networking"
+
+if wifi_if="$(ls /sys/class/net/w* >/dev/null 2>&1 && basename /sys/class/net/w* 2>/dev/null | head -n1)"; then
+	ip link set "${wifi_if}" down
+fi
+
+pkill wpa_supplicant >/dev/null 2>&1
+pkill dhclient >/dev/null 2>&1
+
+if lsmod | grep -q iwlwifi; then
+	rmmod iwldvm >/dev/null 2>&1
+	rmmod iwlwifi >/dev/null 2>&1
+	rmmod ath11k_pci >/dev/null 2>&1
+fi
+if lsmod | grep -q rtlwifi; then
+	rmmod rtl8192cu >/dev/null 2>&1
+	rmmod rtl_usb >/dev/null 2>&1
+	rmmod rtl8192c_common >/dev/null 2>&1
+	rmmod rtlwifi >/dev/null 2>&1
+fi
+if lsmod | grep -q ath11k; then
+	rmmod ath11k >/dev/null 2>&1
+	rmmod ath11k_pci >/dev/null 2>&1
+fi
+echo "done"

@@ -19,6 +19,9 @@ case "$(hostname)" in
 	xinput --set-prop "Elan TrackPoint" "libinput Accel Speed" "-0.6"
 	xinput --set-prop "Elan Touchpad" "Device Enabled" "0"
 	;;
+"tars")
+	xmodmap -e "keysym End = Insert"
+	;;
 esac
 
 for user in web games misc fin; do

@@ -2,7 +2,7 @@
 
 set -eu
 
-cd $(find /sys -name "intel_backlight" 2>/dev/null | head -n1)
+cd $(find /sys \( -name "intel_backlight" -o -name "amdgpu_bl0" \) 2>/dev/null | head -n1)
 max="$(cat max_brightness)"
 cur="$(cat brightness)"
 tgt="${1:-}"
