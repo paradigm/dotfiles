@@ -6,7 +6,7 @@
 # modify it under the terms of the GNU General Public License
 # version 2 as published by the Free Software Foundation.
 #
-# Copyright (c) 2014-2018 Daniel Thau <danthau@gmail.com>
+# Copyright (c) 2014-2022 Daniel Thau <danthau@gmail.com>
 #
 # Encrypted Key Value Store
 #
@@ -25,7 +25,9 @@
 #
 # Baring the following three exceptions, everything should be POSIX portable:
 # - use of `gpg` and `gpg-connect-agent` for encryption
-# - `xclip` for xorg-clipboard-integration
+# - `xclip` for xorg clipboard integration
+# - `termux-clipboard-set` for Termux/Android clipboard integration
+# - `oathtool` for OATH generation
 # - `echo` and `printf` must be built-in to avoid sensitive arguments showing
 #   up in /proc (TODO: replace with heredoc to drop requirement?)
 
@@ -164,6 +166,17 @@ filter_out_item() {
 	done
 }
 
+clip() {
+	if command -v termux-clipboard-set >/dev/null 2>&1
+	then
+		termux-clipboard-set
+	elif command -v xclip >/dev/null 2>&1
+	then
+		xclip
+	else
+		abort "unable to detect clipboard"
+	fi
+}
 
 # ------------------------------------------------------------------------------
 # - constraints and warnings                                                   -
@@ -324,12 +337,29 @@ cmd_clip() {
 	# need actual key to append, not just the regex to match it
 	key=$(list_keys | grep "${key_re}")
 	# use printf to avoid trailing newline
-	printf "%s" "$(get_value "${key}")" | xclip
+	get_value "${key}" | clip
 	outln "Set to clipboard, will clear in 10 seconds"
 	(
 		sleep 10
-		echo -n "overwrote ekvs clipboard entry" | xclip
+		echo "overwrote ekvs clipboard entry" | clip
 	) &
+}
+
+cmd_oath() {
+	if ! command -v oathtool >/dev/null 2>&1
+	then
+		abort "unable to detect oathtool"
+	fi
+
+	abort_if_multiple_matches
+	abort_if_no_matches
+	# need actual key to append, not just the regex to match it
+	key=$(list_keys | grep "${key_re}")
+	# use printf to avoid trailing newline
+	oath="$(get_value "${key}" | oathtool --base32 --totp -)"
+	echo "${oath}"
+	echo "${oath}" | clip
+	outln "Set to clipboard"
 }
 
 cmd_dump() {
@@ -453,7 +483,7 @@ EOF
 
 # Check for need to print help now and get it out of the way
 case "${1:-""}" in
-	"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"u"|"urandom"|"t"|"test"|"")
+	"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"oath"|"o"|"d"|"dump"|"u"|"urandom"|"t"|"test"|"")
 		# legal command
 		true
 		;;
@@ -509,7 +539,7 @@ do
 		cmd="${1}"
 		shift
 	else
-		outln "Commands: [q]uiet, [s]tore, [i]nit, [a]dd, a[p]pend, [r]m, [l]ist, gr[e]p, [g]et, [c]lip, [d]ump, [u]random, e[x]it"
+		outln "Commands: [q]uiet, [s]tore, [i]nit, [a]dd, a[p]pend, [r]m, [l]ist, gr[e]p, [g]et, [c]lip, [o]ath, [d]ump, [u]random, e[x]it"
 		out "Enter COMMAND: "
 		read -r cmd || true
 	fi
@@ -518,7 +548,7 @@ do
 		"x"|"exit")
 			exit 0
 			;;
-		"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"u"|"urandom"|"t"|"test")
+		"q"|"quiet"|"s"|"store"|"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"oath"|"o"|"dump"|"u"|"urandom"|"t"|"test")
 			# legal command
 			true
 			;;
@@ -619,6 +649,19 @@ do
 			# Ensure non-empty
 			[ -n "${key_re}" ] || abort "No KEY-REGEX provided, aborting."
 			;;
+		"oath"|"o")
+			if [ -n "${1:-""}" ]
+			then
+				key_re="${1}"
+				shift
+			else
+				out "Enter KEY-REGEX: "
+				read -r key_re || true
+			fi
+			# Ensure non-empty
+			[ -n "${key_re}" ] || abort "No KEY-REGEX provided, aborting."
+			key_re="oath:${key_re}"
+			;;
 		"grep"|"e")
 			if [ -n "${1:-""}" ]
 			then
@@ -642,7 +685,7 @@ do
 			# these commands do not operate on an existing store and thus do not need a password
 			true
 			;;
-		"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump"|"t"|"test")
+		"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"oath"|"o"|"dump"|"t"|"test")
 			# these commands operate on the store and need a password set
 			verify
 			;;
@@ -657,7 +700,7 @@ do
 			# these commands do not operate on a store and thus do not need a password
 			true
 			;;
-		"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"dump")
+		"i"|"init"|"a"|"add"|"p"|"append"|"r"|"rm"|"l"|"list"|"e"|"grep"|"g"|"get"|"c"|"clip"|"d"|"oath"|"o"|"dump")
 			# these commands operate on the store and need a password set
 			populate_agent
 			;;
@@ -682,7 +725,7 @@ do
 			# key must NOT already exists
 			abort_if_key_exists
 			;;
-		"append"|"p"|"clip"|"c")
+		"append"|"p"|"clip"|"c"|"oath"|"o")
 			# store must exist
 			abort_if_store_does_not_exist
 			# must be exactly one match
@@ -734,6 +777,8 @@ do
 			cmd_get ;;
 		"clip"|"c")
 			cmd_clip ;;
+		"oath"|"o")
+			cmd_oath ;;
 		"dump"|"d")
 			cmd_dump ;;
 		"urandom"|"u")
