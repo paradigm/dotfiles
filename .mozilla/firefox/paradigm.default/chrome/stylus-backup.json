@@ -1,198 +1,323 @@
 [
-	{
-		"installDate": 1531841588374,
-		"enabled": false,
-		"updateUrl": null,
-		"md5Url": null,
-		"url": null,
-		"originalMd5": null,
-		"name": "bnw-general",
-		"sections": [
-			{
-				"code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}\n\n/* google weather */\ndiv#wob_temp.ksb,\ndiv#wob_rain.ksb,\ndiv#wob_wind.ksb,\n/* misc google */\n.gb_Eb,\n/* github */\n.btn {\n\tbackground-image: none !important;\n}",
-				"regexps": [
-					"(http|https|file|moz-extension)://(?!((.*[.])?reddit.com|(.*[.])?slack.com|(.*[.])?discord.com|(.*[.])?duolingo.com|(.*[.])?twitch.tv|(.*[.])?youtube.com|www.google.com|www.netflix.com|www.amazon.com/gp/video/)).*"
-				]
-			}
-		],
-		"id": 26,
-		"_id": "23f17cfd-ec4b-4142-b6ca-c10f2bb2cd78",
-		"_rev": 1595253642593,
-		"updateDate": 1594770196674
-	},
-	{
-		"installDate": 1531845876663,
-		"enabled": true,
-		"updateUrl": "https://userstyles.org/styles/chrome/129171.json???",
-		"md5Url": "https://update.userstyles.org/129171.md5",
-		"url": "http://userstyles.org/styles/129171",
-		"originalMd5": "31714e5cd86955598c257e5a984fb71e",
-		"sections": [
-			{
-				"code": "::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n\n.infobar {\n    display: none !important;\n}\n.fancy-toggle-button .add,\n.fancy-toggle-button .active,\n.fancy-toggle-button .remove {\n    background-image: none !important;\n}\ninput[type=checkbox] {\n    background-color: #f00 !important;\n}\n.linkflairlabel {\n    border: solid 1px #fff !important;\n}\n.prev-button,\n.next-button {\n    border: 1px solid #fff !important;\n}\n.reddit-video-player-root > div {\n    background-color: transparent !important;\n}\n\n.child,\n.md {\n    margin-top: 0px !important;\n    margin-bottom: 0px !important;\n}\np {\n    line-height: 14px !important;\n}\n\n/* Hide subreddits top bar */\n\n/* Hide annoying stuff */\n.give-gold-button,\n.goldvertisement,\n.embed-comment,\n.nub {\n    display: none !important;\n}\n\n/* Reset */\n*,\n*:before,\n*:after {\n    font-family: \"Terminus (TTF)\" !important;\n    font-size: 9pt !important;\n    line-height: 14px;\n    background-color: #000 !important;\n    border: none !important;\n    color: #fff !important;\n}\n\n/* Default links */\na {\n    color: #aaa !important;\n}\na:visited {\n    color: #aaa !important;\n}\na:hover {\n    color: #aaa !important;\n}\n\n/* Background */\nhtml,\nbody,\n#sr-more-link {\n    background-color: #000 !important;\n}\n\n/* Top bar */\n#mail,\n#modmail,\n#chat,\n.sidebox.create .spacer a {\n    filter: invert(80%) hue-rotate(180deg) !important;\n    background-color: #fff !important;\n}\n#header-img {\n    display: none !important;\n}\n.drop-choices,\n.hover-bubble,\n.modal-dialog {\n    background: #000 !important;\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n.tabmenu .selected a {\n    color: #999 !important;\n}\n\n/* Side bar */\n.listing-chooser-collapsed .grippy {\n    width: 1px !important;\n}\n.listing-chooser-collapsed .listing-chooser {\n    padding-right: 1px !important;\n}\n.listing-chooser li.selected {\n    box-shadow: none !important;\n}\n.grippy:after {\n    display: none !important;\n}\n\n/* Inputs and buttons */\ninput,\ntextarea,\n.linkinfo .shortlink input,\n.new-comment .usertext-body,\n.morelink a,\n.morelink:hover a,\n.fancy-toggle-button a,\n.usertext button {\n    font-weight: normal !important;\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n\n/* Listing */\n.thing .title {\n    color: #aaa !important;\n}\n.title:visited {\n    color: #777 !important;\n}\n.thing .title:hover {\n    color: #ccc !important;\n}\n.arrow {\n    filter: brightness(45%);\n}\n.arrow.upmod,\n.arrow.downmod {\n    filter: brightness(50%) contrast(120%);\n}\n.link .score.likes {\n    color: #b3684d !important;\n}\n.link .score.dislikes {\n    color: #7070c2 !important;\n}\n.expando-button {\n    filter: brightness(45%) contrast(180%);\n    background-color: transparent !important;\n}\n.moderator,\n.green {\n    color: #3a3 !important;\n}\n.admin,\n.nsfw-stamp * {\n    color: #a66 !important;\n}\n.pagename a,\n.trophy-name {\n    color: #999 !important;\n}\n.buttons li {\n    padding: 0 !important;\n}\n.buttons a {\n    margin-right: 8px !important;\n    color: #888 !important;\n}\n.buttons a:visited {\n    color: #666 !important;\n}\n.buttons a:hover {\n    color: #aaa !important;\n}\n.pagename,\n.tabmenu li,\n.link .midcol,\n.buttons a,\n.subreddit {\n    font-weight: normal !important;\n}\n.search-expando.collapsed:before,\n.comment-fade {\n    display: none !important;\n}\n.recommended-link {\n    border-color: #333 !important;\n}\n\n/* Comments */\n.link .usertext .md,\nblockquote,\npre,\ncode,\n.gold-accent {\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n.md blockquote {\n    border-left: solid 4px #fff !important;\n}\n.md td {\n    border: solid 1px #333 !important;\n}\nhr {\n    border-bottom: solid 1px #333 !important;\n}\n.comment .author,\n.morecomments a {\n    font-weight: normal !important;\n}\n\n/* RES */\n.guider,\n.guiders_button,\n.res-fancy-toggle-button,\n#RESConsoleContainer,\n#RESShortcutsAddFormContainer {\n    background: #f00 !important;\n}\n.RESDialogSmall,\n.RESDropdownOptions,\n.RESNotification,\n#alert_message {\n    background: #f00 !important;\n}\n.RES-keyNav-activeElement,\n.RES-keyNav-activeElement .md-container {\n    background: #f00 !important;\n}\n.res-nightmode .arrow {\n    filter: none !important;\n}\n\n/* new.reddit.com */\n#header,\n#lightbox,\n#hamburgers,\nbody > div,\ndiv[style^=\"left:\"] div[role=\"button\"] {\n    background-color: #000 !important;\n}\n#redesign-beta-optin-btn {\n\tdisplay: none !important;\n}\n#header svg {\n    filter: invert(90%) hue-rotate(180deg);\n}\ndiv[contenteditable=\"true\"] {\n    background: #0f0 !important;\n}\n#overlayFixedContent + div {\n    background: rgba(0, 0, 0, 0.7) !important;\n}\ndiv[data-slot] {\n    display: none !important;\n}\n.icon,\n.icon:before {\n    color: inherit !important;\n}\na[data-click-id=\"timestamp\"] {\n    color: #777 !important;\n}\na[data-click-id=\"body\"] h2 {\n    color: #aaa !important;\n}\na[data-click-id=\"body\"]:visited h2 {\n    color: #777 !important;\n}\n.scrollerItem {\n    box-shadow: none !important;\n}",
-				"domains": [
-					"reddit.com"
-				]
-			}
-		],
-		"name": "bnw-reddit",
-		"originalDigest": "5f05530a5560fb36aa50710f40957f3ab0447648",
-		"id": 30,
-		"_id": "581f47fe-9f44-4464-96b4-4a6a9fe560c4",
-		"_rev": 1594907848732
-	},
-	{
-		"installDate": 1531850428578,
-		"enabled": false,
-		"updateUrl": "https://userstyles.org/styles/chrome/127836.json",
-		"md5Url": "https://update.userstyles.org/127836.md5",
-		"url": "http://userstyles.org/styles/127836",
-		"originalMd5": "010980211723d255e163a0918031c639",
-		"sections": [
-			{
-				"code": "html, html * {\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tborder-color: #ffffff !important;\n\tfont-family:\"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n\n.c-message_list__day_divider__label__pill,\n.p-channel_sidebar__channel--selected,\n.p-message_pane__top_banners {\n\tborder: solid 1px #fff !important;\n\tborder-style: solid none solid none !important;\n}\n\n.channel_header {\n\tborder: solid 1px #fff !important;\n\tborder-style: none none solid none !important;\n}\n\n#col_channels {\n\tmax-width: 75px !important;\n}\n.client_channels_list_container {\n\tborder-right: solid 1px #fff !important;\n\tmax-width: 75px !important;\n}\n\n#client_header {\n\tflex-basis: 0px !important;\n}\n\n.p-channel_sidebar__link--all-threads,\n.p-channel_sidebar__link--all-unreads,\n.p-channel_sidebar__jumper,\n.c-message_attachment,\n.c-message--last,\n.channel_header {\n\tpadding: 0 0 0 0 !important;\n}\n\n.p-notification_bar {\n    margin-left: 1px !important;\n}\n\n.p-channel_sidebar__link,\n.p-channel_sidebar__jumper,\n.p-channel_sidebar__section_heading,\n.flex_header,\n.p-channel_sidebar__static_list > div,\n.p-channel_sidebar__static_list,\n.p-channel_sidebar__channel {\n\theight: 16px !important;\n\tpadding: 0 0 0 0 !important;\n    margin: 0 0 0 0 !important;\n}\n\n.ReactModal__Overlay {\n\tbackground-color: transparent !important;\n}\n\n.p-channel_sidebar__name {\n\tcolor: #aaa !important;\n}\n.p-channel_sidebar__name > span {\n\tcolor: #aaa !important;\n}\n.p-channel_sidebar__channel--unread:not(.p-channel_sidebar__channel--muted) .p-channel_sidebar__name {\n\tcolor: #fff !important;\n}\n.p-channel_sidebar__channel--unread:not(.p-channel_sidebar__channel--muted) > span {\n\tcolor: #fff !important;\n}\n\n.emoji,\n.emoji-sizer,\n.emoji-picker-yes {\n\tline-height: 12px !important;\n\tfont-size: 22px !important;\n}\n\n#client_body,\n#client_body::before,\n.c-scrollbar__hider::before {\n\tbackground-color: #000 !important;\n}\n\n.p-message_pane__limited_history_foreword {\n\tbackground-image: none !important;\n}\n\n.p-channel_sidebar__banner--unreads {\n\tborder: solid 1px #fff !important;\n}\n\n.candy_red_bg {\n\tbackground-color: #000 !important;\n}\n\n#header_search_form,\n#msg_input {\n\tborder: solid 1px #fff !important;\n\tborder-style: solid none solid none !important;\n\tborder-radius: 0px !important;\n\tpadding: 0px 0px 0px 0px !important;\n\tmax-height: none !important;\n\tmin-height: 16px !important;\n}\n\n#footer {\n\tbackground-image: none !important;\n}\n\n.c-message__body,\n.c-message__content_header,\n#msg_form {\n\tmargin: 0px !important;\n}\n\nheader,\nbutton.channel_header_icon,\n#flex_menu_toggle,\n#stars_toggle,\n#recent_mentions_toggle,\n#channel_name_container,\n.c-scrollbar__track,\n#primary_file_button,\n#main_emo_menu,\n.p-message_pane__top_banners,\nbutton.btn_unstyle.msg_mentions_button,\n.c-message_list__unread_divider__separator,\n.c-scrollbar__hider::before {\n\tdisplay: none !important;\n}\n\n.search_form,\n.ql-editor {\n\theight: auto !important;\n\tmin-height: 16px !important;\n\tpadding-left: 1px !important;\n\tpadding-right: 1px !important;\n\tpadding-top: 0px !important;\n\tpadding-bottom: 0px !important;\n}\n\n.ql-placeholder {\n\tleft: 0px !important;\n\tright: 0px !important;\n\tpadding-left: 1px !important;\n\tpadding-right: 1px !important;\n\tpadding-top: 0px !important;\n\tpadding-bottom: 0px !important;\n}\n\nspan.c-custom_status span span.emoji.emoji-sizer.stop_animations,\nspan.emoji-outer.emoji-sizer {\n    max-height: 16px !important;\n    max-width: 16px !important;\n}\n",
-				"urls": [],
-				"urlPrefixes": [],
-				"domains": [],
-				"regexps": [
-					"https://.*.slack.com/.*"
-				]
-			}
-		],
-		"name": "bnw-slack",
-		"originalDigest": "1b69089f831862981a5a744a0366ab29fcd0cd18",
-		"id": 35,
-		"_id": "5e96d81b-6aa4-4fa7-8559-7b5036b338e5",
-		"_rev": 1583330020958
-	},
-	{
-		"installDate": 1531854106589,
-		"enabled": true,
-		"updateUrl": null,
-		"md5Url": null,
-		"url": null,
-		"originalMd5": null,
-		"name": "bnw-discordapp",
-		"sections": [
-			{
-				"code": "html, html * {\n\tfont-family:\"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}",
-				"urls": [],
-				"urlPrefixes": [],
-				"domains": [
-					"discordapp.com"
-				],
-				"regexps": []
-			}
-		],
-		"id": 36,
-		"_id": "59c1ddfd-de59-413c-bf92-d90eb16ae4ad",
-		"_rev": 1584394836606
-	},
-	{
-		"enabled": true,
-		"updateUrl": null,
-		"md5Url": null,
-		"url": null,
-		"originalMd5": null,
-		"installDate": 1533213753703,
-		"name": "bnw-youtube",
-		"sections": [
-			{
-				"code": "html,\nhtml * {\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tborder-color: #ffffff !important;\n\tfont-family: \"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n\tletter-spacing: normal !important;\n\t-moz-appearance: none !important;\n\t-moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n\n\ndiv#container.style-scope.ytd-searchbox {\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tbox-shadow: none !important;\n}\n.ytd-searchbox-spt {\n\tbackground-color: transparent !important;\n}\n\n#player.style-scope.ytd-watch-flexy {\n\tborder-bottom: 1px solid #fff !important;\n\tborder-top: 1px solid #fff !important;\n}\n\ndiv#container.style-scope.ytd-masthead {\n\tpadding: 0px !important;\n\tmargin: 0px !important;\n\theight: 100% !important;\n}\n\ndiv#title.style-scope.ytd-comments-header-renderer,\nytd-video-secondary-info-renderer.style-scope.ytd-watch-flexy,\ndiv#top-row.style-scope.ytd-video-secondary-info-renderer,\nytd-video-primary-info-renderer.style-scope.ytd-watch-flexy,\ninput#search.ytd-searchbox,\nytd-searchbox#search.style-scope.ytd-masthead,\n#page-manager.style-scope.ytd-app,\n.ytp-gradient-bottom,\n.ytp-chrome-controls,\n#primary.style-scope.ytd-watch-flexy,\n#secondary.style-scope.ytd-watch-flexy {\n\tpadding: 0px !important;\n\tmargin: 0px !important;\n}\n\ndiv.ytp-progress-bar-container {\n\tmargin: 1px !important;\n\tborder-bottom: 1px solid #fff !important;\n}\n\ndiv#secondary.style-scope.ytd-watch-flexy {\n\tborder: 1px solid #fff !important;\n}\n\ndiv.ytp-gradient-top,\napp-drawer#guide.style-scope.ytd-app,\ndiv#subscribe-button.style-scope.ytd-video-secondary-info-renderer,\ndiv#menu-container.style-scope.ytd-video-primary-info-renderer,\nytd-sentiment-bar-renderer#sentiment.style-scope.ytd-video-primary-info-renderer,\nyt-icon-button#guide-button.style-scope.ytd-masthead,\n#logo.style-scope.ytd-masthead,\n#end.style-scope.ytd-masthead {\n\tdisplay: none !important;\n}\n\nform#search-form.style-scope.ytd-searchbox {\n\tmax-width: 100% !important;\n}\n\ndiv.ytp-load-progress {\n\tbackground-color: #fff !important;\n\ttop: 5px !important;\n}\ndiv.ytp-hover-progress.ytp-hover-progress-light {\n\tbackground-color: #fff !important;\n\ttop: 3px !important;\n}\n\n.ytp-scrubber-container {\n\tborder: 1px solid #fff !important;\n\ttop: -2px !important;\n}\n\ndiv#container.style-scope.ytd-searchbox {\n\tpadding: 3px !important;\n\tmargin: 0px !important;\n}\n\nytd-playlist-panel-renderer#playlist.style-scope.ytd-watch-flexy,\nbutton#search-icon-legacy.style-scope.ytd-searchbox,\ndiv#container.style-scope.ytd-searchbox {\n\tborder: none !important;\n\tborder-bottom: 1px solid #fff !important;\n\tmargin: 0px !important;\n}\n\nyt-formatted-string.less-button.style-scope.ytd-video-secondary-info-renderer,\nyt-formatted-string.more-button.style-scope.ytd-video-secondary-info-renderer {\n\tborder: 1px solid #fff !important;\n\tpadding: 1px !important;\n}\n",
-				"urls": [],
-				"urlPrefixes": [],
-				"domains": [
-					"youtube.com"
-				],
-				"regexps": []
-			}
-		],
-		"id": 46,
-		"_id": "df72b375-cbfe-4ccc-bfcd-b07389f5713d",
-		"_rev": 1593992974032
-	},
-	{
-		"enabled": true,
-		"updateUrl": null,
-		"md5Url": null,
-		"url": null,
-		"originalMd5": null,
-		"installDate": 1594766857343,
-		"name": "bnw-duolingo",
-		"sections": [
-			{
-				"code": "body, ._2Jt0i, ._2y4G6, ._2CXf4, ._2iVqi, ._1ruUC, ._3JU6l, ._27B_u, ._3fNBj, ._2VdVL, ._1UnBr, ._1E0xz, ._2NEKS, ._1JwI_, input, textarea, ._37uvX, ._66Mfn, ._3V1pH, .t-hzx, ._3D7BY, ._3SqdF, ._2vedk {\n        background-color: #000000 !important;\n        background: #000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n._2iSv6 {\n        background-color: #555555 !important;\n        background: #555 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n._3uKcR {\n\tdisplay: none !important;\n}\n",
-				"domains": [
-					"duolingo.com"
-				]
-			}
-		],
-		"updateDate": 1595255637945,
-		"_id": "a297becf-2fe3-470e-9bf1-95cd82a53989",
-		"_rev": 1595255637945,
-		"id": 47
-	},
-	{
-		"enabled": true,
-		"updateUrl": null,
-		"md5Url": null,
-		"url": null,
-		"originalMd5": null,
-		"installDate": 1594770095574,
-		"name": "bnw-file",
-		"sections": [
-			{
-				"code": "*, html, html * {\n        background-color: #000000 !important;\n}",
-				"urlPrefixes": [
-					"file:///"
-				]
-			}
-		],
-		"updateDate": 1594770123587,
-		"_id": "19b3cb67-a80a-42fb-aebe-0f3a5e08c722",
-		"_rev": 1595001562813,
-		"id": 48
-	},
-	{
-		"enabled": true,
-		"updateUrl": null,
-		"md5Url": null,
-		"url": null,
-		"originalMd5": null,
-		"installDate": 1594770215003,
-		"name": "bnw-google",
-		"sections": [
-			{
-				"code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}\n\n/* google weather */\ndiv#wob_temp.ksb,\ndiv#wob_rain.ksb,\ndiv#wob_wind.ksb,\n/* misc google */\n.gb_Eb,\n/* github */\n.btn {\n\tbackground-image: none !important;\n}",
-				"domains": [
-					"google.com"
-				]
-			}
-		],
-		"updateDate": 1594770246824,
-		"_id": "7f29638a-cb51-4f29-b460-debf37da325d",
-		"_rev": 1595250038627,
-		"id": 49
-	},
-	{
-		"enabled": true,
-		"updateUrl": null,
-		"md5Url": null,
-		"url": null,
-		"originalMd5": null,
-		"installDate": 1594770320788,
-		"name": "ycombinator.com",
-		"sections": [
-			{
-				"code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}",
-				"domains": [
-					"ycombinator.com"
-				]
-			}
-		],
-		"updateDate": 1594770320788,
-		"_id": "4d2f9363-b8a5-46d5-821d-2f12ad608122",
-		"_rev": 1594770320788,
-		"id": 50
-	}
+  {
+    "settings": {
+      "openEditInWindow": true,
+      "openEditInWindow.popup": false,
+      "windowPosition": {
+        "height": 958,
+        "left": 3840,
+        "top": 128,
+        "width": 1198
+      },
+      "show-badge": true,
+      "disableAll": false,
+      "exposeIframes": false,
+      "exposeStyleName": false,
+      "newStyleAsUsercss": false,
+      "styleViaXhr": false,
+      "patchCsp": false,
+      "config.autosave": true,
+      "schemeSwitcher.enabled": "system",
+      "schemeSwitcher.nightStart": "18:00",
+      "schemeSwitcher.nightEnd": "06:00",
+      "popup.breadcrumbs": true,
+      "popup.breadcrumbs.usePath": false,
+      "popup.enabledFirst": true,
+      "popup.stylesFirst": true,
+      "popup.autoResort": false,
+      "popup.borders": false,
+      "popup.findSort": "u",
+      "manage.onlyEnabled": false,
+      "manage.onlyLocal": false,
+      "manage.onlyUsercss": false,
+      "manage.onlyEnabled.invert": false,
+      "manage.onlyLocal.invert": false,
+      "manage.onlyUsercss.invert": false,
+      "manage.actions.expanded": true,
+      "manage.backup.expanded": true,
+      "manage.filters.expanded": true,
+      "manage.newUI": true,
+      "manage.newUI.favicons": false,
+      "manage.newUI.faviconsGray": true,
+      "manage.newUI.targets": 3,
+      "manage.newUI.sort": "title,asc",
+      "editor.options": {},
+      "editor.toc.expanded": true,
+      "editor.options.expanded": true,
+      "editor.lint.expanded": true,
+      "editor.publish.expanded": true,
+      "editor.lineWrapping": true,
+      "editor.smartIndent": true,
+      "editor.indentWithTabs": false,
+      "editor.tabSize": 4,
+      "editor.keyMap": "default",
+      "editor.theme": "default",
+      "editor.beautify": {
+        "selector_separator_newline": true,
+        "newline_before_open_brace": false,
+        "newline_after_open_brace": true,
+        "newline_between_properties": true,
+        "newline_before_close_brace": true,
+        "newline_between_rules": false,
+        "preserve_newlines": true,
+        "end_with_newline": false,
+        "indent_conditional": true
+      },
+      "editor.beautify.hotkey": "",
+      "editor.lintDelay": 300,
+      "editor.linter": "csslint",
+      "editor.lintReportDelay": 500,
+      "editor.matchHighlight": "token",
+      "editor.autoCloseBrackets": true,
+      "editor.autocompleteOnTyping": false,
+      "editor.contextDelete": false,
+      "editor.selectByTokens": true,
+      "editor.appliesToLineWidget": true,
+      "editor.autosaveDraft": 10,
+      "editor.livePreview": true,
+      "editor.colorpicker": true,
+      "editor.colorpicker.hexUppercase": false,
+      "editor.colorpicker.hotkey": "",
+      "editor.colorpicker.color": "",
+      "editor.colorpicker.maxHeight": 300,
+      "hotkey._execute_browser_action": "",
+      "hotkey.openManage": "",
+      "hotkey.styleDisableAll": "",
+      "sync.enabled": "none",
+      "iconset": 0,
+      "badgeDisabled": "#8B0000",
+      "badgeNormal": "#006666",
+      "headerWidth.edit": 280,
+      "headerWidth.install": 280,
+      "headerWidth.manage": 280,
+      "popupWidth": 246,
+      "updateInterval": 24
+    },
+    "order": {
+      "main": [],
+      "prio": []
+    }
+  },
+  {
+    "installDate": 1531841588374,
+    "enabled": false,
+    "name": "bnw-general",
+    "sections": [
+      {
+        "code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}\n\n/* google weather */\ndiv#wob_temp.ksb,\ndiv#wob_rain.ksb,\ndiv#wob_wind.ksb,\n/* misc google */\n.gb_Eb,\n/* github */\n.btn {\n\tbackground-image: none !important;\n}",
+        "regexps": [
+          "(http|https|file|moz-extension)://(?!((.*[.])?reddit.com|(.*[.])?slack.com|(.*[.])?discord.com|(.*[.])?duolingo.com|(.*[.])?twitch.tv|(.*[.])?youtube.com|(.*[.])?twitter.com|www.google.com|www.netflix.com|www.amazon.com/gp/video/|github.com|doc.rust-lang.org)).*"
+        ]
+      }
+    ],
+    "id": 26,
+    "_id": "23f17cfd-ec4b-4142-b6ca-c10f2bb2cd78",
+    "_rev": 1660789076411,
+    "updateDate": 1626136917342,
+    "exclusions": [
+      "https://doc.rust-lang.org/*",
+      "https://www.google.com/*"
+    ]
+  },
+  {
+    "installDate": 1531845876663,
+    "enabled": true,
+    "updateUrl": "https://userstyles.org/styles/chrome/129171.json???",
+    "md5Url": "https://update.userstyles.org/129171.md5",
+    "url": "http://userstyles.org/styles/129171",
+    "originalMd5": "31714e5cd86955598c257e5a984fb71e",
+    "sections": [
+      {
+        "code": "::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n\n.infobar {\n    display: none !important;\n}\n.fancy-toggle-button .add,\n.fancy-toggle-button .active,\n.fancy-toggle-button .remove {\n    background-image: none !important;\n}\ninput[type=checkbox] {\n    background-color: #f00 !important;\n}\n.linkflairlabel {\n    border: solid 1px #fff !important;\n}\n.prev-button,\n.next-button {\n    border: 1px solid #fff !important;\n}\n.reddit-video-player-root > div {\n    background-color: transparent !important;\n}\n\n.child,\n.md {\n    margin-top: 0px !important;\n    margin-bottom: 0px !important;\n}\np {\n    line-height: 14px !important;\n}\n\n/* Hide subreddits top bar */\n\n/* Hide annoying stuff */\n.give-gold-button,\n.goldvertisement,\n.embed-comment,\n.mobile-web-redirect-bar,\n.nub {\n    display: none !important;\n}\n\n/* Reset */\n*,\n*:before,\n*:after {\n    font-family: \"Terminus (TTF)\" !important;\n    font-size: 9pt !important;\n    line-height: 14px;\n    background-color: #000 !important;\n    border: none !important;\n    color: #fff !important;\n}\n\n/* Default links */\na {\n    color: #aaa !important;\n}\na:visited {\n    color: #aaa !important;\n}\na:hover {\n    color: #aaa !important;\n}\n\n/* Background */\nhtml,\nbody,\n#sr-more-link {\n    background-color: #000 !important;\n}\n\n/* Top bar */\n#mail,\n#modmail,\n#chat,\n.sidebox.create .spacer a {\n    filter: invert(80%) hue-rotate(180deg) !important;\n    background-color: #fff !important;\n}\n#header-img {\n    display: none !important;\n}\n.drop-choices,\n.hover-bubble,\n.modal-dialog {\n    background: #000 !important;\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n.tabmenu .selected a {\n    color: #999 !important;\n}\n\n/* Side bar */\n.listing-chooser-collapsed .grippy {\n    width: 1px !important;\n}\n.listing-chooser-collapsed .listing-chooser {\n    padding-right: 1px !important;\n}\n.listing-chooser li.selected {\n    box-shadow: none !important;\n}\n.grippy:after {\n    display: none !important;\n}\n\n/* Inputs and buttons */\ninput,\ntextarea,\n.linkinfo .shortlink input,\n.new-comment .usertext-body,\n.morelink a,\n.morelink:hover a,\n.fancy-toggle-button a,\n.usertext button {\n    font-weight: normal !important;\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n\n/* Listing */\n.thing .title {\n    color: #aaa !important;\n}\n.title:visited {\n    color: #777 !important;\n}\n.thing .title:hover {\n    color: #ccc !important;\n}\n.arrow {\n    filter: brightness(45%);\n}\n.arrow.upmod,\n.arrow.downmod {\n    filter: brightness(50%) contrast(120%);\n}\n.link .score.likes {\n    color: #b3684d !important;\n}\n.link .score.dislikes {\n    color: #7070c2 !important;\n}\n.expando-button {\n    filter: brightness(45%) contrast(180%);\n    background-color: transparent !important;\n}\n.moderator,\n.green {\n    color: #3a3 !important;\n}\n.admin,\n.nsfw-stamp * {\n    color: #a66 !important;\n}\n.pagename a,\n.trophy-name {\n    color: #999 !important;\n}\n.buttons li {\n    padding: 0 !important;\n}\n.buttons a {\n    margin-right: 8px !important;\n    color: #888 !important;\n}\n.buttons a:visited {\n    color: #666 !important;\n}\n.buttons a:hover {\n    color: #aaa !important;\n}\n.pagename,\n.tabmenu li,\n.link .midcol,\n.buttons a,\n.subreddit {\n    font-weight: normal !important;\n}\n.search-expando.collapsed:before,\n.comment-fade {\n    display: none !important;\n}\n.recommended-link {\n    border-color: #333 !important;\n}\n\n/* Comments */\n.link .usertext .md,\nblockquote,\npre,\ncode,\n.gold-accent {\n    border-color: #ffffff !important;\n    border-style: solid !important;\n    border-width: 1px !important;\n}\n.md blockquote {\n    border-left: solid 4px #fff !important;\n}\n.md td {\n    border: solid 1px #333 !important;\n}\nhr {\n    border-bottom: solid 1px #333 !important;\n}\n.comment .author,\n.morecomments a {\n    font-weight: normal !important;\n}\n\n/* RES */\n.guider,\n.guiders_button,\n.res-fancy-toggle-button,\n#RESConsoleContainer,\n#RESShortcutsAddFormContainer {\n    background: #f00 !important;\n}\n.RESDialogSmall,\n.RESDropdownOptions,\n.RESNotification,\n#alert_message {\n    background: #f00 !important;\n}\n.RES-keyNav-activeElement,\n.RES-keyNav-activeElement .md-container {\n    background: #f00 !important;\n}\n.res-nightmode .arrow {\n    filter: none !important;\n}\n\n/* new.reddit.com */\n#header,\n#lightbox,\n#hamburgers,\nbody > div,\ndiv[style^=\"left:\"] div[role=\"button\"] {\n    background-color: #000 !important;\n}\n#redesign-beta-optin-btn {\n\tdisplay: none !important;\n}\n#header svg {\n    filter: invert(90%) hue-rotate(180deg);\n}\ndiv[contenteditable=\"true\"] {\n    background: #0f0 !important;\n}\n#overlayFixedContent + div {\n    background: rgba(0, 0, 0, 0.7) !important;\n}\ndiv[data-slot] {\n    display: none !important;\n}\n.icon,\n.icon:before {\n    color: inherit !important;\n}\na[data-click-id=\"timestamp\"] {\n    color: #777 !important;\n}\na[data-click-id=\"body\"] h2 {\n    color: #aaa !important;\n}\na[data-click-id=\"body\"]:visited h2 {\n    color: #777 !important;\n}\n.scrollerItem {\n    box-shadow: none !important;\n}",
+        "domains": [
+          "reddit.com"
+        ]
+      }
+    ],
+    "name": "bnw-reddit",
+    "originalDigest": "5f05530a5560fb36aa50710f40957f3ab0447648",
+    "id": 30,
+    "_id": "581f47fe-9f44-4464-96b4-4a6a9fe560c4",
+    "_rev": 1660789061787,
+    "updateDate": 1660789053991
+  },
+  {
+    "installDate": 1531850428578,
+    "enabled": false,
+    "updateUrl": "https://userstyles.org/styles/chrome/127836.json",
+    "md5Url": "https://update.userstyles.org/127836.md5",
+    "url": "http://userstyles.org/styles/127836",
+    "originalMd5": "010980211723d255e163a0918031c639",
+    "sections": [
+      {
+        "code": "html, html * {\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tborder-color: #ffffff !important;\n\tfont-family:\"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n\n.c-message_list__day_divider__label__pill,\n.p-channel_sidebar__channel--selected,\n.p-message_pane__top_banners {\n\tborder: solid 1px #fff !important;\n\tborder-style: solid none solid none !important;\n}\n\n.channel_header {\n\tborder: solid 1px #fff !important;\n\tborder-style: none none solid none !important;\n}\n\n#col_channels {\n\tmax-width: 75px !important;\n}\n.client_channels_list_container {\n\tborder-right: solid 1px #fff !important;\n\tmax-width: 75px !important;\n}\n\n#client_header {\n\tflex-basis: 0px !important;\n}\n\n.p-channel_sidebar__link--all-threads,\n.p-channel_sidebar__link--all-unreads,\n.p-channel_sidebar__jumper,\n.c-message_attachment,\n.c-message--last,\n.channel_header {\n\tpadding: 0 0 0 0 !important;\n}\n\n.p-notification_bar {\n    margin-left: 1px !important;\n}\n\n.p-channel_sidebar__link,\n.p-channel_sidebar__jumper,\n.p-channel_sidebar__section_heading,\n.flex_header,\n.p-channel_sidebar__static_list > div,\n.p-channel_sidebar__static_list,\n.p-channel_sidebar__channel {\n\theight: 16px !important;\n\tpadding: 0 0 0 0 !important;\n    margin: 0 0 0 0 !important;\n}\n\n.ReactModal__Overlay {\n\tbackground-color: transparent !important;\n}\n\n.p-channel_sidebar__name {\n\tcolor: #aaa !important;\n}\n.p-channel_sidebar__name > span {\n\tcolor: #aaa !important;\n}\n.p-channel_sidebar__channel--unread:not(.p-channel_sidebar__channel--muted) .p-channel_sidebar__name {\n\tcolor: #fff !important;\n}\n.p-channel_sidebar__channel--unread:not(.p-channel_sidebar__channel--muted) > span {\n\tcolor: #fff !important;\n}\n\n.emoji,\n.emoji-sizer,\n.emoji-picker-yes {\n\tline-height: 12px !important;\n\tfont-size: 22px !important;\n}\n\n#client_body,\n#client_body::before,\n.c-scrollbar__hider::before {\n\tbackground-color: #000 !important;\n}\n\n.p-message_pane__limited_history_foreword {\n\tbackground-image: none !important;\n}\n\n.p-channel_sidebar__banner--unreads {\n\tborder: solid 1px #fff !important;\n}\n\n.candy_red_bg {\n\tbackground-color: #000 !important;\n}\n\n#header_search_form,\n#msg_input {\n\tborder: solid 1px #fff !important;\n\tborder-style: solid none solid none !important;\n\tborder-radius: 0px !important;\n\tpadding: 0px 0px 0px 0px !important;\n\tmax-height: none !important;\n\tmin-height: 16px !important;\n}\n\n#footer {\n\tbackground-image: none !important;\n}\n\n.c-message__body,\n.c-message__content_header,\n#msg_form {\n\tmargin: 0px !important;\n}\n\nheader,\nbutton.channel_header_icon,\n#flex_menu_toggle,\n#stars_toggle,\n#recent_mentions_toggle,\n#channel_name_container,\n.c-scrollbar__track,\n#primary_file_button,\n#main_emo_menu,\n.p-message_pane__top_banners,\nbutton.btn_unstyle.msg_mentions_button,\n.c-message_list__unread_divider__separator,\n.c-scrollbar__hider::before {\n\tdisplay: none !important;\n}\n\n.search_form,\n.ql-editor {\n\theight: auto !important;\n\tmin-height: 16px !important;\n\tpadding-left: 1px !important;\n\tpadding-right: 1px !important;\n\tpadding-top: 0px !important;\n\tpadding-bottom: 0px !important;\n}\n\n.ql-placeholder {\n\tleft: 0px !important;\n\tright: 0px !important;\n\tpadding-left: 1px !important;\n\tpadding-right: 1px !important;\n\tpadding-top: 0px !important;\n\tpadding-bottom: 0px !important;\n}\n\nspan.c-custom_status span span.emoji.emoji-sizer.stop_animations,\nspan.emoji-outer.emoji-sizer {\n    max-height: 16px !important;\n    max-width: 16px !important;\n}\n",
+        "urls": [],
+        "urlPrefixes": [],
+        "domains": [],
+        "regexps": [
+          "https://.*.slack.com/.*"
+        ]
+      }
+    ],
+    "name": "bnw-slack",
+    "originalDigest": "1b69089f831862981a5a744a0366ab29fcd0cd18",
+    "id": 35,
+    "_id": "5e96d81b-6aa4-4fa7-8559-7b5036b338e5",
+    "_rev": 1641827120081
+  },
+  {
+    "installDate": 1531854106589,
+    "enabled": true,
+    "name": "bnw-discordapp",
+    "sections": [
+      {
+        "code": "html, html * {\n\tfont-family:\"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}",
+        "urls": [],
+        "urlPrefixes": [],
+        "domains": [
+          "discordapp.com"
+        ],
+        "regexps": []
+      }
+    ],
+    "id": 36,
+    "_id": "59c1ddfd-de59-413c-bf92-d90eb16ae4ad",
+    "_rev": 1616633098149
+  },
+  {
+    "enabled": false,
+    "installDate": 1533213753703,
+    "name": "bnw-youtube",
+    "sections": [
+      {
+        "code": ".style-scope,\n.yt-live-chat-renderer,\n.ytd-live-chat-frame,\n#search.ytd-searchbox,\n#content.style-scope.ytd-app,\nyt-formatted-string,\n#search-icon-legacy,\n#masthead,\n#columns.style-scope.ytd-watch-flexy,\nh3.style-scope.ytd-compact-video-renderer,\nytd-compact-video-renderer.style-scope\n{\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tborder-color: #ffffff !important;\n\tfont-family: \"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\tline-height: 14px !important;\n\tletter-spacing: normal !important;\n\t-moz-appearance: none !important;\n\t-moz-border-image: none !important;\n\t--yt-live-chat-primary-text-color: #ffffff !important;\n\t--yt-live-chat-secondary-text-color: #ffffff !important;\n}\n::-moz-selection {\n\tbackground-color: #ffffff !important;\n\tcolor: #000000 !important;\n\tborder-color: #ffffff !important;\n\tfont-family: \"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\t-moz-appearance: none !important;\n\t-moz-border-image: none !important;\n}\na:link {\n\tbackground-color: #000000 !important;\n\tcolor: #aaaaaa !important;\n\tfont-family: \"terminus (ttf)\" !important;\n\tfont-size: 9pt !important;\n\t-moz-appearance: none !important;\n\t-moz-border-image: none !important;\n}\n\ndiv#container.style-scope.ytd-searchbox {\n\tbackground-color: #000000 !important;\n\tcolor: #ffffff !important;\n\tbox-shadow: none !important;\n}\n.ytd-searchbox-spt {\n\tbackground-color: transparent !important;\n}\n\n#player.style-scope.ytd-watch-flexy {\n\tborder-bottom: 1px solid #fff !important;\n\tborder-top: 1px solid #fff !important;\n}\n\ndiv#container.style-scope.ytd-masthead {\n\tpadding: 0px !important;\n\tmargin: 0px !important;\n\theight: 100% !important;\n}\n\ndiv#title.style-scope.ytd-comments-header-renderer,\nytd-video-secondary-info-renderer.style-scope.ytd-watch-flexy,\ndiv#top-row.style-scope.ytd-video-secondary-info-renderer,\nytd-video-primary-info-renderer.style-scope.ytd-watch-flexy,\ninput#search.ytd-searchbox,\nytd-searchbox#search.style-scope.ytd-masthead,\n#page-manager.style-scope.ytd-app,\n.ytp-gradient-bottom,\n.ytp-chrome-controls,\n#primary.style-scope.ytd-watch-flexy,\n#secondary.style-scope.ytd-watch-flexy {\n\tpadding: 0px !important;\n\tmargin: 0px !important;\n}\n\ndiv.ytp-progress-bar-container {\n\tmargin: 1px !important;\n\tborder-bottom: 1px solid #fff !important;\n}\n\ndiv#secondary.style-scope.ytd-watch-flexy {\n\tborder: 1px solid #fff !important;\n}\n\ndiv.ytp-gradient-top,\napp-drawer#guide.style-scope.ytd-app,\ndiv#subscribe-button.style-scope.ytd-video-secondary-info-renderer,\ndiv#menu-container.style-scope.ytd-video-primary-info-renderer,\nytd-sentiment-bar-renderer#sentiment.style-scope.ytd-video-primary-info-renderer,\nyt-icon-button#guide-button.style-scope.ytd-masthead,\n#logo.style-scope.ytd-masthead,\n#end.style-scope.ytd-masthead {\n\tdisplay: none !important;\n}\n\nform#search-form.style-scope.ytd-searchbox {\n\tmax-width: 100% !important;\n}\n\ndiv.ytp-load-progress {\n\tbackground-color: #fff !important;\n\ttop: 5px !important;\n}\ndiv.ytp-hover-progress.ytp-hover-progress-light {\n\tbackground-color: #fff !important;\n\ttop: 3px !important;\n}\n\n.ytp-scrubber-container {\n\tborder: 1px solid #fff !important;\n\ttop: -2px !important;\n}\n\ndiv#container.style-scope.ytd-searchbox {\n\tpadding: 3px !important;\n\tmargin: 0px !important;\n}\n\nytd-playlist-panel-renderer#playlist.style-scope.ytd-watch-flexy,\nbutton#search-icon-legacy.style-scope.ytd-searchbox,\ndiv#container.style-scope.ytd-searchbox {\n\tborder: none !important;\n\tborder-bottom: 1px solid #fff !important;\n\tmargin: 0px !important;\n}\n\nyt-formatted-string.less-button.style-scope.ytd-video-secondary-info-renderer,\nyt-formatted-string.more-button.style-scope.ytd-video-secondary-info-renderer {\n\tborder: 1px solid #fff !important;\n\tpadding: 1px !important;\n}\n\ntp-yt-app-drawer#guide.style-scope.ytd-app {\n\tz-index: -1;\n}\n\nhtml body yt-live-chat-app div#contents.style-scope.yt-live-chat-app yt-live-chat-renderer.style-scope.yt-live-chat-app iron-pages#content-pages.style-scope.yt-live-chat-renderer div#chat-messages.style-scope.yt-live-chat-renderer.iron-selected div#contents.style-scope.yt-live-chat-renderer div#chat.style-scope.yt-live-chat-renderer div#item-list.style-scope.yt-live-chat-renderer yt-live-chat-item-list-renderer.style-scope.yt-live-chat-renderer div#contents.style-scope.yt-live-chat-item-list-renderer div#item-scroller.style-scope.yt-live-chat-item-list-renderer.animated div#item-offset.style-scope.yt-live-chat-item-list-renderer div#items.style-scope.yt-live-chat-item-list-renderer yt-live-chat-viewer-engagement-message-renderer#CjEKL0NPTU1VTklUWV9HVUlERUxJTkVTX1ZFTTIwMjEvMDcvMTMtMDk6MjU6MDIuNjk4.style-scope.yt-live-chat-item-list-renderer,\ntp-yt-paper-dialog.style-scope,\nytd-mini-guide-renderer.style-scope,\n#chips-wrapper {\n\tvisibility: hidden !important;\n}\n",
+        "domains": [
+          "youtube.com"
+        ]
+      }
+    ],
+    "id": 46,
+    "_id": "df72b375-cbfe-4ccc-bfcd-b07389f5713d",
+    "_rev": 1643917343578,
+    "updateDate": 1626310941251
+  },
+  {
+    "enabled": false,
+    "installDate": 1594766857343,
+    "name": "bnw-duolingo",
+    "sections": [
+      {
+        "code": "body, ._2Jt0i, ._2y4G6, ._2CXf4, ._2iVqi, ._1ruUC, ._3JU6l, ._27B_u, ._3fNBj, ._2VdVL, ._1UnBr, ._1E0xz, ._2NEKS, ._1JwI_, input, textarea, ._37uvX, ._66Mfn, ._3V1pH, .t-hzx, ._3D7BY, ._3SqdF, ._2vedk, ._3qbk_, ._3ZJK8, ._3ZuGY, .AjBUV, ._399cc, ._1b8Ja {\n        background-color: #000000 !important;\n        background: #000 !important;\n        color: #ffffff !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n._8xVNY, ._24RGH {\n        background-color: #000000 !important;\n        background: #000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        border: 2px solid !important;\n        border-radius: 16px !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n._2iSv6 {\n        background-color: #555555 !important;\n        background: #555 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n\n._3uKcR, ._2suUz {\n\tdisplay: none !important;\n}\n",
+        "domains": [
+          "duolingo.com"
+        ]
+      }
+    ],
+    "updateDate": 1597763190083,
+    "_id": "a297becf-2fe3-470e-9bf1-95cd82a53989",
+    "_rev": 1627560672587,
+    "id": 47
+  },
+  {
+    "enabled": false,
+    "installDate": 1594770095574,
+    "name": "bnw-file",
+    "sections": [
+      {
+        "code": "*, html, html * {\n        background-color: #000000 !important;\n}",
+        "urlPrefixes": [
+          "file:///"
+        ]
+      }
+    ],
+    "updateDate": 1594770123587,
+    "_id": "19b3cb67-a80a-42fb-aebe-0f3a5e08c722",
+    "_rev": 1658861991099,
+    "id": 48
+  },
+  {
+    "enabled": false,
+    "installDate": 1594770215003,
+    "name": "bnw-google",
+    "sections": [
+      {
+        "code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}\n\n/* google weather */\ndiv#wob_temp.ksb,\ndiv#wob_rain.ksb,\ndiv#wob_wind.ksb,\n/* misc google */\n.gb_Eb,\n/* github */\n.btn {\n\tbackground-image: none !important;\n}",
+        "domains": [
+          "google.com"
+        ]
+      }
+    ],
+    "updateDate": 1594770246824,
+    "_id": "7f29638a-cb51-4f29-b460-debf37da325d",
+    "_rev": 1659833436389,
+    "id": 49
+  },
+  {
+    "enabled": true,
+    "installDate": 1594770320788,
+    "name": "ycombinator.com",
+    "sections": [
+      {
+        "code": "html,\nhtml * {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        line-height: 14px !important;\n        letter-spacing: normal !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\n::-moz-selection {\n        background-color: #ffffff !important;\n        color: #000000 !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\na:link {\n        background-color: #000000 !important;\n        color: #aaaaaa !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n}\ninput:not([type='checkbox']) {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n}\ninput[type='checkbox'] {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n        border-stye: solid !important;\n        border-width: 1px !important;\n        border-color: #ffffff !important;\n        font-family: \"terminus (ttf)\" !important;\n        font-size: 9pt !important;\n        background-image: none !important;\n        -moz-appearance: none !important;\n        -moz-border-image: none !important;\n        border: 1px solid !important;\n        max-height: 12px !important;\n        min-height: 12px !important;\n        max-width: 12px !important;\n        min-width: 12px !important;\n        fill: #fff !important;\n}\n#svg-icon-checked {\n        fill: #fff !important;\n}\n#newtab-customize-button {\n        display: none !important;\n}\n#siteTable::before {\n        background-color: #000000 !important;\n        color: #ffffff !important;\n}",
+        "domains": [
+          "ycombinator.com"
+        ]
+      }
+    ],
+    "updateDate": 1594770320788,
+    "_id": "4d2f9363-b8a5-46d5-821d-2f12ad608122",
+    "_rev": 1613249894925,
+    "id": 50
+  },
+  {
+    "enabled": false,
+    "installDate": 1637771132629,
+    "name": "discord",
+    "sections": [
+      {
+        "code": "/*\n * General\n */\n\nhtml, html * {\n\t/* background-color: #000000; */\n\tcolor: #ffffff;\n\tborder-color: #ffffff;\n\tfont-family: \"terminus (ttf)\";\n\tfont-size: 9pt;\n\tline-height: 14px;\n\n}\n::-moz-selection {\n\tbackground-color: #ffffff;\n\tcolor: #000000;\n\tborder-color: #ffffff;\n\tfont-family: \"terminus (ttf)\";\n\tfont-size: 9pt;\n\t-moz-appearance: none;\n\t-moz-border-image: none;\n}\na:link {\n\t/* background-color: #000000; */\n\tcolor: #aaaaaa;\n\tfont-family: \"terminus (ttf)\";\n\tfont-size: 9pt;\n\t-moz-appearance: none;\n\t-moz-border-image: none;\n}\n\n/*\n * Background\n */\n:root {\n\t--channeltextarea-background: #000000;\n\t--background-primary: #000000;\n\t--background-primary-alt: #000000;\n\t--background-secondary: #000000;\n\t--background-secondary-alt: #000000;\n\t--background-tertiary: #000000;\n\t--background-modifier-selected: #0000;\n}\n\n/*\n * Font\n */\n.markup-2BOw-j,\n.username-1A8OIy,\n.name-1jkAdW, /* server name */\n.topic-TCb_qw.expandable-9fI_e3, /* current room description */\n.embedDescription-1Cuq9a.embedMargin-UO5XwE, /* embed quote */\n.title-29uC1r.fontDisplay-1dagSA.base-1x0h_U.size16-1P40sf\n{\n\tfont-family: \"terminus (ttf)\";\n\tfont-size: 9pt;\n}\n\n/*\n * Emphasis\n */\ndiv.repliedTextPreview-2NBljf.clickable-1bVtEA, /* quoted reply text */\n#placeholder-7pgco.public-DraftEditorPlaceholder-inner, /* unfocused search box text */\n.channelName-2YrOjO, /* room name */\n.name-1jkAdW, /* server name */\n.title-29uC1r.fontDisplay-1dagSA.base-1x0h_U.size16-1P40sf, /* current room name bar */\n.overflow-WK9Ogt /* room section name */\n{\n\tcolor: #aaaaaa;\n}\n.containerDefault--pIXnN.selected-3LIHYU div.iconVisibility-sTNpHs.wrapper-2jXpOf.modeSelected-346R90 /* selected room */\n{\n\tbackground-color: #000;\n\tborder: solid 1px #fff;\n\tborder-style: solid none solid none;\n}\n.iconVisibility-sTNpHs.wrapper-2jXpOf.modeUnread-1qO3K1 div.content-1x5b-n a.mainContent-u_9PKf div.name-23GUGE.overflow-WK9Ogt div.channelName-2YrOjO /* unread room */\n{\n\tcolor: #fff;\n}\n\n/*\n * Area dimensions\n */\n/* server column */\n.wrapper-3NnKdC.guilds-1SWlCJ {\n\twidth: 39px;\n}\n/* room column */\n.sidebar-2K8pFh {\n\twidth: 130px;\n}\n.chatContent-a9vAAp form.form-2fGMdU, /* more text entry box */\n.inner-MADQqc.sansAttachButton-td2irx /* text entry box */\n{\n\tpadding: 0px;\n\tmargin: 0px;\n}\n.title-3qD0b-.container-1r6BKw.themed-ANHk51 /* current room title bar */\n{\n\theight: 24px;\n\tpadding: 0px;\n\tmargin: 0px;\n}\n.public-DraftEditorPlaceholder-root, /* unfocused search box text */\n.searchBar-3dMhjb, /* more unfocused search box text */\n.searchBar-3dMhjb div.DraftEditor-root, /* even more unfocused search box text */\n.DraftEditor-editorContainer /* search box */\n{\n\theight: 14px;\n\tpadding: 0px;\n\tmargin: 0px;\n}\n\n/*\n * Area differentiation\n */\n.textArea-12jD-V.textAreaSlate-1ZzRVj.slateContainer-3Qkn2x /* text entry box */\n{\n\tborder: solid 1px #fff;\n\tborder-style: none none solid none;\n}\n.sidebar-2K8pFh {\n\tborder: solid 1px #fff;\n\tborder-style: none solid none solid;\n}\n.title-3qD0b-.container-1r6BKw.themed-ANHk51 {\n\tborder: solid 1px #fff;\n\tborder-style: none none solid none;\n}\n.form-2fGMdU {\n\tborder: solid 1px #fff;\n\tborder-style: solid none none none;\n}\n.children-19S4PO /* current room title bar */\n{\n\tborder: solid 1px #fff;\n\tborder-style: none solid none none;\n}\n\n/*\n * Remove noise\n */\n.searchBar-3dMhjb div.icon-38sknP.iconLayout-1WxHy4.small-1lPjda, /* search box icon */\n.channelTextArea-rNsIhG.channelTextArea-2VhZ6z div.scrollableContainer-2NUZem div.inner-MADQqc.sansAttachButton-td2irx div.attachWrapper-2TRKBi button.attachButton-2WznTc.attachButton-2dnuIu.button-38aScr.lookBlank-3eh9lL.colorBrand-3pXr91.grow-q77ONN, /* left buttons in text entry */\n.channelTextArea-rNsIhG.channelTextArea-2VhZ6z div.scrollableContainer-2NUZem div.inner-MADQqc.sansAttachButton-td2irx div.buttons-3JBrkn, /* right buttons in text entry */\n.children-3rEycc div.iconItem-F7GRxr.iconBase-3LOlfs, /* create invite button next to selected room */\n.iconContainer-1BBaeJ svg.icon-1DeIlz, /* # sign */\n.children-L002ao, /* new channel button */\n.guildIconContainer-2hr-Lk, /* Star next to server name */\n/* current channel title pound symbol */\n.iconWrapper-2OrFZ1 {\n\tdisplay: none;\n}\n",
+        "domains": [
+          "discord.com"
+        ]
+      }
+    ],
+    "updateDate": 1638360867826,
+    "_id": "6308476b-7443-4e42-923c-368a6173562a",
+    "_rev": 1644357850995,
+    "id": 52
+  },
+  {
+    "enabled": true,
+    "installDate": 1637771396699,
+    "name": "slack.com",
+    "sections": [
+      {
+        "code": "",
+        "regexps": [
+          "https://.*\\.slack\\.com/messages/.*"
+        ]
+      }
+    ],
+    "updateDate": 1637771551910,
+    "_id": "84677565-58cf-4a53-8615-52f90d1bd542",
+    "_rev": 1637771551910,
+    "id": 53
+  },
+  {
+    "enabled": false,
+    "installDate": 1638124079011,
+    "name": "app.slack.com",
+    "sections": [
+      {
+        "code": "/*\n * General\n */\n\nhtml, html * {\n\t/* background-color: #000000; */\n\tcolor: #ffffff;\n\tborder-color: #ffffff;\n\tfont-family: \"terminus (ttf)\";\n\tfont-size: 9pt;\n\tline-height: 14px;\n\n}\n::-moz-selection {\n\tbackground-color: #ffffff;\n\tcolor: #000000;\n\tborder-color: #ffffff;\n\tfont-family: \"terminus (ttf)\";\n\tfont-size: 9pt;\n\t-moz-appearance: none;\n\t-moz-border-image: none;\n}\na:link {\n\t/* background-color: #000000; */\n\tcolor: #aaaaaa;\n\tfont-family: \"terminus (ttf)\";\n\tfont-size: 9pt;\n\t-moz-appearance: none;\n\t-moz-border-image: none;\n}\n\n/*\n * Background\n */\n:root {\n\t--p-channel_sidebar__column-bg: #000000;\n\t--p-channel_sidebar__top-nav-text--opacity-20: #000000;\n}\n.sk-client-theme--dark {\n\t--sk_primary_background: 0,0,0;\n}\n.c-wysiwyg_container--theme_dark,\n.p-channel_sidebar--iap1 .p-channel_sidebar__section_heading, .p-drag_layer .p-channel_sidebar__section_heading {\n\tbackground: #000000;\n}\n\n/*\n * Font\n */\n.p-message_pane__foreword__description, /* message from slack */\n.c-mrkdwn__pre /* code block */\n{\n\tfont-family: \"terminus (ttf)\" !important;\n\tfont-size: 9pt;\n}\n\n\n/*\n * Emphasis\n */\n.p-top_nav__search__text, /* unfocused search box text */\n.c-button-unstyled.p-ia__sidebar_header__team_name span.p-ia__sidebar_header__team_name_text /* server name */\n{\n\tcolor: #aaaaaa;\n}\n\n/*\n * Section area\n */\n/* nav bar items */\n.p-channel_sidebar__link.p-channel_sidebar__link--page.p-channel_sidebar__link--page_punreads.position_relative,\n.p-channel_sidebar__name,\n.p-channel_sidebar__link.p-channel_sidebar__link--all-threads,\n.p-channel_sidebar__section_heading.p-channel_sidebar__section-heading--pages-drawer,\n.p-channel_sidebar__section_heading.p-channel_sidebar__drop_target_indicator,\n.p-ia__sidebar_header.p-ia__sidebar_header--top-nav.p-ia__sidebar_header--ia_details_popover /* server name */\n{\n\theight: 16px;\n\tline-height: 16px;\n\tpadding: 0px;\n\tmargin: 0px;\n}\n\n/*\n * Search box\n */\n.p-top_nav__search__text {\n\tfont-size: 9pt;\n}\n\n/*\n * Message entry box\n */\n.p-message_pane_input {\n\tpadding-left: 0px;\n\tpadding-right: 0px;\n}\n.c-wysiwyg_container__prefix {\n\tborder: solid 1px #fff;\n\tborder-style: none solid none none;\n\tpadding: 1px;\n}\n.p-message_pane_input_inner_main {\n\tborder: solid 1px #fff;\n\tborder-style: solid none solid none;\n}\n.p-workspace__input.p-message_input_unstyled.p-message_input_unstyled--dark,\n.c-basic_container__body {\n\tborder: none;\n}\n.c-wysiwyg_container__suffix {\n\tpadding: 0px;\n}\n.c-texty_buttons /* right text entry buttons */\n{\n\tdisplay: none;\n}\n\n/*\n * Top bar\n */\n.p-top_nav__windows_controls_container.margin_left_125,\n.p-bookmarks_bar.p-bookmarks_bar--with-hide-on-scroll.p-bookmarks_bar--with-hide-on-scroll--ia_details_popover.p-bookmarks_bar--open,\n.p-top_nav__sidebar {\n\tdisplay: none;\n}\n\n/*\n * Channel list\n */\n\n/* container width */\n.p-workspace-layout {\n\tgrid-template-columns: 90px;\n}\n.p-workspace__channel_sidebar {\n\twidth: 90px;\n\tborder: solid 1px #fff;\n\tborder-style: none solid none none;\n}\n.p-client_container div.p-client div.p-workspace-layout div.p-workspace__sidebar.p-workspace__sidebar--large {\n\twidth: 90px !important;\n}\n.p-resizer--dragging\n{\n\tleft: 90px !important;\n}\n.p-resizer {\n\tdisplay: none;\n}\n\n/* server name */\n.p-ia__sidebar_header.p-ia__sidebar_header--top-nav.p-ia__sidebar_header--ia_details_popover div.p-ia__sidebar_header__button {\n\tpadding-left: 0px;\n\tpadding-right: 0px;\n}\n/* section header */\n.p-channel_sidebar__section_heading_right {\n\tdisplay: none;\n}\n/* new message button */\n.c-button-unstyled.p-channel_sidebar__compose_button.p-channel_sidebar__compose_button--iap1.p-channel_sidebar__compose_button--ia_details_popover {\n\tdisplay: none;\n}\n\n/* unselected */\n.p-channel_sidebar__section_heading.p-channel_sidebar__section-heading--pages-drawer,\n.p-channel_sidebar__section_heading_label_overflow,\n.p-channel_sidebar__static_list__item.c-virtual_list__item,\n.p-channel_sidebar__channel,\n.p-channel_sidebar__name,\n.p-channel_sidebar__name.p-channel_sidebar__name--away span,\n.p-channel_sidebar__name span\n{\n\tcolor: #aaaaaa;\n}\n\n/* selected */\n.c-message_list__day_divider__label__pill,\n.p-channel_sidebar__channel--selected,\n.p-message_pane__top_banners,\n.p-channel_sidebar__channel.p-channel_sidebar__channel--selected\n{\n\tborder: solid 1px #fff;\n\tborder-style: solid none solid none;\n\tbackground: black;\n}\n\n/*\n * Date differentiation label/line\n */\n\n.c-button-unstyled.c-message_list__day_divider__label__pill {\n\tcolor: #aaaaaa;\n\tborder: none;\n\tfont-size: 9pt;\n}\n\n.c-virtual_list.c-virtual_list--scrollbar.p-channel_sidebar__static_list.c-scrollbar.c-scrollbar--always_visible {\n\twidth: 10px;\n}\n\n/*\n * Messages\n */\n\n/* padding */\n.c-message_kit__gutter.c-message_kit__gutter--compact,\n.p-channel_sidebar__section_heading.p-channel_sidebar__drop_target_indicator,\n.c-message_kit__indent\n{\n\tborder-left: 0px;\n\tmargin-left: 0px;\n\tpadding-left: 0px;\n}\n\n/* move timestamp to avoid whitespace */\n.p-message_pane_message__compact_timestamp {\n\tpadding-top: 15px;\n\tmargin-right: -47px;\n}\n\n/*\n * Remove noise\n */\n\n.p-channel_sidebar__link.p-channel_sidebar__link--page.p-channel_sidebar__link--page_punreads.position_relative i.c-icon.p-channel_sidebar__link__icon.c-icon--list.c-icon--inherit, /* All unread icon */\n.p-channel_sidebar__link.p-channel_sidebar__link--all-threads i.c-icon.p-channel_sidebar__link__icon.c-icon--small-reply.c-icon--inherit, /* Threads icon */\n.p-top_nav__windows_controls_container.margin_right_75, /* title bar question mark icon */\n.c-icon--inline /* room # sign */\n{\n\tdisplay: none;\n}\n",
+        "domains": [
+          "app.slack.com"
+        ]
+      }
+    ],
+    "updateDate": 1638315045177,
+    "_id": "01624638-cf84-4dc7-a1df-744120dd2c96",
+    "_rev": 1649952403722,
+    "id": 54
+  }
 ]

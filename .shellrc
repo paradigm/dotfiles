@@ -221,7 +221,7 @@ if [ -r ~/.themes/current/terminal/256-theme ] && [ -n "${DISPLAY}" ] || [ "$TER
 	then
 		"${is_bash}" && export PS1="\[\e[38;5;${ERROR_FOREGROUND}m\e[48;5;${ERROR_BACKGROUND}m#\e[0m\]\] "
 		"${is_zsh}" && export PROMPT="%F{$ERROR_FOREGROUND}%K{$ERROR_BACKGROUND}#%f%k "
-	elif [ -n "${SSH_CLIENT}" ] || [ -n "${SSH_TTY}" ]
+	elif [ -n "${SSH_CLIENT}" ] || [ -n "${SSH_TTY}" ] || [ -n "${SSH_CONNECTION}" ]
 	then
 		"${is_bash}" && export PS1="\[\e[38;5;${MISCELLANEOUS_FOREGROUND}m\e[48;5;${MISCELLANEOUS_BACKGROUND}m$\e[0m\]\] "
 		"${is_zsh}" && export PROMPT="%F{$MISCELLANEOUS_FOREGROUND}%K{$MISCELLANEOUS_BACKGROUND}$%f%k "
@@ -418,6 +418,9 @@ if "${is_zsh}"; then
 
 	# Have zsh treat "mosh" like "ssh"
 	compdef mosh=ssh
+
+	# Have zsh treat "rerun" like "sudo"
+	compdef rerun=sudo
 fi
 
 # ==============================================================================
