@@ -71,7 +71,7 @@ fi
 # = general-envvars                                                            =
 # ==============================================================================
 
-for dir in .bin .priv .go/bin .cargo/bin; do
+for dir in .bin .priv .go/bin .cargo/bin .local/bin; do
 	if echo "${PATH}" | grep -q "\(:\|^\)${HOME}/${dir}:"; then
 		export PATH="${HOME}/${dir}:$(echo "${PATH}" | sed "s,:${HOME}/${dir}:,:,")"
 	else
