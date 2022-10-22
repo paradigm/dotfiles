@@ -1141,6 +1141,22 @@ elif "${is_zsh}"; then
 fi
 
 # ==============================================================================
+# = termux                                                                     =
+# ==============================================================================
+#
+# Set TZ if on termux for non-android aware programs
+if uname -a | grep -qi android; then
+	local TZ_NAME="$(date +%Z)"
+	if date +%z | grep -- '+'; then
+		local TZ_SIGN="-"
+	else
+		local TZ_SIGN="+"
+	fi
+	local TZ_OFFSET="$(date +%z | sed 's/[0+-]//g')"
+	export TZ="${TZ_NAME}${TZ_SIGN}${TZ_OFFSET}"
+fi
+
+# ==============================================================================
 # = run_tmux                                                                   =
 # ==============================================================================
 #
