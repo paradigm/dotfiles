@@ -1,5 +1,14 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
+TZ_NAME="$(date +%Z)"
+if date +%z | grep -- '+'; then
+	TZ_SIGN="-"
+else
+	TZ_SIGN="+"
+fi
+TZ_OFFSET="$(date +%z | sed 's/[0+-]//g')"
+export TZ="${TZ_NAME}${TZ_SIGN}${TZ_OFFSET}"
+
 remind -g -q ~/.reminders | grep -ve '-[0-9][0-9]*h[0-9][0-9]*m$' | awk 'NR>2'
 echo
 ~/.bin/chore
